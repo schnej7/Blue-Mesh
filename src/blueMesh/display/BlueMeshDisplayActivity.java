@@ -1,22 +1,21 @@
 package blueMesh.display;
 
 import android.app.Activity;
-import android.bluetooth.BluetoothAdapter;
-import android.bluetooth.BluetoothDevice;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
-@SuppressWarnings("unused")
 public class BlueMeshDisplayActivity extends Activity{
 	
-	public static final int WRITE_MESSAGE = 1;
+	public static final int SUCCESS = 0;
+	public static final int MSG_DEBUG = 1;
 	
 	private ArrayAdapter <String> mMessageArray;
 	private ListView mMessageView;
-	private TestService mTestService = null;
+	//private TestService mTestService = null;
+	private BlueMeshService mBlueMeshService = null;
 	
 	
     /** Called when the activity is first created. */
@@ -28,32 +27,34 @@ public class BlueMeshDisplayActivity extends Activity{
         setup();
     }
     
-    
+    //Used to setup the display and the service
     private void setup(){
     	mMessageArray = new ArrayAdapter<String>(this, R.layout.message);
     	mMessageView = (ListView) findViewById(R.id.ListMessages);
     	mMessageView.setAdapter(mMessageArray);
     	
-    	mTestService = new TestService( this, mHandler);
-    	mTestService.start();
+    	mBlueMeshService = new BlueMeshService( this, mHandler);
+    	mBlueMeshService.start();
+    	clearDisplay();
     }
     
-    
+    //Used to clear the display
     private void clearDisplay(){
     	mMessageArray.clear();
     }
     
+    //Handler used for receiving messages from the service
     private final Handler mHandler = new Handler(){
     	@Override
     	public void handleMessage( Message msg ){
+    		byte[] writeBuf;
+    		String messageString;
 	    	switch(msg.what){
-	    	case WRITE_MESSAGE:
-	    		byte[] writeBuf = (byte[]) msg.obj;
-	    		String messageString = new String(writeBuf);
+	    	case MSG_DEBUG:
+	    		writeBuf = (byte[]) msg.obj;
+	    		messageString = new String(writeBuf);
 	    		mMessageArray.add(messageString);
 	    		break;
-	    		
-	    	}
 	    }
     };
 }

@@ -1,12 +1,8 @@
 package blueMesh.display;
 
-import android.app.Service;
 import android.content.Context;
-import android.content.Intent;
 import android.os.Handler;
-import android.os.IBinder;
 
-@SuppressWarnings("unused")
 public class TestService{
 	
 	private final Handler mHandler;
@@ -37,7 +33,8 @@ public class TestService{
 				String sendString = "From Service " + String.valueOf(i);
 				buffer = sendString.getBytes();
 				bytes = buffer.length;
-				mHandler.obtainMessage(BlueMeshDisplayActivity.WRITE_MESSAGE, bytes, -1, buffer).sendToTarget();
+				mHandler.obtainMessage(BlueMeshDisplayActivity.WRITE_MESSAGE,
+						bytes, -1, buffer).sendToTarget();
 				try {
 					Thread.sleep(1000);
 				} catch (InterruptedException e) {
