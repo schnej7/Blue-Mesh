@@ -9,6 +9,7 @@ import android.widget.ListView;
 
 public class BlueMeshDisplayActivity extends Activity{
 	
+	public static final int FAIL = -1;
 	public static final int SUCCESS = 0;
 	public static final int MSG_DEBUG = 1;
 	
@@ -55,6 +56,7 @@ public class BlueMeshDisplayActivity extends Activity{
 	    		messageString = new String(writeBuf);
 	    		mMessageArray.add(messageString);
 	    		break;
-	    }
+	    	}
+    	}
     };
 }

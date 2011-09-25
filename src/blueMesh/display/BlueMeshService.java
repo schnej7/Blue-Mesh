@@ -8,9 +8,12 @@ import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothServerSocket;
 import android.bluetooth.BluetoothSocket;
 
+
+@SuppressWarnings("unused")
 public class BlueMeshService {
 
 	public static final boolean DEBUG = true;
+	public static final int FAIL = -1;
 	public static final int SUCCESS = 0;
 	public static final int ERR_STRING_TO_LARGE = 1;
 	public static final int STATE_NONE = 2;
@@ -20,6 +23,7 @@ public class BlueMeshService {
 	public static final int NUMBER_OF_AVAILABLE_RADIOS = 8;
 	public static final int AVAILABLE = 9;
 	public static final int UNAVAILABLE = 10;
+	public static final int INT_OUT_OF_RANGE = 11;
 	
 	public static int numRadiosConnected = 0;
 	
@@ -53,36 +57,68 @@ public class BlueMeshService {
 		
 		public void run(){
 			
-			if (DEBUG) print("Running radioManagerThread");
+			if (DEBUG) print_debug("Running radioManagerThread");
 			//This function is used to manage the bluetooth threads
 			//used for connections between devices
+			
+			//All threads are available
 			for( int i = 0; i < NUMBER_OF_AVAILABLE_RADIOS; i++){
 				threadsInUse[i] = AVAILABLE;
 			}
-			threadsInUse[0] = UNAVAILABLE;
 
-			deviceThreads[0] = new bluetoothDeviceThread();
-			deviceThreads[0].start();
-
+			int tempReturnVal;
+			
+			tempReturnVal = start_search_on_thread( 0 );
+			if (DEBUG) print_debug("return " + tempReturnVal);
+			tempReturnVal = start_search_on_thread( 1 );
+			if (DEBUG) print_debug("return " + tempReturnVal);
+			tempReturnVal = start_search_on_thread( 0 );
+			if (DEBUG) print_debug("return " + tempReturnVal);
+			tempReturnVal = kill_search_on_thread( 0 );
+			if (DEBUG) print_debug("return " + tempReturnVal);
+			tempReturnVal = start_search_on_thread( 0 );
+			if (DEBUG) print_debug("return " + tempReturnVal);
 		}
 		
-		public int print( String outString ){
+		public synchronized int start_search_on_thread( int searchThread ){
+			if (DEBUG){
+				print_debug ("start_search_on_thread " + 
+			String.valueOf(searchThread));
+			}
 			
-			//Create buffer for string to be converted to bytes to be 
-			//displayed by the UI thread
-			byte[] buffer = new byte[1024];
-			int bytes;
+			if( searchThread > NUMBER_OF_AVAILABLE_RADIOS &&
+					searchThread < 0){
+				return INT_OUT_OF_RANGE;
+			}
+			else if( threadsInUse[searchThread] == UNAVAILABLE ){
+				return UNAVAILABLE;
+			}
+			else{
+				threadsInUse[searchThread] = UNAVAILABLE;
+
+				deviceThreads[searchThread] = new bluetoothDeviceThread( 0 );
+				deviceThreads[searchThread].start();
+				
+				return SUCCESS;
+			}
+		}
+		
+		public synchronized int kill_search_on_thread( int searchThread){
+			if (DEBUG){
+				print_debug ("kill_search_on_thread " + 
+			String.valueOf(searchThread));
+			}
 			
-			buffer = outString.getBytes();
-			
-			//Check size of input string
-			if(buffer.length > 1024) return ERR_STRING_TO_LARGE;
-			
-			bytes = buffer.length;
-			mHandler.obtainMessage(BlueMeshDisplayActivity.MSG_DEBUG,
-					bytes, -1, buffer).sendToTarget();
-			
-			return SUCCESS;
+			if( searchThread > NUMBER_OF_AVAILABLE_RADIOS &&
+					searchThread < 0){
+				return INT_OUT_OF_RANGE;
+			}
+			else {
+				deviceThreads[searchThread].stop();
+				
+				threadsInUse[searchThread] = AVAILABLE;
+				return SUCCESS;
+			}
 		}
 		
 	}
@@ -90,35 +126,41 @@ public class BlueMeshService {
 	//Thread to search for other bluetooth devices
 	private class bluetoothDeviceThread extends Thread{
 		
+		private int deviceID;
+		
+		public bluetoothDeviceThread ( int a_deviceID ){
+			deviceID = a_deviceID;
+		}
+		
 		public void run(){
-			if (DEBUG) print("Running searchingRadioThread");
+			if (DEBUG) print_debug("Running searchingRadioThread");
 			search();
 		}
 		
 		public void search(){
-			print("Searching...");
+			print_debug("Searching...");
 		}
 		
 		//Function used to send a message to be displayed by the UI thread
-		public int print( String outString ){
-			
-			//Create buffer for string to be converted to bytes to be 
-			//displayed by the UI thread
-			byte[] buffer = new byte[1024];
-			int bytes;
-			
-			buffer = outString.getBytes();
-			
-			//Check size of input string
-			if(buffer.length > 1024) return ERR_STRING_TO_LARGE;
-			
-			bytes = buffer.length;
-			mHandler.obtainMessage(BlueMeshDisplayActivity.MSG_DEBUG,
-					bytes, -1, buffer).sendToTarget();
-			
-			return SUCCESS;
-		}
 	}
 	
+	public synchronized int print_debug( String outString ){
+		
+		//Create buffer for string to be converted to bytes to be 
+		//displayed by the UI thread
+		byte[] buffer = new byte[1024];
+		int bytes;
+		
+		buffer = outString.getBytes();
+		
+		//Check size of input string
+		if(buffer.length > 1024) return ERR_STRING_TO_LARGE;
+		
+		bytes = buffer.length;
+		mHandler.obtainMessage(BlueMeshDisplayActivity.MSG_DEBUG,
+				bytes, -1, buffer).sendToTarget();
+		
+		return SUCCESS;
+	}
 	
 }
