@@ -14,6 +14,7 @@ import android.bluetooth.BluetoothSocket;
 @SuppressWarnings("unused")
 public class BlueMeshService {
 
+	//Constants
 	public static final boolean DEBUG = true;
 	public static final int FAIL = -1;
 	public static final int SUCCESS = 0;
@@ -27,8 +28,11 @@ public class BlueMeshService {
 	public static final int UNAVAILABLE = 10;
 	public static final int INT_OUT_OF_RANGE = 11;
 	
-	public static int numRadiosConnected = 0;
-	public static List <String> connectedDeviceIDs;
+	//Number of devices connected
+	private static int numRadiosConnected = 0;
+	private static String myID = null;
+	//List of devices connected
+	private static List <String> connectedDeviceIDs;
 	
 	private final Handler mHandler;
 
@@ -40,6 +44,12 @@ public class BlueMeshService {
 	//Constructor
 	public BlueMeshService (Context context, Handler handler){
 		mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+		
+		if( mBluetoothAdapter == null){
+			//Bluetooth is not supported
+			return;
+		}
+		
 		mHandler = handler;
 	}
 	
@@ -67,6 +77,24 @@ public class BlueMeshService {
 			//All threads are available
 			for( int i = 0; i < NUMBER_OF_AVAILABLE_RADIOS; i++){
 				threadsInUse[i] = AVAILABLE;
+			}
+			
+			////////////////////////
+			// TO DO: Set myID
+			///////////////////////
+			myID = "ME";
+			
+			//Check if myID is in connectedDeviceIDs
+			//If it is not, then add it
+			boolean inList = false;
+			for( int i = 0; i < connectedDeviceIDs.size(); i++){
+				if( connectedDeviceIDs.get(i) == myID){
+					inList = true;
+					break;
+				}
+			}	
+			if( !inList ){
+				connectedDeviceIDs.add(myID);
 			}
 
 			int tempReturnVal;
@@ -134,6 +162,15 @@ public class BlueMeshService {
 		
 		public void search(){
 			print_debug("Searching...");
+		}
+		
+		private int killable(){
+			if(Thread.holdsLock(mHandler)){
+				return FAIL;
+			}
+			else{
+				return SUCCESS;
+			}
 		}
 		
 		//Function used to send a message to be displayed by the UI thread

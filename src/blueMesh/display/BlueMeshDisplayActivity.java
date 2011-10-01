@@ -12,6 +12,7 @@ public class BlueMeshDisplayActivity extends Activity{
 	public static final int FAIL = -1;
 	public static final int SUCCESS = 0;
 	public static final int MSG_DEBUG = 1;
+	public static final int MSG_DISPLAY = 2;
 	
 	private ArrayAdapter <String> mMessageArray;
 	private ListView mMessageView;
@@ -52,6 +53,11 @@ public class BlueMeshDisplayActivity extends Activity{
     		String messageString;
 	    	switch(msg.what){
 	    	case MSG_DEBUG:
+	    		writeBuf = (byte[]) msg.obj;
+	    		messageString = new String(writeBuf);
+	    		mMessageArray.add(messageString);
+	    		break;
+	    	case MSG_DISPLAY:
 	    		writeBuf = (byte[]) msg.obj;
 	    		messageString = new String(writeBuf);
 	    		mMessageArray.add(messageString);
