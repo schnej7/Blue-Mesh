@@ -1,6 +1,8 @@
 package blueMesh.display;
 
 //import android.bluetooth.BluetoothAdapter;
+import java.util.List;
+
 import android.content.Context;
 import android.os.Handler;
 import android.bluetooth.BluetoothAdapter;
@@ -26,6 +28,7 @@ public class BlueMeshService {
 	public static final int INT_OUT_OF_RANGE = 11;
 	
 	public static int numRadiosConnected = 0;
+	public static List <String> connectedDeviceIDs;
 	
 	private final Handler mHandler;
 
@@ -69,18 +72,9 @@ public class BlueMeshService {
 			int tempReturnVal;
 			
 			tempReturnVal = start_search_on_thread( 0 );
-			if (DEBUG) print_debug("return " + tempReturnVal);
-			tempReturnVal = start_search_on_thread( 1 );
-			if (DEBUG) print_debug("return " + tempReturnVal);
-			tempReturnVal = start_search_on_thread( 0 );
-			if (DEBUG) print_debug("return " + tempReturnVal);
-			tempReturnVal = kill_search_on_thread( 0 );
-			if (DEBUG) print_debug("return " + tempReturnVal);
-			tempReturnVal = start_search_on_thread( 0 );
-			if (DEBUG) print_debug("return " + tempReturnVal);
 		}
 		
-		public synchronized int start_search_on_thread( int searchThread ){
+		public int start_search_on_thread( int searchThread ){
 			if (DEBUG){
 				print_debug ("start_search_on_thread " + 
 			String.valueOf(searchThread));
@@ -96,14 +90,15 @@ public class BlueMeshService {
 			else{
 				threadsInUse[searchThread] = UNAVAILABLE;
 
-				deviceThreads[searchThread] = new bluetoothDeviceThread( 0 );
+				deviceThreads[searchThread] = new bluetoothDeviceThread( 
+						searchThread );
 				deviceThreads[searchThread].start();
 				
 				return SUCCESS;
 			}
 		}
 		
-		public synchronized int kill_search_on_thread( int searchThread){
+		public int kill_search_on_thread( int searchThread){
 			if (DEBUG){
 				print_debug ("kill_search_on_thread " + 
 			String.valueOf(searchThread));

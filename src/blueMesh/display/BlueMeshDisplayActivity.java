@@ -16,14 +16,14 @@ public class BlueMeshDisplayActivity extends Activity{
 	private ArrayAdapter <String> mMessageArray;
 	private ListView mMessageView;
 	//private TestService mTestService = null;
-	private BlueMeshService mBlueMeshService = null;
+	private TestService mBlueMeshService = null;
 	
 	
     /** Called when the activity is first created. */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.main);
+        setContentView(R.layout.main);  
         
         setup();
     }
@@ -34,7 +34,7 @@ public class BlueMeshDisplayActivity extends Activity{
     	mMessageView = (ListView) findViewById(R.id.ListMessages);
     	mMessageView.setAdapter(mMessageArray);
     	
-    	mBlueMeshService = new BlueMeshService( this, mHandler);
+    	mBlueMeshService = new TestService( this, mHandler);
     	mBlueMeshService.start();
     	clearDisplay();
     }
