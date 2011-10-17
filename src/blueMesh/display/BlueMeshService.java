@@ -8,7 +8,7 @@ import blueMesh.display.Constants;
 
 public class BlueMeshService {
 
-	private static String myID = null;
+	//private static String myID = null;
 	
 	private final Handler mHandler;
 
@@ -43,7 +43,7 @@ public class BlueMeshService {
 		if(buffer.length > 1024) return Constants.ERR_STRING_TO_LARGE;
 		
 		bytes = buffer.length;
-		mHandler.obtainMessage(BlueMeshDisplayActivity.MSG_DEBUG,
+		mHandler.obtainMessage(Constants.MSG_DEBUG,
 				bytes, -1, buffer).sendToTarget();
 		
 		return Constants.SUCCESS;

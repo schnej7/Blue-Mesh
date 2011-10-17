@@ -9,11 +9,6 @@ import android.widget.ListView;
 
 public class BlueMeshDisplayActivity extends Activity{
 	
-	public static final int FAIL = -1;
-	public static final int SUCCESS = 0;
-	public static final int MSG_DEBUG = 1;
-	public static final int MSG_DISPLAY = 2;
-	
 	private ArrayAdapter <String> mMessageArray;
 	private ListView mMessageView;
 	//private TestService mTestService = null;
@@ -52,12 +47,12 @@ public class BlueMeshDisplayActivity extends Activity{
     		byte[] writeBuf;
     		String messageString;
 	    	switch(msg.what){
-	    	case MSG_DEBUG:
+	    	case Constants.MSG_DEBUG:
 	    		writeBuf = (byte[]) msg.obj;
 	    		messageString = new String(writeBuf);
 	    		mMessageArray.add(messageString);
 	    		break;
-	    	case MSG_DISPLAY:
+	    	case Constants.MSG_NORMAL:
 	    		writeBuf = (byte[]) msg.obj;
 	    		messageString = new String(writeBuf);
 	    		mMessageArray.add(messageString);

@@ -130,7 +130,7 @@ public class RouterThread extends Thread {
 			for( int i = 0; i < Constants.NUMBER_OF_AVAILABLE_RADIOS; i++){
 				if (connectedThreads[i] == null){
 					connectedThreads[i] = 
-							new ConnectedThread(myParent, i);
+							new ConnectedThread(mHandler, myParent, i, mmSocket);
 					connectedThreads[i].start();
 					break;
 				}
@@ -167,7 +167,7 @@ public class RouterThread extends Thread {
 			return Constants.ERR_STRING_TO_LARGE;
 
 		bytes = buffer.length;
-		mHandler.obtainMessage(BlueMeshDisplayActivity.MSG_DEBUG, bytes, -1,
+		mHandler.obtainMessage(Constants.MSG_DEBUG, bytes, -1,
 				buffer).sendToTarget();
 
 		return Constants.SUCCESS;
