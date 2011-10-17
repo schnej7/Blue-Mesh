@@ -1,25 +1,14 @@
 package blueMesh.display;
 
-//import android.bluetooth.BluetoothAdapter;
-import java.util.List;
-
 import android.content.Context;
 import android.os.Handler;
 import android.bluetooth.BluetoothAdapter;
-import android.bluetooth.BluetoothDevice;
-import android.bluetooth.BluetoothServerSocket;
-import android.bluetooth.BluetoothSocket;
 import blueMesh.display.Constants;
 
 
-@SuppressWarnings("unused")
 public class BlueMeshService {
-	
-	//Number of devices connected
-	private static int numRadiosConnected = 0;
+
 	private static String myID = null;
-	//List of devices connected
-	private static List <String> connectedDeviceIDs;
 	
 	private final Handler mHandler;
 

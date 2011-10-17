@@ -13,7 +13,7 @@ public class SearchThread extends Thread {
 	private final BluetoothServerSocket mmServerSocket;
 	private Handler mHandler;
 	private int devicesConnected = 0;
-	private ConnectionSetupThread connectionSetupThread;
+	private RouterThread routerThread;
 
 	public SearchThread(Handler a_mHandler, BluetoothAdapter mBluetoothAdapter) {
 		BluetoothServerSocket tmp = null;
@@ -28,7 +28,8 @@ public class SearchThread extends Thread {
 		}
 		mmServerSocket = tmp;
 		
-		connectionSetupThread = new ConnectionSetupThread();
+		routerThread = new RouterThread(mHandler);
+		routerThread.run();
 	}
 
 	public void run() {
@@ -52,12 +53,11 @@ public class SearchThread extends Thread {
 
 			// If a connection was accepted
 			if (socket != null) {
-				switch (connectionSetupThread.get_connection_state()) {
+				switch (routerThread.get_connection_state()) {
 				case Constants.STATE_READY:
 					// Situation normal. Start the connected thread.
 					obtain_connection(socket, 
-							socket.getRemoteDevice(), 
-							Constants.mSocketType);
+							socket.getRemoteDevice());
 					break;
 				case Constants.STATE_NONE:
 				case Constants.STATE_FULL:
@@ -112,17 +112,16 @@ public class SearchThread extends Thread {
 		return Constants.SUCCESS;
 	}
 	
-	public void obtain_connection(
-			BluetoothSocket socket, 
-			BluetoothDevice device, 
-			String socket_type){
+	public void obtain_connection( BluetoothSocket socket,
+			BluetoothDevice device ){
 		
-		////////////////////////////////////
-		// TODO                           //
-		//                                //
-		// Call the ConnectionSetupThread //
-		// To setup the connection        //
-		////////////////////////////////////
+		if(routerThread.get_connection_state() != Constants.STATE_READY){
+			cancel();
+		}
+		else{
+			routerThread.make_connection(socket, device);
+		}
+		
 	}
 
 }
