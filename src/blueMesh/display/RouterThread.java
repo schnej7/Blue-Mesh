@@ -6,7 +6,7 @@ import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
 import android.os.Handler;
 
-public class RouterThread extends Thread{
+public class RouterThread extends Thread {
 
 	private ConnectedThread connectedThreads[];
 	private Handler mHandler;
@@ -15,10 +15,10 @@ public class RouterThread extends Thread{
 	private static int radiosInUse;
 	private String pairedDeviceNames[];
 
-	public synchronized void kill_connection( int connectionNumber ){
+	public synchronized void kill_connection(int connectionNumber) {
 		connectedThreads[connectionNumber] = null;
 	}
-	
+
 	public synchronized void set_connection_state(int a_connectionState) {
 		connectionState = a_connectionState;
 	}
@@ -34,40 +34,40 @@ public class RouterThread extends Thread{
 		radiosInUse = 0;
 		connectedThreads = 
 				new ConnectedThread[Constants.NUMBER_OF_AVAILABLE_RADIOS];
-		pairedDeviceNames =
+		pairedDeviceNames = 
 				new String[Constants.NUMBER_OF_AVAILABLE_RADIOS];
-		for(int i = 0; i < Constants.NUMBER_OF_AVAILABLE_RADIOS; i++){
+		for (int i = 0; i < Constants.NUMBER_OF_AVAILABLE_RADIOS; i++) {
 			pairedDeviceNames[i] = "";
 		}
 	}
-		
-	///////////////////////////
-	//TODO
-	//function to route data coming in
-	//and going out
-	//////////////////////////
-	
-	public synchronized int make_connection( BluetoothSocket socket,
-			BluetoothDevice device ){
-		
-		if( radiosInUse >= Constants.NUMBER_OF_AVAILABLE_RADIOS){
+
+	// /////////////////////////
+	// TODO
+	// function to route data coming in
+	// and going out
+	// ////////////////////////
+
+	public synchronized int make_connection(BluetoothSocket socket,
+			BluetoothDevice device) {
+
+		if (radiosInUse >= Constants.NUMBER_OF_AVAILABLE_RADIOS) {
 			return Constants.FAIL;
 		}
-		
-		//The connection setup thread is busy
-		if( connectionState != Constants.STATE_READY){
+
+		// The connection setup thread is busy
+		if (connectionState != Constants.STATE_READY) {
 			return Constants.FAIL;
 		}
-		
+
 		connectionState = Constants.STATE_BUSY;
-		
-		if( connectionSetupThread != null ){
+
+		if (connectionSetupThread != null) {
 			connectionSetupThread.cancel();
 		}
-		
+
 		connectionSetupThread = new ConnectionSetupThread(device, this);
 		connectionSetupThread.start();
-		
+
 		return Constants.SUCCESS;
 	}
 
@@ -75,18 +75,22 @@ public class RouterThread extends Thread{
 
 		private RouterThread myParent;
 		private BluetoothSocket mmSocket;
-		//private BluetoothDevice mmDevice;
 
-		public ConnectionSetupThread(BluetoothDevice device, RouterThread parent) {
+		// private BluetoothDevice mmDevice;
+
+		public ConnectionSetupThread(
+				BluetoothDevice device, 
+				RouterThread parent) {
+			
 			myParent = parent;
-			//mmDevice = device;
+			// mmDevice = device;
 			BluetoothSocket tmp = null;
 
 			// Get a BluetoothSocket for a connection with the
 			// given BluetoothDevice
 			try {
 				tmp = device.createRfcommSocketToServiceRecord(
-								Constants.MY_UUID_SECURE);
+						Constants.MY_UUID_SECURE);
 			} catch (IOException e) {
 				print_debug("create() failed");
 			}
@@ -107,14 +111,14 @@ public class RouterThread extends Thread{
 				try {
 					mmSocket.close();
 				} catch (IOException e2) {
-					print_debug("unable to close() socket during " +
-							"connection failure");
+					print_debug("unable to close() socket during "
+							+ "connection failure");
 				}
-				/////////////////
-				//TODO
-				//connectionFailed();
-				//Do something on a failed connection
-				/////////////////
+				// ///////////////
+				// TODO
+				// connectionFailed();
+				// Do something on a failed connection
+				// ///////////////
 				synchronized (RouterThread.this) {
 					connectionState = Constants.STATE_READY;
 				}
@@ -125,42 +129,43 @@ public class RouterThread extends Thread{
 			synchronized (RouterThread.this) {
 				connectionSetupThread = null;
 			}
-			
-			//mmDevice.getName()
-			//////////////////////////////
-			//TODO
-			//Add the device name to the list
-			//of all device names
-			//////////////////////////////
-			
-			for( int i = 0; i < Constants.NUMBER_OF_AVAILABLE_RADIOS; i++){
-				if (connectedThreads[i] == null){
-					connectedThreads[i] = 
-							new ConnectedThread(mHandler, myParent, i, mmSocket);
+
+			// mmDevice.getName()
+			// ////////////////////////////
+			// TODO
+			// Add the device name to the list
+			// of all device names
+			// ////////////////////////////
+
+			for (int i = 0; i < Constants.NUMBER_OF_AVAILABLE_RADIOS; i++) {
+				if (connectedThreads[i] == null) {
+					connectedThreads[i] = new ConnectedThread(mHandler,
+							myParent, i, mmSocket);
 					connectedThreads[i].start();
 					break;
 				}
 			}
-			
+
 			synchronized (RouterThread.this) {
 				connectionState = Constants.STATE_READY;
 			}
-			
-			
+
 		}
-		
-        public void cancel() {
-            try {
-                mmSocket.close();
-            } catch (IOException e) {
-                print_debug("connectionSetupThread close() failed");
-            }
-        }
+
+		public void cancel() {
+			try {
+				mmSocket.close();
+			} catch (IOException e) {
+				print_debug("connectionSetupThread close() failed");
+			}
+		}
 
 	}
 
 	public synchronized int print_debug(String outString) {
 
+		if (!Constants.DEBUG)
+			return Constants.SUCCESS;
 		// Create buffer for string to be converted to bytes to be
 		// displayed by the UI thread
 		byte[] buffer = new byte[1024];
@@ -173,8 +178,8 @@ public class RouterThread extends Thread{
 			return Constants.ERR_STRING_TO_LARGE;
 
 		bytes = buffer.length;
-		mHandler.obtainMessage(Constants.MSG_DEBUG, bytes, -1,
-				buffer).sendToTarget();
+		mHandler.obtainMessage(Constants.MSG_DEBUG, bytes, -1, buffer)
+				.sendToTarget();
 
 		return Constants.SUCCESS;
 	}

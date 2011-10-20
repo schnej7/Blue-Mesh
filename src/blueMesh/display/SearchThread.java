@@ -15,14 +15,15 @@ public class SearchThread extends Thread {
 	private int devicesConnected = 0;
 	private RouterThread routerThread;
 
-	public SearchThread(Handler a_mHandler,
+	public SearchThread(
+			Handler a_mHandler, 
 			BluetoothAdapter mBluetoothAdapter) {
+		
 		BluetoothServerSocket tmp = null;
 		mHandler = a_mHandler;
 
-		if(Constants.DEBUG)
-			print_debug("Creating Search Thread");
-		
+		print_debug("Creating SearchThread");
+
 		// Create a new listening server socket
 		try {
 			tmp = mBluetoothAdapter.listenUsingRfcommWithServiceRecord(
@@ -30,16 +31,16 @@ public class SearchThread extends Thread {
 		} catch (IOException e) {
 			print_debug(e.toString());
 		}
-		
+
 		mmServerSocket = tmp;
-		
+
 		routerThread = new RouterThread(mHandler);
 
 	}
 
 	public void run() {
-		if (Constants.DEBUG)
-			print_debug("BEGIN mAcceptThread ");
+
+		print_debug("BEGIN SearchThread");
 
 		setName("SearchThread" + Constants.mSocketType);
 
@@ -62,8 +63,7 @@ public class SearchThread extends Thread {
 				switch (routerThread.get_connection_state()) {
 				case Constants.STATE_READY:
 					// Situation normal. Start the connected thread.
-					obtain_connection(socket, 
-							socket.getRemoteDevice());
+					obtain_connection(socket, socket.getRemoteDevice());
 					break;
 				case Constants.STATE_NONE:
 					break;
@@ -84,23 +84,24 @@ public class SearchThread extends Thread {
 				}
 			}
 		}
-		if (Constants.DEBUG)
-			print_debug("END mAcceptThread");
+		print_debug("END SearchThread");
 
 	}
 
 	public void cancel() {
-		if (Constants.DEBUG)
-			print_debug("cancel " + this);
+		print_debug("cancel " + this);
+
 		try {
 			mmServerSocket.close();
 		} catch (IOException e) {
-			print_debug( "close() of server failed");
+			print_debug("close() of server failed");
 		}
 	}
 
 	public synchronized int print_debug(String outString) {
 
+		if (!Constants.DEBUG)
+			return Constants.SUCCESS;
 		// Create buffer for string to be converted to bytes to be
 		// displayed by the UI thread
 		byte[] buffer = new byte[1024];
@@ -113,22 +114,22 @@ public class SearchThread extends Thread {
 			return Constants.ERR_STRING_TO_LARGE;
 
 		bytes = buffer.length;
-		mHandler.obtainMessage(Constants.MSG_DEBUG, bytes, -1,
-				buffer).sendToTarget();
+		mHandler.obtainMessage(Constants.MSG_DEBUG, bytes, -1, buffer)
+				.sendToTarget();
 
 		return Constants.SUCCESS;
 	}
-	
-	public void obtain_connection( BluetoothSocket socket,
-			BluetoothDevice device ){
-		
-		if(routerThread.get_connection_state() != Constants.STATE_READY){
+
+	public void obtain_connection(
+			BluetoothSocket socket, 
+			BluetoothDevice device) {
+
+		if (routerThread.get_connection_state() != Constants.STATE_READY) {
 			cancel();
-		}
-		else{
+		} else {
 			routerThread.make_connection(socket, device);
 		}
-		
+
 	}
 
 }

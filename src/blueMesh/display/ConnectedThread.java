@@ -55,7 +55,7 @@ public class ConnectedThread extends Thread {
 
 	public void run() {
 
-		print_debug("BEGIN mConnectedThread");
+		print_debug("BEGIN ConnectedThread");
 		byte[] buffer = new byte[1024];
 		int bytes;
 
@@ -68,14 +68,14 @@ public class ConnectedThread extends Thread {
 				// Send the obtained bytes to the UI Activity
 				mHandler.obtainMessage(Constants.MSG_NORMAL, bytes, -1, buffer)
 						.sendToTarget();
-				
-				//////////////////////
-				//TODO
-				//Use myParent to rout
-				//the data to all of the
-				//other connections
-				//////////////////////
-				
+
+				// ////////////////////
+				// TODO
+				// Use myParent to rout
+				// the data to all of the
+				// other connections
+				// ////////////////////
+
 			} catch (IOException e) {
 				print_debug("connection " + myConnectionID + " disconnected");
 
@@ -101,8 +101,10 @@ public class ConnectedThread extends Thread {
 		}
 	}
 
-
 	public synchronized int print_debug(String outString) {
+
+		if (!Constants.DEBUG)
+			return Constants.SUCCESS;
 		// Create buffer for string to be converted to bytes to be
 		// displayed by the UI thread
 		byte[] buffer = new byte[1024];
@@ -115,8 +117,8 @@ public class ConnectedThread extends Thread {
 			return Constants.ERR_STRING_TO_LARGE;
 
 		bytes = buffer.length;
-		mHandler.obtainMessage(Constants.MSG_DEBUG, bytes, -1,
-				buffer).sendToTarget();
+		mHandler.obtainMessage(Constants.MSG_DEBUG, bytes, -1, buffer)
+				.sendToTarget();
 
 		return Constants.SUCCESS;
 	}
