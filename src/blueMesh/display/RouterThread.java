@@ -6,13 +6,14 @@ import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
 import android.os.Handler;
 
-public class RouterThread extends Thread {
+public class RouterThread extends Thread{
 
 	private ConnectedThread connectedThreads[];
 	private Handler mHandler;
 	private static int connectionState;
 	private ConnectionSetupThread connectionSetupThread;
 	private static int radiosInUse;
+	private String pairedDeviceNames[];
 
 	public synchronized void kill_connection( int connectionNumber ){
 		connectedThreads[connectionNumber] = null;
@@ -33,16 +34,18 @@ public class RouterThread extends Thread {
 		radiosInUse = 0;
 		connectedThreads = 
 				new ConnectedThread[Constants.NUMBER_OF_AVAILABLE_RADIOS];
+		pairedDeviceNames =
+				new String[Constants.NUMBER_OF_AVAILABLE_RADIOS];
+		for(int i = 0; i < Constants.NUMBER_OF_AVAILABLE_RADIOS; i++){
+			pairedDeviceNames[i] = "";
+		}
 	}
-	
-	public void run(){
 		
-		///////////////////////////
-		//TODO
-		//This thread needs to rout data coming in
-		//and going out
-		//////////////////////////
-	}
+	///////////////////////////
+	//TODO
+	//function to route data coming in
+	//and going out
+	//////////////////////////
 	
 	public synchronized int make_connection( BluetoothSocket socket,
 			BluetoothDevice device ){
@@ -72,9 +75,11 @@ public class RouterThread extends Thread {
 
 		private RouterThread myParent;
 		private BluetoothSocket mmSocket;
+		//private BluetoothDevice mmDevice;
 
 		public ConnectionSetupThread(BluetoothDevice device, RouterThread parent) {
 			myParent = parent;
+			//mmDevice = device;
 			BluetoothSocket tmp = null;
 
 			// Get a BluetoothSocket for a connection with the
@@ -120,12 +125,13 @@ public class RouterThread extends Thread {
 			synchronized (RouterThread.this) {
 				connectionSetupThread = null;
 			}
-
-			////////////////////////
+			
+			//mmDevice.getName()
+			//////////////////////////////
 			//TODO
-			// Start the connected thread
-			// connected(mmSocket, mmDevice, mSocketType);
-			////////////////////////
+			//Add the device name to the list
+			//of all device names
+			//////////////////////////////
 			
 			for( int i = 0; i < Constants.NUMBER_OF_AVAILABLE_RADIOS; i++){
 				if (connectedThreads[i] == null){

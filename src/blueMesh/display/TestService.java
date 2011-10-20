@@ -33,7 +33,7 @@ public class TestService{
 				String sendString = "From Service " + String.valueOf(i);
 				buffer = sendString.getBytes();
 				bytes = buffer.length;
-				mHandler.obtainMessage(BlueMeshDisplayActivity.MSG_DEBUG,
+				mHandler.obtainMessage(Constants.MSG_DEBUG,
 						bytes, -1, buffer).sendToTarget();
 				try {
 					Thread.sleep(1000);

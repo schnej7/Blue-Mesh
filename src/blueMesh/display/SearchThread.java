@@ -15,36 +15,42 @@ public class SearchThread extends Thread {
 	private int devicesConnected = 0;
 	private RouterThread routerThread;
 
-	public SearchThread(Handler a_mHandler, BluetoothAdapter mBluetoothAdapter) {
+	public SearchThread(Handler a_mHandler,
+			BluetoothAdapter mBluetoothAdapter) {
 		BluetoothServerSocket tmp = null;
 		mHandler = a_mHandler;
 
+		if(Constants.DEBUG)
+			print_debug("Creating Search Thread");
+		
 		// Create a new listening server socket
 		try {
 			tmp = mBluetoothAdapter.listenUsingRfcommWithServiceRecord(
 					Constants.NAME, Constants.MY_UUID_SECURE);
 		} catch (IOException e) {
-			print_debug("socket listen() failed");
+			print_debug(e.toString());
 		}
+		
 		mmServerSocket = tmp;
 		
 		routerThread = new RouterThread(mHandler);
-		routerThread.run();
+
 	}
 
 	public void run() {
 		if (Constants.DEBUG)
-			print_debug("BEGIN mAcceptThread " + this);
+			print_debug("BEGIN mAcceptThread ");
 
 		setName("SearchThread" + Constants.mSocketType);
 
 		BluetoothSocket socket = null;
 
 		// Listen to the server socket if we're not connected
-		while (devicesConnected < Constants.NUMBER_OF_AVAILABLE_RADIOS) {
+		while (true) {
 			try {
 				// This is a blocking call and will only return on a
 				// successful connection or an exception
+				print_debug("Trying to accept()");
 				socket = mmServerSocket.accept();
 			} catch (IOException e) {
 				print_debug("accept() failed");
@@ -60,6 +66,7 @@ public class SearchThread extends Thread {
 							socket.getRemoteDevice());
 					break;
 				case Constants.STATE_NONE:
+					break;
 				case Constants.STATE_FULL:
 					try {
 						socket.close();

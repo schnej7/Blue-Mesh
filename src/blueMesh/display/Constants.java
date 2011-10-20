@@ -27,7 +27,7 @@ public final class Constants {
 	public static final int NUMBER_OF_AVAILABLE_RADIOS = 8;
 	
     public static final UUID MY_UUID_SECURE = 
-    		UUID.fromString("fa87c0d0-afcf-11de-8a39-0800200c9a66");
+    		UUID.fromString("fa87c0d0-afac-11de-8a39-0800200c9a66");
     public static final String NAME = "blueMesh";
 	public static final String mSocketType = "Secure";
 }

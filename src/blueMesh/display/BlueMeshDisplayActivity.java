@@ -12,7 +12,7 @@ public class BlueMeshDisplayActivity extends Activity{
 	private ArrayAdapter <String> mMessageArray;
 	private ListView mMessageView;
 	//private TestService mTestService = null;
-	private TestService mBlueMeshService = null;
+	private BlueMeshService mBlueMeshService = null;
 	
 	
     /** Called when the activity is first created. */
@@ -30,7 +30,7 @@ public class BlueMeshDisplayActivity extends Activity{
     	mMessageView = (ListView) findViewById(R.id.ListMessages);
     	mMessageView.setAdapter(mMessageArray);
     	
-    	mBlueMeshService = new TestService( this, mHandler);
+    	mBlueMeshService = new BlueMeshService( this, mHandler);
     	mBlueMeshService.start();
     	clearDisplay();
     }
