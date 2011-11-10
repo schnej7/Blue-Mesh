@@ -48,6 +48,12 @@ public class SearchThread extends Thread {
 
 		// Listen to the server socket if we're not connected
 		while (true) {
+			
+			if(this.isInterrupted()){
+				print_debug("SearchThread Done");
+				return;
+			}
+			
 			try {
 				// This is a blocking call and will only return on a
 				// successful connection or an exception
@@ -55,7 +61,6 @@ public class SearchThread extends Thread {
 				socket = mmServerSocket.accept();
 			} catch (IOException e) {
 				print_debug("accept() failed");
-				break;
 			}
 
 			// If a connection was accepted
@@ -84,8 +89,6 @@ public class SearchThread extends Thread {
 				}
 			}
 		}
-		print_debug("END SearchThread");
-
 	}
 	
 	public synchronized void done(){
