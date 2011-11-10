@@ -3,6 +3,7 @@
     android:orientation="vertical"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    >
-    <ListView android:layout_height="wrap_content" android:id="@+id/ListMessages" android:layout_width="fill_parent"></ListView>
+    android:weightSum="1">
+    <ListView android:id="@+id/ListMessages" android:layout_width="fill_parent" android:layout_height="410dp"></ListView>
+    <Button android:id="@+id/button1" android:layout_width="fill_parent" android:text="STOP!" android:layout_height="fill_parent"></Button>
 </LinearLayout>

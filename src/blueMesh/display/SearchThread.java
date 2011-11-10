@@ -87,6 +87,14 @@ public class SearchThread extends Thread {
 		print_debug("END SearchThread");
 
 	}
+	
+	public synchronized void done(){
+		print_debug("SearchThread done()");
+		////////////////////
+		//TODO
+		//Stop child threads
+		////////////////////
+	}
 
 	public void cancel() {
 		print_debug("cancel " + this);

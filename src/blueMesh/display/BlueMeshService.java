@@ -10,7 +10,7 @@ public class BlueMeshService {
 	// private static String myID = null;
 
 	private final Handler mHandler;
-
+	
 	private final BluetoothAdapter myBluetoothAdapter;
 	// private ConnectThread mConnectThread;
 	// private ConnectedThread mConnectedThread;
@@ -18,6 +18,7 @@ public class BlueMeshService {
 
 	// Constructor
 	public BlueMeshService(Context context, Handler handler) {
+		
 		myBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
 		mHandler = handler;
 
@@ -34,6 +35,7 @@ public class BlueMeshService {
 
 		if (myBluetoothAdapter == null) {
 			print_debug("No bluetooth hardware...");
+			
 			return;
 			// //////////////////////
 			// TODO
@@ -47,32 +49,32 @@ public class BlueMeshService {
 			print_debug("Starting Service");
 			searchThread = new SearchThread(mHandler, myBluetoothAdapter);
 			searchThread.start();
+			stop();
 		} else {
 			print_debug("Bluetooth State: " + myBluetoothAdapter.getState());
 			print_debug("Bluetooth is not enabled!");
+			stop();
 		}
 	}
-
-	public synchronized int print_debug(String outString) {
-
-		if (!Constants.DEBUG)
-			return Constants.SUCCESS;
-		// Create buffer for string to be converted to bytes to be
-		// displayed by the UI thread
-		byte[] buffer = new byte[1024];
-		int bytes;
-
-		buffer = outString.getBytes();
-
-		// Check size of input string
-		if (buffer.length > 1024)
-			return Constants.ERR_STRING_TO_LARGE;
-
-		bytes = buffer.length;
-		mHandler.obtainMessage(Constants.MSG_DEBUG, bytes, -1, buffer)
-				.sendToTarget();
-
+	
+	private int stop(){
+		/////////////////////
+		//TODO
+		//Stop the service
+		/////////////////////
+		searchThread.done();
+		searchThread.interrupt();
+		
 		return Constants.SUCCESS;
 	}
-
+	
+	private synchronized void print_debug(String message){
+		print(Constants.MSG_DEBUG, message);
+	}
+	
+	private synchronized void print(int mType, String message){
+		MessageSenderThread msThread = 
+				new MessageSenderThread(mHandler, message, mType);
+		msThread.start();
+	}
 }

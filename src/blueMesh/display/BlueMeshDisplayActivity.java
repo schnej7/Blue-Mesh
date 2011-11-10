@@ -4,7 +4,9 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.view.View;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ListView;
 
 public class BlueMeshDisplayActivity extends Activity{
@@ -33,6 +35,13 @@ public class BlueMeshDisplayActivity extends Activity{
     	mBlueMeshService = new BlueMeshService( this, mHandler);
     	mBlueMeshService.start();
     	clearDisplay();
+    	
+        final Button button = (Button) findViewById(R.id.button1);
+        button.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                finish();
+            }
+        });
     }
     
     //Used to clear the display
