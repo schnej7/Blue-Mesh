@@ -89,6 +89,8 @@ public class SearchThread extends Thread {
 	}
 	
 	public synchronized void done(){
+		this.cancel();
+		this.interrupt();
 		print_debug("SearchThread done()");
 		////////////////////
 		//TODO

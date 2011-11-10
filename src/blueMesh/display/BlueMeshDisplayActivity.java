@@ -39,7 +39,7 @@ public class BlueMeshDisplayActivity extends Activity{
         final Button button = (Button) findViewById(R.id.button1);
         button.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                finish();
+                mBlueMeshService.stop();
             }
         });
     }

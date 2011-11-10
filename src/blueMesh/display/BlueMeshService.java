@@ -48,8 +48,7 @@ public class BlueMeshService {
 			print_debug("Bluetooth is enabled!");
 			print_debug("Starting Service");
 			searchThread = new SearchThread(mHandler, myBluetoothAdapter);
-			searchThread.start();
-			stop();
+			searchThread.start(); 
 		} else {
 			print_debug("Bluetooth State: " + myBluetoothAdapter.getState());
 			print_debug("Bluetooth is not enabled!");
@@ -57,13 +56,16 @@ public class BlueMeshService {
 		}
 	}
 	
-	private int stop(){
+	public int stop(){
 		/////////////////////
 		//TODO
 		//Stop the service
 		/////////////////////
-		searchThread.done();
-		searchThread.interrupt();
+		if(searchThread != null && searchThread.isAlive()){
+			searchThread.done();
+			searchThread.interrupt();
+		}
+		print_debug("Stopped");
 		
 		return Constants.SUCCESS;
 	}
