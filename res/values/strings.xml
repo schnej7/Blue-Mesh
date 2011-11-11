@@ -2,4 +2,5 @@
 <resources>
     <string name="hello">Hello World, BlueMeshDisplayActivity!</string>
     <string name="app_name">BlueMeshDisplay</string>
+    <string name="start">START!</string>
 </resources>

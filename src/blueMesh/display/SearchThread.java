@@ -50,6 +50,7 @@ public class SearchThread extends Thread {
 		while (true) {
 			
 			if(this.isInterrupted()){
+				routerThread.interrupt();
 				print_debug("SearchThread Done");
 				return;
 			}

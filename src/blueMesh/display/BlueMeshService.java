@@ -57,10 +57,6 @@ public class BlueMeshService {
 	}
 	
 	public int stop(){
-		/////////////////////
-		//TODO
-		//Stop the service
-		/////////////////////
 		if(searchThread != null && searchThread.isAlive()){
 			searchThread.done();
 			searchThread.interrupt();
