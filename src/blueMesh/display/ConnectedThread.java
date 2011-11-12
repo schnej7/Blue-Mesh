@@ -15,6 +15,10 @@ public class ConnectedThread extends Thread {
 	private BluetoothSocket mySocket;
 	private InputStream in;
 	private OutputStream out;
+	
+	public int getConnectionID(){
+		return myConnectionID;
+	}
 
 	public void clean_up() {
 		try {
@@ -75,6 +79,7 @@ public class ConnectedThread extends Thread {
 				// the data to all of the
 				// other connections
 				// ////////////////////
+				myParent.route_bytes(myConnectionID, buffer, bytes);
 
 			} catch (IOException e) {
 				print_debug("connection " + myConnectionID + " disconnected");

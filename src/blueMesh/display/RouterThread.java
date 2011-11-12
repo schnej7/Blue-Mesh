@@ -46,6 +46,21 @@ public class RouterThread extends Thread {
 	// function to route data coming in
 	// and going out
 	// ////////////////////////
+	
+	public synchronized int route_bytes(
+			int threadRecievedOn, 
+			byte bytes[],
+			int size){
+		
+		for(int i = 0; i < connectedThreads.length; i++){
+			if(connectedThreads[i] != null && 
+					connectedThreads[i].getConnectionID() != threadRecievedOn){
+				connectedThreads[i].write(bytes);
+			}
+		}
+		
+		return Constants.SUCCESS;
+	}
 
 	public synchronized int make_connection(BluetoothSocket socket,
 			BluetoothDevice device) {

@@ -12,7 +12,7 @@ public class SearchThread extends Thread {
 	// The local server socket
 	private final BluetoothServerSocket mmServerSocket;
 	private Handler mHandler;
-	private int devicesConnected = 0;
+	//private int devicesConnected = 0;
 	private RouterThread routerThread;
 
 	public SearchThread(

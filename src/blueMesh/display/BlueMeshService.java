@@ -33,6 +33,8 @@ public class BlueMeshService {
 	// Used to start the service
 	public void start() {
 
+		this.stop();
+		
 		if (myBluetoothAdapter == null) {
 			print_debug("No bluetooth hardware...");
 			
@@ -42,6 +44,17 @@ public class BlueMeshService {
 			// Exit the program
 			// Bluetooth is not supported on this device
 			// //////////////////////
+		}
+		
+		//Try to enable bluetooth if it is not enabled
+		if( !myBluetoothAdapter.isEnabled()){
+			print_debug("Trying to enable Bluetooth...");
+			if(!myBluetoothAdapter.enable()){
+				print_debug("Bluetooth State: " + myBluetoothAdapter.getState());
+				print_debug("Bluetooth is not enabled!");
+				stop();
+			}
+			while(!myBluetoothAdapter.isEnabled()){}
 		}
 
 		if (myBluetoothAdapter.isEnabled()) {
