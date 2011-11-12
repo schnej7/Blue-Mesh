@@ -30,4 +30,6 @@ public final class Constants {
     		UUID.fromString("fa87c0d0-afac-11de-8a39-0800200c9a66");
     public static final String NAME = "blueMesh";
 	public static final String mSocketType = "Secure";
+	
+	public static final int MESSAGE_QUEUE_SIZE = 100;
 }

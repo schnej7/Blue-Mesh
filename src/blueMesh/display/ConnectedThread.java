@@ -3,10 +3,17 @@ package blueMesh.display;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.Calendar;
+
 
 import android.bluetooth.BluetoothSocket;
 import android.os.Handler;
 
+/**
+ * Class used to send data over sockets obtained by other Bluetooth devices
+ * @author schnej7
+ *
+ */
 public class ConnectedThread extends Thread {
 
 	private Handler mHandler;
@@ -20,6 +27,9 @@ public class ConnectedThread extends Thread {
 		return myConnectionID;
 	}
 
+	/**
+	 * Used to close input and output streams and close the Bluetooth socket
+	 */
 	public void clean_up() {
 		try {
 			in.close();
@@ -34,6 +44,13 @@ public class ConnectedThread extends Thread {
 		}
 	}
 
+	/**
+	 * Constructor
+	 * @param aHandler used to send data back to the user
+	 * @param parent reference to the parent RouterThread
+	 * @param ID the ID of the ConnectedThread assigned by its parent
+	 * @param socket the socket use for input and output to another device
+	 */
 	public ConnectedThread(Handler aHandler, RouterThread parent, int ID,
 			BluetoothSocket socket) {
 
@@ -57,6 +74,9 @@ public class ConnectedThread extends Thread {
 		out = tmpOut;
 	}
 
+	/**
+	 * Begins the thread which listens for data coming in through in sends all read bytes to the RouterThread to be handled
+	 */
 	public void run() {
 
 		print_debug("BEGIN ConnectedThread");
@@ -69,16 +89,6 @@ public class ConnectedThread extends Thread {
 				// Read from the InputStream
 				bytes = in.read(buffer);
 
-				// Send the obtained bytes to the UI Activity
-				mHandler.obtainMessage(Constants.MSG_NORMAL, bytes, -1, buffer)
-						.sendToTarget();
-
-				// ////////////////////
-				// TODO
-				// Use myParent to rout
-				// the data to all of the
-				// other connections
-				// ////////////////////
 				myParent.route_bytes(myConnectionID, buffer, bytes);
 
 			} catch (IOException e) {
@@ -93,7 +103,30 @@ public class ConnectedThread extends Thread {
 		myParent.kill_connection(myConnectionID);
 
 	}
+	
+	/**
+	 * Attaches a timestamp to the array of bytes to send and then sends it using write()
+	 * @param buffer bytes to send generated from this device
+	 */
+	public void send(byte[] buffer){
+		
+		//Attach the time to the beginning of the byte array
+		//In order to give it a unique time stamp
+		
+		Integer mili = Calendar.MILLISECOND;
+		mili.byteValue();
+		
+		byte[] message= new byte[buffer.length + 1];
+		System.arraycopy(mili, 0, message, 0, 1);
+		System.arraycopy(buffer, 0, message, 1, buffer.length);
+		
+		write(message);
+	}
 
+	/**
+	 * Writes array of bytes to out
+	 * @param buffer bytes to write
+	 */
 	public void write(byte[] buffer) {
 		try {
 			out.write(buffer);
@@ -106,6 +139,11 @@ public class ConnectedThread extends Thread {
 		}
 	}
 
+	/**
+	 * Send a debug message
+	 * @param outString message
+	 * @return SUCCESS or ERR_STRING_TO_LARGE
+	 */
 	public synchronized int print_debug(String outString) {
 
 		if (!Constants.DEBUG)

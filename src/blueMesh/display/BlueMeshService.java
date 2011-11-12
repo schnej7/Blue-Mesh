@@ -1,10 +1,14 @@
 package blueMesh.display;
 
-import android.content.Context;
 import android.os.Handler;
 import android.bluetooth.BluetoothAdapter;
 import blueMesh.display.Constants;
 
+/**
+ * Main class of BlueMesh service
+ * @author schnej7
+ *
+ */
 public class BlueMeshService {
 
 	// private static String myID = null;
@@ -16,8 +20,11 @@ public class BlueMeshService {
 	// private ConnectedThread mConnectedThread;
 	private SearchThread searchThread;
 
-	// Constructor
-	public BlueMeshService(Context context, Handler handler) {
+	/**
+	 * Constructor
+	 * @param handler used to pass messages to the user
+	 */
+	public BlueMeshService(Handler handler) {
 		
 		myBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
 		mHandler = handler;
@@ -30,7 +37,9 @@ public class BlueMeshService {
 
 	}
 
-	// Used to start the service
+	/**
+	 * Used to start the service
+	 */
 	public void start() {
 
 		this.stop();
@@ -64,10 +73,13 @@ public class BlueMeshService {
 		}
 	}
 	
+	/**
+	 * Used to stop the service
+	 * @return SUCCESS
+	 */
 	public int stop(){
 		if(searchThread != null && searchThread.isAlive()){
-			searchThread.done();
-			searchThread.interrupt();
+			searchThread.kill();
 		}
 		print_debug("Stopped");
 		

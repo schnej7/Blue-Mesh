@@ -32,7 +32,7 @@ public class BlueMeshDisplayActivity extends Activity{
     	mMessageView = (ListView) findViewById(R.id.ListMessages);
     	mMessageView.setAdapter(mMessageArray);
     	
-    	mBlueMeshService = new BlueMeshService( this, mHandler);
+    	mBlueMeshService = new BlueMeshService( mHandler);
     	mBlueMeshService.start();
     	clearDisplay();
     	

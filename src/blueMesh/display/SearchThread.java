@@ -7,6 +7,11 @@ import android.bluetooth.BluetoothServerSocket;
 import android.bluetooth.BluetoothSocket;
 import android.os.Handler;
 
+/**
+ * Class used to search for other devices
+ * @author schnej7
+ *
+ */
 public class SearchThread extends Thread {
 
 	// The local server socket
@@ -15,6 +20,11 @@ public class SearchThread extends Thread {
 	//private int devicesConnected = 0;
 	private RouterThread routerThread;
 
+	/**
+	 * Constructor
+	 * @param a_mHandler used to pass messages to user
+	 * @param mBluetoothAdapter the default BluetoothAdapter
+	 */
 	public SearchThread(
 			Handler a_mHandler, 
 			BluetoothAdapter mBluetoothAdapter) {
@@ -38,6 +48,10 @@ public class SearchThread extends Thread {
 
 	}
 
+	/**
+	 * Begins looking for other devices
+	 * when they are found a connection is attempted
+	 */
 	public void run() {
 
 		print_debug("BEGIN SearchThread");
@@ -54,6 +68,8 @@ public class SearchThread extends Thread {
 				print_debug("SearchThread Done");
 				return;
 			}
+			
+			socket = null;
 			
 			try {
 				// This is a blocking call and will only return on a
@@ -92,7 +108,10 @@ public class SearchThread extends Thread {
 		}
 	}
 	
-	public synchronized void done(){
+	/**
+	 * Attempts to stop the thread
+	 */
+	public synchronized void kill(){
 		this.cancel();
 		this.interrupt();
 		print_debug("SearchThread done()");
@@ -102,6 +121,9 @@ public class SearchThread extends Thread {
 		////////////////////
 	}
 
+	/**
+	 * Attempts to close the serverSocket
+	 */
 	public void cancel() {
 		print_debug("cancel " + this);
 
@@ -112,6 +134,11 @@ public class SearchThread extends Thread {
 		}
 	}
 
+	/**
+	 * Send a debug message
+	 * @param outString message
+	 * @return SUCCESS or ERR_STRING_TO_LARGE
+	 */
 	public synchronized int print_debug(String outString) {
 
 		if (!Constants.DEBUG)
@@ -134,6 +161,11 @@ public class SearchThread extends Thread {
 		return Constants.SUCCESS;
 	}
 
+	/**
+	 * Attempt to use the router thread to obtain a connection
+	 * @param socket socket to communicate over
+	 * @param device device to connect to
+	 */
 	public void obtain_connection(
 			BluetoothSocket socket, 
 			BluetoothDevice device) {
