@@ -16,6 +16,7 @@ public class SearchThread extends Thread {
 
 	// The local server socket
 	private final BluetoothServerSocket mmServerSocket;
+	private final BluetoothAdapter myBluetoothAdapter;
 	private Handler mHandler;
 	//private int devicesConnected = 0;
 	private RouterThread routerThread;
@@ -31,6 +32,7 @@ public class SearchThread extends Thread {
 		
 		BluetoothServerSocket tmp = null;
 		mHandler = a_mHandler;
+		myBluetoothAdapter = mBluetoothAdapter;
 
 		print_debug("Creating SearchThread");
 
@@ -68,6 +70,12 @@ public class SearchThread extends Thread {
 				print_debug("SearchThread Done");
 				return;
 			}
+			
+			if(!myBluetoothAdapter.isEnabled()){
+				this.kill();
+				print_debug("SearchThread Done, Bluetooth disabled unexpectedly");
+				return;
+			} 
 			
 			socket = null;
 			
