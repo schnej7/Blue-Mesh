@@ -39,11 +39,6 @@ public class BlueMeshService {
 			print_debug("No bluetooth hardware...");
 			
 			return;
-			// //////////////////////
-			// TODO
-			// Exit the program
-			// Bluetooth is not supported on this device
-			// //////////////////////
 		}
 		
 		//Try to enable bluetooth if it is not enabled

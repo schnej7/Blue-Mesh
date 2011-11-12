@@ -41,16 +41,19 @@ public class RouterThread extends Thread {
 		}
 	}
 
-	// /////////////////////////
-	// TODO
-	// function to route data coming in
-	// and going out
-	// ////////////////////////
 	
 	public synchronized int route_bytes(
 			int threadRecievedOn, 
 			byte bytes[],
 			int size){
+		
+		//////////////////////
+		// TODO
+		//
+		// Figure out if this
+		// message has already been received
+		// if it has not, do something with it
+		//////////////////////
 		
 		for(int i = 0; i < connectedThreads.length; i++){
 			if(connectedThreads[i] != null && 
