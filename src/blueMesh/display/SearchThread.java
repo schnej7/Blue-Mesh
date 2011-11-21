@@ -34,14 +34,14 @@ public class SearchThread extends Thread {
 		mHandler = a_mHandler;
 		myBluetoothAdapter = mBluetoothAdapter;
 
-		print_debug("Creating SearchThread");
+		print(Constants.MSG_DEBUG, "Creating SearchThread");
 
 		// Create a new listening server socket
 		try {
 			tmp = mBluetoothAdapter.listenUsingRfcommWithServiceRecord(
 					Constants.NAME, Constants.MY_UUID_SECURE);
 		} catch (IOException e) {
-			print_debug(e.toString());
+			print(Constants.MSG_DEBUG, e.toString());
 		}
 
 		mmServerSocket = tmp;
@@ -56,7 +56,7 @@ public class SearchThread extends Thread {
 	 */
 	public void run() {
 
-		print_debug("BEGIN SearchThread");
+		print(Constants.MSG_DEBUG, "BEGIN SearchThread");
 
 		setName("SearchThread" + Constants.mSocketType);
 
@@ -67,13 +67,13 @@ public class SearchThread extends Thread {
 			
 			if(this.isInterrupted()){
 				routerThread.interrupt();
-				print_debug("SearchThread Done");
+				print(Constants.MSG_DEBUG, "SearchThread Done");
 				return;
 			}
 			
 			if(!myBluetoothAdapter.isEnabled()){
 				this.kill();
-				print_debug("SearchThread Done, Bluetooth disabled unexpectedly");
+				print(Constants.MSG_DEBUG, "SearchThread Done, Bluetooth disabled unexpectedly");
 				return;
 			} 
 			
@@ -82,10 +82,10 @@ public class SearchThread extends Thread {
 			try {
 				// This is a blocking call and will only return on a
 				// successful connection or an exception
-				print_debug("Trying to accept()");
+				print(Constants.MSG_DEBUG, "Trying to accept()");
 				socket = mmServerSocket.accept();
 			} catch (IOException e) {
-				print_debug("accept() failed");
+				print(Constants.MSG_DEBUG, "accept() failed");
 			}
 
 			// If a connection was accepted
@@ -101,14 +101,14 @@ public class SearchThread extends Thread {
 					try {
 						socket.close();
 					} catch (IOException e) {
-						print_debug("Could not close unwanted socket");
+						print(Constants.MSG_DEBUG, "Could not close unwanted socket");
 					}
 					break;
 				case Constants.STATE_BUSY:
 					try {
 						socket.close();
 					} catch (IOException e) {
-						print_debug("Could not close unwanted socket");
+						print(Constants.MSG_DEBUG, "Could not close unwanted socket");
 					}
 					break;
 				}
@@ -122,7 +122,7 @@ public class SearchThread extends Thread {
 	public synchronized void kill(){
 		this.cancel();
 		this.interrupt();
-		print_debug("SearchThread done()");
+		print(Constants.MSG_DEBUG, "SearchThread done()");
 		////////////////////
 		//TODO
 		//Stop child threads
@@ -133,40 +133,13 @@ public class SearchThread extends Thread {
 	 * Attempts to close the serverSocket
 	 */
 	public void cancel() {
-		print_debug("cancel " + this);
+		print(Constants.MSG_DEBUG, "cancel " + this);
 
 		try {
 			mmServerSocket.close();
 		} catch (IOException e) {
-			print_debug("close() of server failed");
+			print(Constants.MSG_DEBUG, "close() of server failed");
 		}
-	}
-
-	/**
-	 * Send a debug message
-	 * @param outString message
-	 * @return SUCCESS or ERR_STRING_TO_LARGE
-	 */
-	public synchronized int print_debug(String outString) {
-
-		if (!Constants.DEBUG)
-			return Constants.SUCCESS;
-		// Create buffer for string to be converted to bytes to be
-		// displayed by the UI thread
-		byte[] buffer = new byte[1024];
-		int bytes;
-
-		buffer = outString.getBytes();
-
-		// Check size of input string
-		if (buffer.length > 1024)
-			return Constants.ERR_STRING_TO_LARGE;
-
-		bytes = buffer.length;
-		mHandler.obtainMessage(Constants.MSG_DEBUG, bytes, -1, buffer)
-				.sendToTarget();
-
-		return Constants.SUCCESS;
 	}
 
 	/**
@@ -184,6 +157,17 @@ public class SearchThread extends Thread {
 			routerThread.make_connection(socket, device);
 		}
 
+	}
+	
+	/**
+	 * Send a message
+	 * @param message message
+	 * @param mType message type
+	 */
+	private synchronized void print(int mType, String message){
+		MessageSenderThread msThread = 
+				new MessageSenderThread(mHandler, message, mType);
+		msThread.start();
 	}
 
 }

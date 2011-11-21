@@ -165,7 +165,7 @@ public class RouterThread extends Thread {
 				tmp = device.createRfcommSocketToServiceRecord(
 						Constants.MY_UUID_SECURE);
 			} catch (IOException e) {
-				print_debug("create() failed");
+				print(Constants.MSG_DEBUG, "create() failed");
 			}
 			mmSocket = tmp;
 		}
@@ -176,7 +176,7 @@ public class RouterThread extends Thread {
 		 * be in connectedThreads[]
 		 */
 		public void run() {
-			print_debug("BEGIN ConnectionSetupThread");
+			print(Constants.MSG_DEBUG, "BEGIN ConnectionSetupThread");
 			setName("ConnectThread");
 
 			// Make a connection to the BluetoothSocket
@@ -189,7 +189,7 @@ public class RouterThread extends Thread {
 				try {
 					mmSocket.close();
 				} catch (IOException e2) {
-					print_debug("unable to close() socket during "
+					print(Constants.MSG_DEBUG, "unable to close() socket during "
 							+ "connection failure");
 				}
 				// ///////////////
@@ -240,7 +240,7 @@ public class RouterThread extends Thread {
 					connectionState = Constants.STATE_READY;
 				}
 			} catch (IOException e) {
-				print_debug("connectionSetupThread close() failed");
+				print(Constants.MSG_DEBUG, "connectionSetupThread close() failed");
 			}
 			
 		}
@@ -248,30 +248,14 @@ public class RouterThread extends Thread {
 	}
 
 	/**
-	 * Send a debug message
-	 * @param outString message
-	 * @return SUCCESS or ERR_STRING_TO_LARGE
+	 * Send a message
+	 * @param message message
+	 * @param mType message type
 	 */
-	public synchronized int print_debug(String outString) {
-
-		if (!Constants.DEBUG)
-			return Constants.SUCCESS;
-		// Create buffer for string to be converted to bytes to be
-		// displayed by the UI thread
-		byte[] buffer = new byte[1024];
-		int bytes;
-
-		buffer = outString.getBytes();
-
-		// Check size of input string
-		if (buffer.length > 1024)
-			return Constants.ERR_STRING_TO_LARGE;
-
-		bytes = buffer.length;
-		mHandler.obtainMessage(Constants.MSG_DEBUG, bytes, -1, buffer)
-				.sendToTarget();
-
-		return Constants.SUCCESS;
+	private synchronized void print(int mType, String message){
+		MessageSenderThread msThread = 
+				new MessageSenderThread(mHandler, message, mType);
+		msThread.start();
 	}
 
 }

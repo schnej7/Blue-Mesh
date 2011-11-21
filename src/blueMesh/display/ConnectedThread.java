@@ -35,12 +35,12 @@ public class ConnectedThread extends Thread {
 			in.close();
 			out.close();
 		} catch (IOException e) {
-			print_debug("failed to close() input output streams");
+			print(Constants.MSG_DEBUG, "failed to close() input output streams");
 		}
 		try {
 			mySocket.close();
 		} catch (IOException e) {
-			print_debug("failed to close() mySocket");
+			print(Constants.MSG_DEBUG, "failed to close() mySocket");
 		}
 	}
 
@@ -57,7 +57,7 @@ public class ConnectedThread extends Thread {
 		mHandler = aHandler;
 		myParent = parent;
 		myConnectionID = ID;
-		print_debug("create ConnectedThread:");
+		print(Constants.MSG_DEBUG, "create ConnectedThread:");
 		mySocket = socket;
 		InputStream tmpIn = null;
 		OutputStream tmpOut = null;
@@ -67,7 +67,7 @@ public class ConnectedThread extends Thread {
 			tmpIn = socket.getInputStream();
 			tmpOut = socket.getOutputStream();
 		} catch (IOException e) {
-			print_debug("temp sockets not created");
+			print(Constants.MSG_DEBUG, "temp sockets not created");
 		}
 
 		in = tmpIn;
@@ -79,7 +79,7 @@ public class ConnectedThread extends Thread {
 	 */
 	public void run() {
 
-		print_debug("BEGIN ConnectedThread");
+		print(Constants.MSG_DEBUG, "BEGIN ConnectedThread");
 		byte[] buffer = new byte[1024];
 		int bytes;
 
@@ -92,7 +92,7 @@ public class ConnectedThread extends Thread {
 				myParent.route_bytes(myConnectionID, buffer, bytes);
 
 			} catch (IOException e) {
-				print_debug("connection " + myConnectionID + " disconnected");
+				print(Constants.MSG_DEBUG, "connection " + myConnectionID + " disconnected");
 
 				break;
 			}
@@ -135,35 +135,19 @@ public class ConnectedThread extends Thread {
 			mHandler.obtainMessage(Constants.MSG_SENT, -1, -1, buffer)
 					.sendToTarget();
 		} catch (IOException e) {
-			print_debug("Exception during write");
+			print(Constants.MSG_DEBUG, "Exception during write");
 		}
 	}
 
 	/**
-	 * Send a debug message
-	 * @param outString message
-	 * @return SUCCESS or ERR_STRING_TO_LARGE
+	 * Send a message
+	 * @param message message
+	 * @param mType message type
 	 */
-	public synchronized int print_debug(String outString) {
-
-		if (!Constants.DEBUG)
-			return Constants.SUCCESS;
-		// Create buffer for string to be converted to bytes to be
-		// displayed by the UI thread
-		byte[] buffer = new byte[1024];
-		int bytes;
-
-		buffer = outString.getBytes();
-
-		// Check size of input string
-		if (buffer.length > 1024)
-			return Constants.ERR_STRING_TO_LARGE;
-
-		bytes = buffer.length;
-		mHandler.obtainMessage(Constants.MSG_DEBUG, bytes, -1, buffer)
-				.sendToTarget();
-
-		return Constants.SUCCESS;
+	private synchronized void print(int mType, String message){
+		MessageSenderThread msThread = 
+				new MessageSenderThread(mHandler, message, mType);
+		msThread.start();
 	}
 
 }

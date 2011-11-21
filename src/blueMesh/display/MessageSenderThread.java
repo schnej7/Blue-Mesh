@@ -27,17 +27,9 @@ public class MessageSenderThread extends Thread{
 		if (mType != Constants.MSG_DEBUG || Constants.DEBUG){
 			// Create buffer for string to be converted to bytes to be
 			// displayed by the UI thread
-			byte[] buffer = new byte[1024];
-			int bytes;
+			byte[] buffer = outString.getBytes();
 	
-			buffer = outString.getBytes();
-	
-			// Check size of input string
-			if (buffer.length > 1024)
-				return;
-	
-			bytes = buffer.length;
-			mHandler.obtainMessage(Constants.MSG_DEBUG, bytes, -1, buffer)
+			mHandler.obtainMessage(Constants.MSG_DEBUG, buffer.length, -1, buffer)
 					.sendToTarget();
 	
 			return;

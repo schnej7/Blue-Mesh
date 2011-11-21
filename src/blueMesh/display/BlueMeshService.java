@@ -30,9 +30,9 @@ public class BlueMeshService {
 		mHandler = handler;
 
 		if (myBluetoothAdapter == null) {
-			print_debug("myBluetoothAdapter is null");
+			print(Constants.MSG_DEBUG, "myBluetoothAdapter is null");
 		} else {
-			print_debug("myBluetoothAdapter is non-null");
+			print(Constants.MSG_DEBUG, "myBluetoothAdapter is non-null");
 		}
 
 	}
@@ -45,30 +45,30 @@ public class BlueMeshService {
 		this.stop();
 		
 		if (myBluetoothAdapter == null) {
-			print_debug("No bluetooth hardware...");
+			print(Constants.MSG_DEBUG, "No bluetooth hardware...");
 			
 			return;
 		}
 		
 		//Try to enable bluetooth if it is not enabled
 		if( !myBluetoothAdapter.isEnabled()){
-			print_debug("Trying to enable Bluetooth...");
+			print(Constants.MSG_DEBUG, "Trying to enable Bluetooth...");
 			if(!myBluetoothAdapter.enable()){
-				print_debug("Bluetooth State: " + myBluetoothAdapter.getState());
-				print_debug("Bluetooth is not enabled!");
+				print(Constants.MSG_DEBUG, "Bluetooth State: " + myBluetoothAdapter.getState());
+				print(Constants.MSG_DEBUG, "Bluetooth is not enabled!");
 				stop();
 			}
 			while(!myBluetoothAdapter.isEnabled()){}
 		}
 
 		if (myBluetoothAdapter.isEnabled()) {
-			print_debug("Bluetooth is enabled!");
-			print_debug("Starting Service");
+			print(Constants.MSG_DEBUG, "Bluetooth is enabled!");
+			print(Constants.MSG_DEBUG, "Starting Service");
 			searchThread = new SearchThread(mHandler, myBluetoothAdapter);
 			searchThread.start(); 
 		} else {
-			print_debug("Bluetooth State: " + myBluetoothAdapter.getState());
-			print_debug("Bluetooth is not enabled!");
+			print(Constants.MSG_DEBUG, "Bluetooth State: " + myBluetoothAdapter.getState());
+			print(Constants.MSG_DEBUG, "Bluetooth is not enabled!");
 			stop();
 		}
 	}
@@ -81,13 +81,9 @@ public class BlueMeshService {
 		if(searchThread != null && searchThread.isAlive()){
 			searchThread.kill();
 		}
-		print_debug("Stopped");
+		print(Constants.MSG_DEBUG, "Stopped");
 		
 		return Constants.SUCCESS;
-	}
-	
-	private synchronized void print_debug(String message){
-		print(Constants.MSG_DEBUG, message);
 	}
 	
 	private synchronized void print(int mType, String message){
