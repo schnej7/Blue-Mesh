@@ -143,6 +143,7 @@ public class RouterThread extends Thread {
 
 		private RouterThread myParent;
 		private BluetoothSocket mmSocket;
+		private String myName;
 
 		// private BluetoothDevice mmDevice;
 
@@ -168,6 +169,7 @@ public class RouterThread extends Thread {
 				print(Constants.MSG_DEBUG, "create() failed");
 			}
 			mmSocket = tmp;
+			myName = device.getName();
 		}
 
 		/**
@@ -219,6 +221,7 @@ public class RouterThread extends Thread {
 				if (connectedThreads[i] == null) {
 					connectedThreads[i] = new ConnectedThread(mHandler,
 							myParent, i, mmSocket);
+					pairedDeviceNames[i] = myName;
 					connectedThreads[i].start();
 					break;
 				}
