@@ -8,7 +8,7 @@ import java.util.Collections;
 //Class used to calculate CRCs over a list of strings
 public class CrcCalculations {
 
-	long CalcCRC( List < String > deviceIDs ){
+	static long CalcCRC( List < String > deviceIDs ){
 		Collections.sort(deviceIDs);
 		
 		CRC32 idCRC = new CRC32();

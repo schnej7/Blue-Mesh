@@ -1,6 +1,8 @@
 package blueMesh.display;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
@@ -36,6 +38,16 @@ public class RouterThread extends Thread {
 
 	public synchronized int get_connection_state() {
 		return connectionState;
+	}
+	
+	public synchronized long CRC_paired_names(){
+		List <String> deviceNamesList = new ArrayList <String>();
+		for( int i = 0; i < Constants.NUMBER_OF_AVAILABLE_RADIOS; i++){
+			if( connectedThreads[i] != null){
+				deviceNamesList.add(pairedDeviceNames[i]);
+			}
+		}
+		return CrcCalculations.CalcCRC(deviceNamesList);
 	}
 
 	/**
@@ -209,13 +221,6 @@ public class RouterThread extends Thread {
 			synchronized (RouterThread.this) {
 				connectionSetupThread = null;
 			}
-
-			// mmDevice.getName()
-			// ////////////////////////////
-			// TODO
-			// Add the device name to the list
-			// of all device names
-			// ////////////////////////////
 
 			for (int i = 0; i < Constants.NUMBER_OF_AVAILABLE_RADIOS; i++) {
 				if (connectedThreads[i] == null) {
