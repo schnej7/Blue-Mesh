@@ -11,7 +11,7 @@ public class ReadWriteThread extends Thread{
 	BluetoothSocket socket;
 	BluetoothDevice device;
 	
-	ReadWriteThread(
+	public ReadWriteThread(
 			RouterObject mRouter, 
 			BluetoothSocket mSocket, 
 			BluetoothDevice mDevice ) {
@@ -24,5 +24,10 @@ public class ReadWriteThread extends Thread{
 	public void run()
 	{
 		
+	}
+	
+	int write(byte [] buffer){
+		
+		return Constants.SUCCESS;
 	}
 }
