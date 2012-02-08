@@ -42,7 +42,29 @@ public class ReadWriteThread extends Thread{
 
 	public void run()
 	{
+        byte[] buffer = new byte[Constants.MAX_MESSAGE_LEN];
 
+        // Keep listening to the InputStream while connected
+        while (true) {
+        	
+        	if( this.isInterrupted() ){
+        		//TODO: Do some kind of cleanup
+        		return;
+        	}
+        	
+            try {
+                // Read from the InputStream
+                in.read( buffer );
+
+                // Send the obtained bytes to the RouterThread
+               router.route( buffer );
+                
+            } catch (IOException e) {
+                Log.e(TAG, "disconnected", e);
+                //TODO: The connection has been lost, handle this!
+                break;
+            }
+        }
 	}
 
 	int write(byte [] buffer){
