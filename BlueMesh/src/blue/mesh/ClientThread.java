@@ -17,7 +17,7 @@ public class ClientThread extends Thread{
 	private BluetoothAdapter adapter;
 	private RouterObject router;
 
-	public ClientThread(  
+	protected ClientThread(  
 			Handler mHandler, 
 			BluetoothAdapter mAdapter, 
 			RouterObject mRouter )  {
