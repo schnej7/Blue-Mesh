@@ -16,7 +16,7 @@ public class ServerThread extends Thread{
     private RouterObject router;
     private BluetoothServerSocket serverSocket;
     
-	public ServerThread( 
+    protected ServerThread( 
 			Handler mHandler, 
 			BluetoothAdapter mAdapter, 
 			RouterObject mRouterObject ) {
