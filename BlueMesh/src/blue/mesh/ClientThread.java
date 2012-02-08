@@ -16,8 +16,7 @@ public class ClientThread {
 		routerObject = mRouterObject;
 	}
 	
-	void run()
-	{
+	void run() {
 		//Using variables in code to get rid of warnings
 		handler.notify();
 		adapter.enable();
