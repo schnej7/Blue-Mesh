@@ -11,7 +11,7 @@ import android.util.Log;
 
 
 
-public class ClientThread {
+public class ClientThread extends Thread{
 	private static final String TAG = "BluetoothChatService";
     private Handler handler;
     private BluetoothAdapter adapter;
@@ -28,40 +28,44 @@ public class ClientThread {
 	//open and connect a socket for that device, which is then 
 	//passed to the router object
 	public void run() {
-		
-		//get list of all paired devices
-		Set <BluetoothDevice> pairedDevices = adapter.getBondedDevices();
-		
-		for (BluetoothDevice d : pairedDevices)
+		while (true)
 		{
-			//for each paired device, get uuids
-			ParcelUuid[] uuids = d.getUuids();
-			
-			for (ParcelUuid u : uuids)
+			if(this.isInterrupted()){
+				Log.e(TAG, "Connect thread interrupted", null);
+				return;
+			}
+			//get list of all paired devices
+			Set <BluetoothDevice> pairedDevices = adapter.getBondedDevices();
+		
+			for (BluetoothDevice d : pairedDevices)
 			{
-				//for each uuid, try to open a socket on it
-				BluetoothSocket clientSocket = null;
-				try {
-					 clientSocket = d.createRfcommSocketToServiceRecord(u.getUuid());
-				}
+				//for each paired device, get uuids
+				ParcelUuid[] uuids = d.getUuids();
+				
+				for (ParcelUuid u : uuids)
+				{
+					//for each uuid, try to open a socket on it
+					BluetoothSocket clientSocket = null;
+					try {
+						 clientSocket = d.createRfcommSocketToServiceRecord(u.getUuid());
+					}
 			
-				catch (IOException e) {
-				Log.e(TAG, "Socket create() failed", e);
+					catch (IOException e) {
+					Log.e(TAG, "Socket create() failed", e);
+					}
+					
+					//once a socet is opened, try to connect and then pass to router
+					try {
+						clientSocket.connect();
+						router.BeginConnection(clientSocket);
+					}
+					
+					catch (IOException e) {
+						Log.e(TAG, "Socket connect() failed", e);
+					}
 				}
-				
-				//once a socet is opened, try to connect and then pass to router
-				try {
-					clientSocket.connect();
-					router.BeginConnection(clientSocket);
-				}
-				
-				catch (IOException e) {
-					Log.e(TAG, "Socket connect() failed", e);
-				}
-				
 			}
 		}
-		return;
 	}
 };
 
