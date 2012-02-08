@@ -18,7 +18,7 @@ public class ReadWriteThread extends Thread{
 	private final BluetoothSocket socket;
 	private static final String TAG = "ReadWriteThread";
 
-	public ReadWriteThread(
+	protected ReadWriteThread(
 			RouterObject mRouter, 
 			BluetoothSocket mSocket) {
 
@@ -67,7 +67,7 @@ public class ReadWriteThread extends Thread{
         }
 	}
 
-	int write(byte [] buffer){
+	protected int write(byte [] buffer){
 		try {
 			out.write(buffer);
 		} catch (IOException e) {
