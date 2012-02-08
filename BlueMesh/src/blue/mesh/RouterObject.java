@@ -31,5 +31,10 @@ public class RouterObject {
 		return 1;
 	}
 	
+	public byte [] GetUserMessage()
+	{
+		byte arr[] = null;
+		return arr;
+	}
 }
 
