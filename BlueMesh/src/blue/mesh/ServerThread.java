@@ -63,7 +63,7 @@ public class ServerThread extends Thread{
 
             // If a connection was accepted, pass socket to router
             if (socket != null) {
-				router.BeginConnection(socket);
+				router.beginConnection(socket);
             }
             
             socket = null;
