@@ -11,7 +11,7 @@ public class RouterObject {
 	private Handler handler;
 	private BluetoothAdapter adapter;
 	
-	RouterObject( Handler mHandler, BluetoothAdapter mAdapter) {
+	public RouterObject( Handler mHandler, BluetoothAdapter mAdapter) {
 		handler = mHandler;
 		adapter= mAdapter;
 	}
@@ -25,7 +25,7 @@ public class RouterObject {
 	
 	public int route(byte buff[]) {
 		//Great Success!
-		return 1;
+		return Constants.SUCCESS;
 	}
 	
 	public byte [] getNextMessage() {
@@ -35,12 +35,12 @@ public class RouterObject {
 	
 	int getDeviceState( BluetoothDevice device ){
 		
-		return 0;
+		return Constants.STATE_NONE;
 	}
 	
 	public int stop() {
 		//Great Success!
-		return 1;
+		return Constants.SUCCESS;
 	}
 }
 
