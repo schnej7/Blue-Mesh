@@ -12,7 +12,7 @@ import android.util.Log;
 
 
 public class ClientThread extends Thread{
-	private static final String TAG = "BluetoothChatService";
+	private static final String TAG = "ClientThread";
     private Handler handler;
     private BluetoothAdapter adapter;
     private RouterObject router;
@@ -34,7 +34,7 @@ public class ClientThread extends Thread{
 		while (true)
 		{
 			if(this.isInterrupted()){
-				Log.e(TAG, "Connect thread interrupted", null);
+				Log.d(TAG, "Connect thread interrupted");
 				return;
 			}
 			//get list of all paired devices
