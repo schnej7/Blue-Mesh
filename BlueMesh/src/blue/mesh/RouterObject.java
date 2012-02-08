@@ -16,6 +16,7 @@ public class RouterObject {
 	}
 	
 	public int BeginConnection(BluetoothSocket mSocket) {
+		//TODO: Get rid of these two lines
 		handler.notify();
 		adapter.enable();
 		
