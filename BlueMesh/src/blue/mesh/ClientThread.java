@@ -58,7 +58,7 @@ public class ClientThread extends Thread{
 				//once a socet is opened, try to connect and then pass to router
 				try {
 					clientSocket.connect();
-					router.BeginConnection(clientSocket);
+					router.beginConnection(clientSocket);
 				}
 
 				catch (IOException e) {
