@@ -46,9 +46,11 @@ public class ReadWriteThread extends Thread{
 	}
 
 	int write(byte [] buffer){
-
-
-
+		try {
+			out.write(buffer);
+		} catch (IOException e) {
+			Log.e(TAG, "Exception during write", e);
+		}
 		return Constants.SUCCESS;
 	}
 }
