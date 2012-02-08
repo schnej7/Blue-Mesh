@@ -5,7 +5,7 @@ import android.os.Handler;
 
 
 
-public class ServerThread {
+public class ServerThread extends Thread{
 	
 	private Handler handler;
     private BluetoothAdapter adapter;
@@ -18,7 +18,8 @@ public class ServerThread {
 		routerObject = mRouterObject;
 	}
 	
-	void run() {
+	public void run() {
+		//TODO: get rid of code below
 		//Using variables in code to get rid of warnings
 		handler.notify();
 		adapter.enable();
