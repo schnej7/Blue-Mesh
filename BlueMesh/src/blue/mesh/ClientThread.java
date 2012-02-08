@@ -8,7 +8,7 @@ import android.bluetooth.BluetoothSocket;
 import android.os.Handler;
 import android.os.ParcelUuid;
 import android.util.Log;
-
+import
 
 
 public class ClientThread extends Thread{
@@ -40,29 +40,26 @@ public class ClientThread extends Thread{
 			for (BluetoothDevice d : pairedDevices)
 			{
 				//for each paired device, get uuids
-				ParcelUuid[] uuids = d.getUuids();
+
 				
-				for (ParcelUuid u : uuids)
-				{
-					//for each uuid, try to open a socket on it
-					BluetoothSocket clientSocket = null;
-					try {
-						 clientSocket = d.createRfcommSocketToServiceRecord(u.getUuid());
-					}
-			
-					catch (IOException e) {
-					Log.e(TAG, "Socket create() failed", e);
-					}
-					
-					//once a socet is opened, try to connect and then pass to router
-					try {
-						clientSocket.connect();
-						router.BeginConnection(clientSocket);
-					}
-					
-					catch (IOException e) {
-						Log.e(TAG, "Socket connect() failed", e);
-					}
+				//for each uuid, try to open a socket on it
+				BluetoothSocket clientSocket = null;
+				try {
+					 clientSocket = d.createRfcommSocketToServiceRecord(Constants.MY_UUID_SECURE);
+				}
+		
+				catch (IOException e) {
+				Log.e(TAG, "Socket create() failed", e);
+				}
+				
+				//once a socet is opened, try to connect and then pass to router
+				try {
+					clientSocket.connect();
+					router.BeginConnection(clientSocket);
+				}
+				
+				catch (IOException e) {
+					Log.e(TAG, "Socket connect() failed", e);
 				}
 			}
 		}
