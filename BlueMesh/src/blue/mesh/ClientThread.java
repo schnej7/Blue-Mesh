@@ -18,6 +18,10 @@ public class ClientThread {
 	
 	void run()
 	{
+		//Using variables in code to get rid of warnings
+		handler.notify();
+		adapter.enable();
+		routerObject.notify();
 		return;
 	}
 };
