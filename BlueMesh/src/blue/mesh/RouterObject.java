@@ -24,5 +24,12 @@ public class RouterObject {
 		//Great Success!
 		return 1;
 	}
+	
+	public int WriteAll(byte bytes[])
+	{
+		//Great Success!
+		return 1;
+	}
+	
 }
 
