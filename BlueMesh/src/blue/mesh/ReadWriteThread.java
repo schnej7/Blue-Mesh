@@ -5,7 +5,7 @@ import android.bluetooth.BluetoothSocket;
 
 
 
-public class ReadWriteThread {
+public class ReadWriteThread extends Thread{
 	
 	RouterObject router;
 	BluetoothSocket socket;
@@ -15,5 +15,10 @@ public class ReadWriteThread {
 		router = mRouter;
 		socket = mSocket;
 		device = mDevice;
+	}
+	
+	public void run()
+	{
+		
 	}
 }
