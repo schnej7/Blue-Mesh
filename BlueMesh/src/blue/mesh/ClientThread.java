@@ -15,6 +15,11 @@ public class ClientThread {
 		adapter = mAdapter;
 		routerObject = mRouterObject;
 	}
+	
+	void run()
+	{
+		return;
+	}
 };
 
 
