@@ -36,5 +36,11 @@ public class RouterObject {
 		byte arr[] = null;
 		return arr;
 	}
+	
+	public int stop()
+	{
+		//Great Success!
+		return 1;
+	}
 }
 
