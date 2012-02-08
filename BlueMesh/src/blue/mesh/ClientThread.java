@@ -45,7 +45,8 @@ public class ClientThread extends Thread{
 				//for each uuid, try to open a socket on it
 				BluetoothSocket clientSocket = null;
 				try {
-					 clientSocket = d.createRfcommSocketToServiceRecord(Constants.MY_UUID_SECURE);
+					 clientSocket = d.createRfcommSocketToServiceRecord(
+							 Constants.MY_UUID_SECURE);
 				}
 		
 				catch (IOException e) {

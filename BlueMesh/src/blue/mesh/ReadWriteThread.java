@@ -11,7 +11,11 @@ public class ReadWriteThread extends Thread{
 	BluetoothSocket socket;
 	BluetoothDevice device;
 	
-	ReadWriteThread(RouterObject mRouter, BluetoothSocket mSocket, BluetoothDevice mDevice ) {
+	ReadWriteThread(
+			RouterObject mRouter, 
+			BluetoothSocket mSocket, 
+			BluetoothDevice mDevice ) {
+		
 		router = mRouter;
 		socket = mSocket;
 		device = mDevice;
