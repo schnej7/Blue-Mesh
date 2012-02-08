@@ -15,10 +15,8 @@ public class RouterObject {
 		adapter= mAdapter;
 	}
 	
+	//TODO: MAKE THIS CALL SYNCHRONIZED
 	public int BeginConnection(BluetoothSocket mSocket) {
-		//TODO: Get rid of these two lines
-		handler.notify();
-		adapter.enable();
 		
 		//Great Success!
 		return 1;
