@@ -8,7 +8,7 @@ import android.bluetooth.BluetoothSocket;
 import android.os.Handler;
 import android.os.ParcelUuid;
 import android.util.Log;
-import
+
 
 
 public class ClientThread extends Thread{
@@ -17,8 +17,8 @@ public class ClientThread extends Thread{
     private BluetoothAdapter adapter;
     private RouterObject router;
 	
-	ClientThread( Handler mHandler, BluetoothAdapter mAdapter, 
-			      RouterObject mRouter ) {
+	ClientThread(  Handler mHandler, BluetoothAdapter mAdapter, 
+				   RouterObject mRouter )  {
 		handler = mHandler;
 		adapter = mAdapter;
 		router = mRouter;
