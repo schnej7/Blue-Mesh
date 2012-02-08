@@ -23,7 +23,7 @@ public class RouterObject {
 		return 1;
 	}
 	
-	public int WriteAll(byte bytes[]) {
+	public int WriteAll(byte buff[]) {
 		//Great Success!
 		return 1;
 	}

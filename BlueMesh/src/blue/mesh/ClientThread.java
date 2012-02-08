@@ -15,13 +15,13 @@ public class ClientThread {
 	private static final String TAG = "BluetoothChatService";
     private Handler handler;
     private BluetoothAdapter adapter;
-    private RouterObject routerObject;
+    private RouterObject router;
 	
 	ClientThread( Handler mHandler, BluetoothAdapter mAdapter, 
-			      RouterObject mRouterObject ) {
+			      RouterObject mRouter ) {
 		handler = mHandler;
 		adapter = mAdapter;
-		routerObject = mRouterObject;
+		router = mRouter;
 	}
 	
 	//function run gets list of paired devices, and attempts to 
@@ -52,7 +52,7 @@ public class ClientThread {
 				//once a socet is opened, try to connect and then pass to router
 				try {
 					clientSocket.connect();
-					routerObject.BeginConnection(clientSocket);
+					router.BeginConnection(clientSocket);
 				}
 				
 				catch (IOException e) {
