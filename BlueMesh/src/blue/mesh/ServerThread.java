@@ -33,7 +33,7 @@ public class ServerThread extends Thread{
 		// Create a new listening server socket
 		try {
 			tmp = adapter.listenUsingRfcommWithServiceRecord(
-					Constants.NAME, Constants.MY_UUID_SECURE);
+					Constants.NAME, Constants.MY_UUID);
 		} catch (IOException e) {
 			Log.e(TAG, "listenUsingRfcommWithServiceRecord() failed", e);
 		}

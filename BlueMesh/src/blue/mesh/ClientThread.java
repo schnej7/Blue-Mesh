@@ -43,14 +43,12 @@ public class ClientThread extends Thread{
 
 			for (BluetoothDevice d : pairedDevices)
 			{
-				//for each paired device, get uuids
-
-
-				//for each uuid, try to open a socket on it
 				BluetoothSocket clientSocket = null;
 				try {
+					//TODO: ask the router if it is already connected
+					//to that device before trying to connect to it
 					clientSocket = d.createRfcommSocketToServiceRecord(
-							Constants.MY_UUID_SECURE);
+							Constants.MY_UUID);
 				}
 
 				catch (IOException e) {
@@ -60,7 +58,6 @@ public class ClientThread extends Thread{
 				//once a socet is opened, try to connect and then pass to router
 				try {
 					clientSocket.connect();
-					//
 					router.BeginConnection(clientSocket);
 				}
 
