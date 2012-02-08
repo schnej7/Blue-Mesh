@@ -24,7 +24,10 @@ public class ClientThread {
 		routerObject = mRouterObject;
 	}
 	
-	void run() {
+	//function run gets list of paired devices, and attempts to 
+	//open and connect a socket for that device, which is then 
+	//passed to the router object
+	public void run() {
 		
 		//get list of all paired devices
 		Set <BluetoothDevice> pairedDevices = adapter.getBondedDevices();
