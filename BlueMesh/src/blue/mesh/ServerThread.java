@@ -4,7 +4,6 @@ import java.io.IOException;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothServerSocket;
 import android.bluetooth.BluetoothSocket;
-import android.os.Handler;
 import android.util.Log;
 
 
@@ -16,7 +15,6 @@ public class ServerThread extends Thread{
     private BluetoothServerSocket serverSocket;
     
     protected ServerThread( 
-			Handler mHandler, 
 			BluetoothAdapter mAdapter, 
 			RouterObject mRouterObject ) {
 
@@ -78,4 +76,9 @@ public class ServerThread extends Thread{
 		return Constants.SUCCESS;
 	}
 	
+	protected int kill(){
+		this.closeSocket();
+		this.interrupt();
+		return Constants.SUCCESS;
+	}
 }
