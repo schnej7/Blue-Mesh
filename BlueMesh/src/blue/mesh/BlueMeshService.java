@@ -54,7 +54,9 @@ public class BlueMeshService {
 	
 	public byte [] pull(){
 		
-		return null;
+		byte message[] = new byte[Constants.MAX_MESSAGE_LEN];
+		message = router.getNextMessage();
+		return message;
 	}
 	
 	public int disconnect(){
