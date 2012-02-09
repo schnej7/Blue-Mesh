@@ -13,11 +13,16 @@ public class BlueMeshService {
 	private ClientThread clientThread;
 	private static final String TAG = "BlueMesh Service";
 	
+	///Trevor wrote this:
+	//BMS constructor
 	public BlueMeshService(){
+		
+		//Gets bluetooth hardware from phone and makes sure that it is non-null;
 		adapter = BluetoothAdapter.getDefaultAdapter();
 
 		if (adapter == null) {
 			if(Constants.DEBUG) Log.d(TAG, "BluetoothAdapter is null");
+			return;
 		} else {
 			if(Constants.DEBUG) Log.d(TAG, "BluetoothAdapter is is non-null");
 		}
@@ -47,11 +52,16 @@ public class BlueMeshService {
 		return Constants.SUCCESS;
 	}
 	
+	//Trevor wrote this:
+	//function that writes message to devices
 	public int write( byte [] buffer){
 		router.write(buffer);
 		return Constants.SUCCESS;
 	}
 	
+	//Trevor wrote this:
+	//function to grab most recent message off of message queue
+	//(message stack actually a linked list but is used like a queue)
 	public byte [] pull(){
 		
 		byte message[] = new byte[Constants.MAX_MESSAGE_LEN];
