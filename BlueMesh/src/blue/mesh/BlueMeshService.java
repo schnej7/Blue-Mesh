@@ -48,7 +48,7 @@ public class BlueMeshService {
 	}
 	
 	public int write( byte [] buffer){
-		router.route(buffer);
+		router.write(buffer);
 		return Constants.SUCCESS;
 	}
 	
