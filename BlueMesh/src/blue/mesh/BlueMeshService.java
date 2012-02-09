@@ -4,6 +4,10 @@ package blue.mesh;
 
 public class BlueMeshService {
 	
+	private RouterObject router;
+	private ServerThread serverThread;
+	private ClientThread clientThread;
+	
 	public BlueMeshService(){
 		
 	}
