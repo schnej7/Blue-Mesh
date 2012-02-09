@@ -3,27 +3,22 @@ package blue.mesh;
 import java.io.IOException;
 import java.util.List;
 import java.util.Random;
-
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
-import android.os.Handler;
 import android.util.Log;
 
 
 public class RouterObject {
 
-	private Handler handler;
-	private BluetoothAdapter adapter;
 	private List <String> connectedDevices;
 	private List <ReadWriteThread> rwThreads;
 	private List <byte[]> messageIDs;
 	private final String TAG = "RouterObject";
 	private List <byte[]> messages;
 	
-	protected RouterObject( Handler mHandler, BluetoothAdapter mAdapter) {
-		handler = mHandler;
-		adapter= mAdapter;
+	protected RouterObject( BluetoothAdapter mAdapter) {
+		
 	}
 	
 	protected synchronized int beginConnection(BluetoothSocket socket) {
@@ -115,7 +110,16 @@ public class RouterObject {
 	}
 	
 	protected int stop() {
-		//Great Success!
+		
+		for( ReadWriteThread aThread : rwThreads ){
+			aThread.interrupt();
+			try {
+				aThread.getSocket().close();
+			} catch (IOException e) {
+				Log.e(TAG, "could not close socket", e);
+			}
+		}
+		
 		return Constants.SUCCESS;
 	}
 	
