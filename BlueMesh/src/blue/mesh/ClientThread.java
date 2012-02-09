@@ -5,24 +5,19 @@ import java.util.Set;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
-import android.os.Handler;
-import android.os.ParcelUuid;
 import android.util.Log;
 
 
 
 public class ClientThread extends Thread{
 	private static final String TAG = "ClientThread";
-	private Handler handler;
 	private BluetoothAdapter adapter;
 	private RouterObject router;
 
-	protected ClientThread(  
-			Handler mHandler, 
+	protected ClientThread(   
 			BluetoothAdapter mAdapter, 
 			RouterObject mRouter )  {
 
-		handler = mHandler;
 		adapter = mAdapter;
 		router = mRouter;
 	}
@@ -67,6 +62,14 @@ public class ClientThread extends Thread{
 			}
 		}
 		return;
+	}
+	
+	protected int closeSocket(){
+		
+		//TODO use this function to close any socket that is in a blocking
+		//call in order to kill this thread
+		
+		return Constants.SUCCESS;
 	}
 };
 
