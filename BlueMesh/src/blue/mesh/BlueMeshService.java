@@ -12,9 +12,13 @@ public class BlueMeshService {
 	private ClientThread clientThread;
 	
 	public BlueMeshService(){
-		
+		adapter = BluetoothAdapter.getDefaultAdapter();
+		router = new RouterObject();
+		serverThread = new ServerThread(adapter, router);
+		clientThread = new ClientThread(adapter, router);
 	}
 	
+	//TODO: Implement later
 	public int config(){
 		
 		return Constants.SUCCESS;
