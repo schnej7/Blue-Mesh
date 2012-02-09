@@ -71,6 +71,12 @@ public class ClientThread extends Thread{
 		
 		return Constants.SUCCESS;
 	}
+	
+	protected int kill(){
+		this.closeSocket();
+		this.interrupt();
+		return Constants.SUCCESS;
+	}
 };
 
 
