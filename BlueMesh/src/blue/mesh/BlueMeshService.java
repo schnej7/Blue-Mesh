@@ -41,11 +41,6 @@ public class BlueMeshService {
 	public int launch(){
 		
 		//TODO: check to see if the service is already running
-		
-		router = new RouterObject();
-		serverThread = new ServerThread( adapter, router );
-		clientThread = new ClientThread( adapter, router );
-		
 		serverThread.start();
 		clientThread.start();
 		
@@ -64,9 +59,7 @@ public class BlueMeshService {
 	//(message stack actually a linked list but is used like a queue)
 	public byte [] pull(){
 		
-		byte message[] = new byte[Constants.MAX_MESSAGE_LEN];
-		message = router.getNextMessage();
-		return message;
+		return router.getNextMessage();
 	}
 	
 	public int disconnect(){
