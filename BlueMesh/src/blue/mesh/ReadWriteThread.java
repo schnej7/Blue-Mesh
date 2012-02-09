@@ -3,8 +3,6 @@ package blue.mesh;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-
-import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
 import android.util.Log;
 
@@ -48,8 +46,7 @@ public class ReadWriteThread extends Thread{
         while (true) {
         	
         	if( this.isInterrupted() ){
-        		//TODO: Do some kind of cleanup
-        		return;
+        		break;
         	}
         	
             try {
@@ -61,10 +58,22 @@ public class ReadWriteThread extends Thread{
                 
             } catch (IOException e) {
                 Log.e(TAG, "disconnected", e);
-                //TODO: The connection has been lost, handle this!
                 break;
             }
         }
+        
+        //On exit close the in and out sockets
+        try {
+			in.close();
+		} catch (IOException e) {
+			Log.e(TAG, "could not close in", e);
+		}
+        try {
+			out.close();
+		} catch (IOException e) {
+			Log.e(TAG, "could not close out", e);
+		}
+        return;
 	}
 
 	protected int write(byte [] buffer){
@@ -74,5 +83,9 @@ public class ReadWriteThread extends Thread{
 			Log.e(TAG, "Exception during write", e);
 		}
 		return Constants.SUCCESS;
+	}
+	
+	protected BluetoothSocket getSocket(){
+		return socket;
 	}
 }
