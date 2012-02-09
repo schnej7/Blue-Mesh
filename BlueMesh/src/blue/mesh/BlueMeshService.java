@@ -27,7 +27,7 @@ public class BlueMeshService {
 		clientThread = new ClientThread(adapter, router);
 	}
 	
-	//TODO: Implement later
+	//TODO: Implement later if needed
 	public int config(){
 		
 		return Constants.SUCCESS;
