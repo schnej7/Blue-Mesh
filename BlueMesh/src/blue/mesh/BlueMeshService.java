@@ -1,6 +1,7 @@
 package blue.mesh;
 
 import android.bluetooth.BluetoothAdapter;
+import android.util.Log;
 
 
 
@@ -10,9 +11,17 @@ public class BlueMeshService {
 	private RouterObject router;
 	private ServerThread serverThread;
 	private ClientThread clientThread;
+	private static final String TAG = "BlueMesh Service";
 	
 	public BlueMeshService(){
 		adapter = BluetoothAdapter.getDefaultAdapter();
+
+		if (adapter == null) {
+			if(Constants.DEBUG) Log.d(TAG, "BluetoothAdapter is null");
+		} else {
+			if(Constants.DEBUG) Log.d(TAG, "BluetoothAdapter is is non-null");
+		}
+		
 		router = new RouterObject();
 		serverThread = new ServerThread(adapter, router);
 		clientThread = new ClientThread(adapter, router);
