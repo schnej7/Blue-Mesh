@@ -69,4 +69,13 @@ public class ServerThread extends Thread{
         return;
 	}
 	
+	protected int closeSocket(){
+		try {
+			this.serverSocket.close();
+		} catch (IOException e) {
+			Log.e(TAG, "Could not close serverSocket", e);
+		}
+		return Constants.SUCCESS;
+	}
+	
 }
