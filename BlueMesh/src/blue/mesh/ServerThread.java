@@ -11,7 +11,6 @@ import android.util.Log;
 public class ServerThread extends Thread{
 	
 	private static final String TAG = "ServerThread";
-	private Handler handler;
     private BluetoothAdapter adapter;
     private RouterObject router;
     private BluetoothServerSocket serverSocket;
@@ -20,8 +19,7 @@ public class ServerThread extends Thread{
 			Handler mHandler, 
 			BluetoothAdapter mAdapter, 
 			RouterObject mRouterObject ) {
-		
-		handler = mHandler;
+
 		adapter = mAdapter;
 		router = mRouterObject;
 
