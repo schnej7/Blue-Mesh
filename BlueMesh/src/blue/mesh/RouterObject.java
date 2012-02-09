@@ -17,8 +17,8 @@ public class RouterObject {
 	private final String TAG = "RouterObject";
 	private List <byte[]> messages;
 	
-	protected RouterObject( BluetoothAdapter mAdapter) {
-		
+	protected RouterObject() {
+		//Nothing to set as of now
 	}
 	
 	protected synchronized int beginConnection(BluetoothSocket socket) {
