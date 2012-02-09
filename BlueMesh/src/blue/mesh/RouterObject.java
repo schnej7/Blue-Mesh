@@ -3,7 +3,6 @@ package blue.mesh;
 import java.io.IOException;
 import java.util.List;
 import java.util.Random;
-import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
 import android.util.Log;
