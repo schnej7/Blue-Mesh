@@ -57,7 +57,7 @@ public class ReadWriteThread extends Thread{
                 if(  bytes != -1 ){
                 	Log.d( TAG, "DATA READ!1");
                 	// Send the obtained bytes to the RouterThread
-                	router.route( buffer );
+                	router.route( buffer, Constants.SRC_OTHER );
                 	Log.d( TAG, "DATA READ!2");
                 }
                 else{
