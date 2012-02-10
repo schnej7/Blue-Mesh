@@ -57,6 +57,7 @@ public class RouterObject {
 	
 	protected int route(byte buffer[]) {
 		
+		//get the messageID
 		byte messageID[] = new byte[Constants.MESSAGE_ID_LEN];
 		for( int i = 0; i < Constants.MESSAGE_ID_LEN; i++ ){
 			messageID[i] = buffer[i];
@@ -65,12 +66,15 @@ public class RouterObject {
 		//Check that the message was not received before
 		synchronized( this.messageIDs ){
 			if( messageIDs.contains(messageID) ){
+				Log.d(TAG, "Message already recieved, ID: " + Integer.toHexString(messageID[0]) );
 				return Constants.SUCCESS;
 			}
 			else{
+				Log.d(TAG, "New Message, ID: " + Integer.toHexString(messageID[0]) );
 				messageIDs.add(messageID);
 				//Remove oldest message ID if too many are stored
 				if( messageIDs.size() > Constants.MSG_HISTORY_LEN){
+					Log.d(TAG, "Removing Message from History");
 					messageIDs.remove(0);
 				}
 			}
@@ -79,6 +83,7 @@ public class RouterObject {
 		//Send the message all the threads
 		synchronized( this.rwThreads ){
 			for( ReadWriteThread aThread : rwThreads ){
+				Log.d(TAG, "Writing to device: " + aThread.getSocket().getRemoteDevice().getName() );
 				aThread.write(buffer);
 			}
 		}
@@ -98,7 +103,7 @@ public class RouterObject {
 	protected byte [] getNextMessage() {
 
 		if(messages.size() > 0){
-			byte message[] = messages.get(0);
+			byte message[] = messages.get(0).clone();
 			messages.remove(0);
 			return message;
 		}
