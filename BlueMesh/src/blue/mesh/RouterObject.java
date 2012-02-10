@@ -16,16 +16,16 @@ public class RouterObject {
 	private List <byte[]> messageIDs;
 	private final String TAG = "RouterObject";
 	private List <byte[]> messages;
-	
+
 	protected RouterObject() {
 		connectedDevices = new ArrayList <String>();
 		rwThreads = new ArrayList <ReadWriteThread>();
 		messageIDs = new ArrayList <byte[]>();
 		messages = new ArrayList <byte[]>();
 	}
-	
+
 	protected synchronized int beginConnection(BluetoothSocket socket) {
-		
+
 		Log.d(TAG, "beginConnection");
 		//Don't let another thread touch connectedDevices while
 		//I read and write it
@@ -44,29 +44,30 @@ public class RouterObject {
 			//Add device name to list of connected devices
 			connectedDevices.add(socket.getRemoteDevice().getName());
 		}
-		
+
 		//Don't let another thread touch rwThreads while I add to it
 		ReadWriteThread aReadWriteThread = new ReadWriteThread(this, socket);
 		aReadWriteThread.start();
 		synchronized( this.rwThreads ){
 			rwThreads.add(aReadWriteThread);
 		}
-		
+
 		return Constants.SUCCESS;
 	}
-	
-	protected int route(byte buffer[]) {
-		
+
+	protected int route(byte buffer[], int source) {
+
 		//get the messageID
 		byte messageID[] = new byte[Constants.MESSAGE_ID_LEN];
 		for( int i = 0; i < Constants.MESSAGE_ID_LEN; i++ ){
 			messageID[i] = buffer[i];
 		}
-		
+
 		//Check that the message was not received before
 		synchronized( this.messageIDs ){
 			if( messageIDs.contains(messageID) ){
-				Log.d(TAG, "Message already recieved, ID: " + Integer.toHexString(messageID[0]) );
+				Log.d(TAG, "Message already recieved, ID: " + 
+						Integer.toHexString(messageID[0]) );
 				return Constants.SUCCESS;
 			}
 			else{
@@ -79,27 +80,32 @@ public class RouterObject {
 				}
 			}
 		}
-		
+
 		//Send the message all the threads
 		synchronized( this.rwThreads ){
 			for( ReadWriteThread aThread : rwThreads ){
-				Log.d(TAG, "Writing to device: " + aThread.getSocket().getRemoteDevice().getName() );
+				Log.d(TAG, "Writing to device: " + 
+						aThread.getSocket().getRemoteDevice().getName() );
 				aThread.write(buffer);
 			}
 		}
-		
-		//Add message to buffer
-		synchronized( this.messages ){
-			byte message[] = new byte[buffer.length - Constants.MESSAGE_ID_LEN];
-			for( int i = Constants.MESSAGE_ID_LEN; i < buffer.length; i++ ){
-				message[i - Constants.MESSAGE_ID_LEN] = buffer[i];
+
+		//If I am not the sender of the message
+		//add it to the message queue
+		if( source != Constants.SRC_ME ){
+			//Add message to message queue
+			synchronized( this.messages ){
+				byte message[] = new byte[buffer.length - Constants.MESSAGE_ID_LEN];
+				for( int i = Constants.MESSAGE_ID_LEN; i < buffer.length; i++ ){
+					message[i - Constants.MESSAGE_ID_LEN] = buffer[i];
+				}
+				messages.add(buffer);
 			}
-			messages.add(buffer);
 		}
-		
+
 		return Constants.SUCCESS;
 	}
-	
+
 	protected byte [] getNextMessage() {
 
 		if(messages.size() > 0){
@@ -110,9 +116,9 @@ public class RouterObject {
 		else{
 			return null;
 		}
-		
+
 	}
-	
+
 	protected int getDeviceState( BluetoothDevice device ){
 		synchronized( this.connectedDevices ){
 			if( connectedDevices.contains(device.getName()) ){
@@ -121,9 +127,9 @@ public class RouterObject {
 		}
 		return Constants.STATE_NONE;
 	}
-	
+
 	protected int stop() {
-		
+
 		for( ReadWriteThread aThread : rwThreads ){
 			aThread.interrupt();
 			try {
@@ -132,28 +138,28 @@ public class RouterObject {
 				Log.e(TAG, "could not close socket", e);
 			}
 		}
-		
+
 		return Constants.SUCCESS;
 	}
-	
+
 	protected int write( byte[] buffer ){
-		
+
 		Random rand = new Random();
 		byte messageID[] = new byte[Constants.MESSAGE_ID_LEN];
 		rand.nextBytes(messageID);
-		
+
 		byte new_buffer[] = new byte[Constants.MESSAGE_ID_LEN + buffer.length];
-		
+
 		for( int i = 0; i < Constants.MESSAGE_ID_LEN; i++ ){
 			new_buffer[i] = messageID[i];
 		}
-		
+
 		for( int i = 0; i < buffer.length; i++ ){
 			new_buffer[Constants.MESSAGE_ID_LEN + i] = buffer[i];
 		}
-		
-		this.route(new_buffer);
-		
+
+		this.route(new_buffer, Constants.SRC_ME );
+
 		return Constants.SUCCESS;
 	}
 }
