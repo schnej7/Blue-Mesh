@@ -20,6 +20,8 @@ public class ReadWriteThread extends Thread{
 			RouterObject mRouter, 
 			BluetoothSocket mSocket) {
 
+		Log.d(TAG, "RWTHREAD CONNECTED!");
+		
 		router = mRouter;
 		socket = mSocket;
 
@@ -51,10 +53,15 @@ public class ReadWriteThread extends Thread{
         	
             try {
                 // Read from the InputStream
-                in.read( buffer );
-
-                // Send the obtained bytes to the RouterThread
-               router.route( buffer );
+                if( in.read( buffer ) != -1 ){
+                	Log.d( TAG, "DATA READ!1");
+                	// Send the obtained bytes to the RouterThread
+                	router.route( buffer );
+                	Log.d( TAG, "DATA READ!2");
+                }
+                else{
+                	Log.d( TAG, "No data read");
+                }
                 
             } catch (IOException e) {
                 Log.e(TAG, "disconnected", e);
