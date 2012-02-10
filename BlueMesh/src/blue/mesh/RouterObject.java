@@ -1,6 +1,7 @@
 package blue.mesh;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import android.bluetooth.BluetoothDevice;
@@ -17,17 +18,23 @@ public class RouterObject {
 	private List <byte[]> messages;
 	
 	protected RouterObject() {
-		//Nothing to set as of now
+		connectedDevices = new ArrayList <String>();
+		rwThreads = new ArrayList <ReadWriteThread>();
+		messageIDs = new ArrayList <byte[]>();
+		messages = new ArrayList <byte[]>();
 	}
 	
 	protected synchronized int beginConnection(BluetoothSocket socket) {
 		
+		Log.d(TAG, "beginConnection");
 		//Don't let another thread touch connectedDevices while
 		//I read and write it
 		synchronized( this.connectedDevices ){
+			Log.d(TAG, "test if devices contains the device name");
 			//Check if the device is already connected to
 			if( connectedDevices.contains(socket.getRemoteDevice().getName())){
 				try {
+					Log.d(TAG, "trying to close socket");
 					socket.close();
 				} catch (IOException e) {
 					Log.e(TAG, "could not close() socket", e);
@@ -89,6 +96,7 @@ public class RouterObject {
 	}
 	
 	protected byte [] getNextMessage() {
+
 		if(messages.size() > 0){
 			byte message[] = messages.get(0);
 			messages.remove(0);
@@ -97,6 +105,7 @@ public class RouterObject {
 		else{
 			return null;
 		}
+		
 	}
 	
 	protected int getDeviceState( BluetoothDevice device ){
@@ -137,6 +146,8 @@ public class RouterObject {
 		for( int i = 0; i < buffer.length; i++ ){
 			new_buffer[Constants.MESSAGE_ID_LEN + i] = buffer[i];
 		}
+		
+		this.route(new_buffer);
 		
 		return Constants.SUCCESS;
 	}
