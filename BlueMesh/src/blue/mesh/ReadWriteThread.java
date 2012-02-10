@@ -53,7 +53,8 @@ public class ReadWriteThread extends Thread{
         	
             try {
                 // Read from the InputStream
-                if( in.read( buffer ) != -1 ){
+            	int bytes = in.read( buffer );
+                if(  bytes != -1 ){
                 	Log.d( TAG, "DATA READ!1");
                 	// Send the obtained bytes to the RouterThread
                 	router.route( buffer );
@@ -84,6 +85,7 @@ public class ReadWriteThread extends Thread{
 	}
 
 	protected int write(byte [] buffer){
+		Log.d(TAG, "Writing bytes");
 		try {
 			out.write(buffer);
 		} catch (IOException e) {
