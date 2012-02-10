@@ -5,6 +5,7 @@ import java.util.Set;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
+import android.os.Looper;
 import android.util.Log;
 
 
@@ -40,6 +41,7 @@ public class ClientThread extends Thread{
 			{
 				BluetoothSocket clientSocket = null;
 				try {
+					Log.d(TAG,  "Device: " + d.getName() );
 					//TODO: ask the router if it is already connected
 					//to that device before trying to connect to it
 					clientSocket = d.createRfcommSocketToServiceRecord(
