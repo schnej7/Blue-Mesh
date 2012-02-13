@@ -8,47 +8,47 @@ import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
 import android.util.Log;
 
-
 public class RouterObject {
 
-	private List <String> connectedDevices;
-	private List <ReadWriteThread> rwThreads;
-	private List <byte[]> messageIDs;
+	private List<String> connectedDevices;
+	private List<ReadWriteThread> rwThreads;
+	private List<byte[]> messageIDs;
 	private final String TAG = "RouterObject";
-	private List <byte[]> messages;
+	private List<byte[]> messages;
 
 	protected RouterObject() {
-		connectedDevices = new ArrayList <String>();
-		rwThreads = new ArrayList <ReadWriteThread>();
-		messageIDs = new ArrayList <byte[]>();
-		messages = new ArrayList <byte[]>();
+		connectedDevices = new ArrayList<String>();
+		rwThreads = new ArrayList<ReadWriteThread>();
+		messageIDs = new ArrayList<byte[]>();
+		messages = new ArrayList<byte[]>();
 	}
 
 	protected synchronized int beginConnection(BluetoothSocket socket) {
 
 		Log.d(TAG, "beginConnection");
-		//Don't let another thread touch connectedDevices while
-		//I read and write it
-		synchronized( this.connectedDevices ){
+		// Don't let another thread touch connectedDevices while
+		// I read and write it
+		synchronized (this.connectedDevices) {
 			Log.d(TAG, "test if devices contains the device name");
-			//Check if the device is already connected to
-			if( connectedDevices.contains(socket.getRemoteDevice().getName())){
+			// Check if the device is already connected to
+			if (connectedDevices.contains(socket.getRemoteDevice().getName())) {
 				try {
-					Log.d(TAG, "trying to close socket");
+					Log.d(TAG, "trying to close socket, already"
+							+ "connected to device");
 					socket.close();
 				} catch (IOException e) {
 					Log.e(TAG, "could not close() socket", e);
 				}
 				return Constants.SUCCESS;
 			}
-			//Add device name to list of connected devices
+			// Add device name to list of connected devices
 			connectedDevices.add(socket.getRemoteDevice().getName());
 		}
 
-		//Don't let another thread touch rwThreads while I add to it
+		// Don't let another thread touch rwThreads while I add to it
 		ReadWriteThread aReadWriteThread = new ReadWriteThread(this, socket);
 		aReadWriteThread.start();
-		synchronized( this.rwThreads ){
+		synchronized (this.rwThreads) {
 			rwThreads.add(aReadWriteThread);
 		}
 
@@ -57,46 +57,48 @@ public class RouterObject {
 
 	protected int route(byte buffer[], int source) {
 
-		//get the messageID
+		// get the messageID
 		byte messageID[] = new byte[Constants.MESSAGE_ID_LEN];
-		for( int i = 0; i < Constants.MESSAGE_ID_LEN; i++ ){
+		for (int i = 0; i < Constants.MESSAGE_ID_LEN; i++) {
 			messageID[i] = buffer[i];
 		}
 
-		//Check that the message was not received before
-		synchronized( this.messageIDs ){
-			if( messageIDs.contains(messageID) ){
-				Log.d(TAG, "Message already recieved, ID: " + 
-						Integer.toHexString(messageID[0]) );
+		// Check that the message was not received before
+		synchronized (this.messageIDs) {
+			if (messageIDs.contains(messageID)) {
+				Log.d(TAG,
+						"Message already recieved, ID: "
+								+ Integer.toHexString(messageID[0]));
 				return Constants.SUCCESS;
-			}
-			else{
-				Log.d(TAG, "New Message, ID: " + Integer.toHexString(messageID[0]) );
+			} else {
+				Log.d(TAG,
+						"New Message, ID: " + Integer.toHexString(messageID[0]));
 				messageIDs.add(messageID);
-				//Remove oldest message ID if too many are stored
-				if( messageIDs.size() > Constants.MSG_HISTORY_LEN){
+				// Remove oldest message ID if too many are stored
+				if (messageIDs.size() > Constants.MSG_HISTORY_LEN) {
 					Log.d(TAG, "Removing Message from History");
 					messageIDs.remove(0);
 				}
 			}
 		}
 
-		//Send the message all the threads
-		synchronized( this.rwThreads ){
-			for( ReadWriteThread aThread : rwThreads ){
-				Log.d(TAG, "Writing to device: " + 
-						aThread.getSocket().getRemoteDevice().getName() );
+		// Send the message all the threads
+		synchronized (this.rwThreads) {
+			for (ReadWriteThread aThread : rwThreads) {
+				Log.d(TAG, "Writing to device: "
+						+ aThread.getSocket().getRemoteDevice().getName());
 				aThread.write(buffer);
 			}
 		}
 
-		//If I am not the sender of the message
-		//add it to the message queue
-		if( source != Constants.SRC_ME ){
-			//Add message to message queue
-			synchronized( this.messages ){
-				byte message[] = new byte[buffer.length - Constants.MESSAGE_ID_LEN];
-				for( int i = Constants.MESSAGE_ID_LEN; i < buffer.length; i++ ){
+		// If I am not the sender of the message
+		// add it to the message queue
+		if (source != Constants.SRC_ME) {
+			// Add message to message queue
+			synchronized (this.messages) {
+				byte message[] = new byte[buffer.length
+						- Constants.MESSAGE_ID_LEN];
+				for (int i = Constants.MESSAGE_ID_LEN; i < buffer.length; i++) {
 					message[i - Constants.MESSAGE_ID_LEN] = buffer[i];
 				}
 				messages.add(buffer);
@@ -106,22 +108,21 @@ public class RouterObject {
 		return Constants.SUCCESS;
 	}
 
-	protected byte [] getNextMessage() {
+	protected byte[] getNextMessage() {
 
-		if(messages.size() > 0){
+		if (messages.size() > 0) {
 			byte message[] = messages.get(0).clone();
 			messages.remove(0);
 			return message;
-		}
-		else{
+		} else {
 			return null;
 		}
 
 	}
 
-	protected int getDeviceState( BluetoothDevice device ){
-		synchronized( this.connectedDevices ){
-			if( connectedDevices.contains(device.getName()) ){
+	protected int getDeviceState(BluetoothDevice device) {
+		synchronized (this.connectedDevices) {
+			if (connectedDevices.contains(device.getName())) {
 				return Constants.STATE_CONNECTED;
 			}
 		}
@@ -130,7 +131,7 @@ public class RouterObject {
 
 	protected int stop() {
 
-		for( ReadWriteThread aThread : rwThreads ){
+		for (ReadWriteThread aThread : rwThreads) {
 			aThread.interrupt();
 			try {
 				aThread.getSocket().close();
@@ -142,7 +143,7 @@ public class RouterObject {
 		return Constants.SUCCESS;
 	}
 
-	protected int write( byte[] buffer ){
+	protected int write(byte[] buffer) {
 
 		Random rand = new Random();
 		byte messageID[] = new byte[Constants.MESSAGE_ID_LEN];
@@ -150,17 +151,16 @@ public class RouterObject {
 
 		byte new_buffer[] = new byte[Constants.MESSAGE_ID_LEN + buffer.length];
 
-		for( int i = 0; i < Constants.MESSAGE_ID_LEN; i++ ){
+		for (int i = 0; i < Constants.MESSAGE_ID_LEN; i++) {
 			new_buffer[i] = messageID[i];
 		}
 
-		for( int i = 0; i < buffer.length; i++ ){
+		for (int i = 0; i < buffer.length; i++) {
 			new_buffer[Constants.MESSAGE_ID_LEN + i] = buffer[i];
 		}
 
-		this.route(new_buffer, Constants.SRC_ME );
+		this.route(new_buffer, Constants.SRC_ME);
 
 		return Constants.SUCCESS;
 	}
 }
-
