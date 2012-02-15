@@ -41,8 +41,10 @@ public class ClientThread extends Thread{
 				BluetoothSocket clientSocket = null;
 				try {
 					Log.d(TAG,  "Device: " + d.getName() );
-					//TODO: ask the router if it is already connected
-					//to that device before trying to connect to it
+					
+					if( router.getDeviceState(d) == Constants.STATE_CONNECTED) 
+						continue;
+
 					clientSocket = d.createRfcommSocketToServiceRecord(
 							Constants.MY_UUID);
 				}
