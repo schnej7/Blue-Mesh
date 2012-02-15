@@ -51,6 +51,9 @@ public class RouterObject {
 		synchronized (this.rwThreads) {
 			rwThreads.add(aReadWriteThread);
 		}
+		
+		String tmp = new String("Connected to " + socket.getRemoteDevice().getName());
+		this.messages.add(tmp.getBytes());
 
 		return Constants.SUCCESS;
 	}
