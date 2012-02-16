@@ -73,11 +73,13 @@ public class ReadWriteThread extends Thread{
         //On exit close the in and out sockets
         try {
 			in.close();
+			Log.d(TAG, "in closed");
 		} catch (IOException e) {
 			Log.e(TAG, "could not close in", e);
 		}
         try {
 			out.close();
+			Log.d(TAG, "out closed");
 		} catch (IOException e) {
 			Log.e(TAG, "could not close out", e);
 		}
