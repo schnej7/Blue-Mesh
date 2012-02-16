@@ -1,0 +1,16 @@
+/*This file contains a step-by-step how-to on how to install a .apk to your android phone (for developers and debuggers) and an internal instruction on how to create .apks with our eclipse setup.*/
+
+External:
+To install an APK:
+1) Transfer the APK from computer to your phone (Gmail, Bluetooth, Dropbox, or your favorite app)
+2) Go into "My Files" and run the .apk file.
+3) Allow permissions and install.
+4) To run the application, simply touch the icon on your menu.
+
+Internal:
+To create a working APK (compile):
+1) Right-click the project folder in eclipse
+2) Go to Android Tools/Export Signed Application Package...
+3) Click Next.
+4) If you already have a keystore, include it now. Otherwise, hit "Create New Keystore" and pick somewhere to put one. Select an easy to remember password and hit "next".
+5) When creating a keystore, follow the eclipse directions to create one. If using an existant one, type in the passwords as requested and hit "Finish"
