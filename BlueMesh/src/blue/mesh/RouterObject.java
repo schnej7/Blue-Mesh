@@ -2,6 +2,7 @@ package blue.mesh;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 import android.bluetooth.BluetoothDevice;
@@ -68,20 +69,19 @@ public class RouterObject {
 
 		// Check that the message was not received before
 		synchronized (this.messageIDs) {
-			if (messageIDs.contains(messageID)) {
-				Log.d(TAG,
-						"Message already recieved, ID: "
-								+ messageID[0]);
-				return Constants.SUCCESS;
-			} else {
-				Log.d(TAG,
-						"New Message, ID: " + messageID[0]);
-				messageIDs.add(messageID);
-				// Remove oldest message ID if too many are stored
-				if (messageIDs.size() > Constants.MSG_HISTORY_LEN) {
-					Log.d(TAG, "Removing Message from History");
-					messageIDs.remove(0);
-				}
+			for( int i = 0; i < messageIDs.size(); i++ ){
+				if (Arrays.equals( messageIDs.get(i), messageID ) ) {
+					Log.d(TAG, "Message already recieved, ID: " + messageID[0]);
+					return Constants.SUCCESS;
+				} 
+			}
+			
+			Log.d(TAG, "New Message, ID: " + messageID[0]);
+			messageIDs.add(messageID);
+			// Remove oldest message ID if too many are stored
+			if (messageIDs.size() > Constants.MSG_HISTORY_LEN) {
+				Log.d(TAG, "Removing Message from History");
+				messageIDs.remove(0);
 			}
 		}
 
