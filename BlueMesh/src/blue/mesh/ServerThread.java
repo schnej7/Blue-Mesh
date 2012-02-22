@@ -80,6 +80,7 @@ public class ServerThread extends Thread{
 	protected int kill(){
 		this.closeSocket();
 		this.interrupt();
+		Log.d(TAG, "kill success");
 		return Constants.SUCCESS;
 	}
 }
