@@ -54,10 +54,16 @@ public class ReadWriteThread extends Thread{
             try {
                 // Read from the InputStream
             	int bytes = in.read( buffer );
+            	byte[] newBuffer = new byte[bytes];
+            	
+            	for( int i = 0; i < bytes; i++ ){
+            		newBuffer[i] = buffer[i];
+            	}
+            	
                 if(  bytes != -1 ){
                 	Log.d( TAG, "DATA READ!1");
                 	// Send the obtained bytes to the RouterThread
-                	router.route( buffer, Constants.SRC_OTHER );
+                	router.route( newBuffer, Constants.SRC_OTHER );
                 	Log.d( TAG, "DATA READ!2");
                 }
                 else{
