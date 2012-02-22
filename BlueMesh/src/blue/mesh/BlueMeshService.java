@@ -73,6 +73,7 @@ public class BlueMeshService {
 		this.clientThread.kill();
 		this.serverThread.kill();
 		this.router.stop();
+		Log.d(TAG, "kill success");
 		return Constants.SUCCESS;
 	}
 
