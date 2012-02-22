@@ -16,7 +16,7 @@ public class BlueMeshService {
 	
 	///Trevor wrote this:
 	//BMS constructor
-	public BlueMeshService(){
+	public BlueMeshService() throws NullPointerException{
 		Looper.myLooper();
 		Looper.prepare();
 		//Gets bluetooth hardware from phone and makes sure that it is non-null;
@@ -24,13 +24,18 @@ public class BlueMeshService {
 
 		if (adapter == null) {
 			if(Constants.DEBUG) Log.d(TAG, "BluetoothAdapter is null");
-			return;
+			throw new NullPointerException("BluetoothAdapter is null");
 		} else {
 			if(Constants.DEBUG) Log.d(TAG, "BluetoothAdapter is is non-null");
 		}
 		
 		router = new RouterObject();
-		serverThread = new ServerThread(adapter, router);
+		try{
+			serverThread = new ServerThread(adapter, router);
+		}
+		catch(NullPointerException e){
+			throw e;
+		}
 		clientThread = new ClientThread(adapter, router);
 	}
 	
