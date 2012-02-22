@@ -71,11 +71,11 @@ public class RouterObject {
 			if (messageIDs.contains(messageID)) {
 				Log.d(TAG,
 						"Message already recieved, ID: "
-								+ Integer.toHexString(messageID[0]));
+								+ messageID[0]);
 				return Constants.SUCCESS;
 			} else {
 				Log.d(TAG,
-						"New Message, ID: " + Integer.toHexString(messageID[0]));
+						"New Message, ID: " + messageID[0]);
 				messageIDs.add(messageID);
 				// Remove oldest message ID if too many are stored
 				if (messageIDs.size() > Constants.MSG_HISTORY_LEN) {
@@ -104,7 +104,7 @@ public class RouterObject {
 				for (int i = Constants.MESSAGE_ID_LEN; i < buffer.length; i++) {
 					message[i - Constants.MESSAGE_ID_LEN] = buffer[i];
 				}
-				messages.add(buffer);
+				messages.add(message);
 			}
 		}
 
