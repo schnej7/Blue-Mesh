@@ -16,7 +16,7 @@ public class ServerThread extends Thread{
     
     protected ServerThread( 
 			BluetoothAdapter mAdapter, 
-			RouterObject mRouterObject ) {
+			RouterObject mRouterObject ) throws NullPointerException {
 
 		adapter = mAdapter;
 		router = mRouterObject;
@@ -32,6 +32,7 @@ public class ServerThread extends Thread{
 					Constants.NAME, Constants.MY_UUID);
 		} catch (IOException e) {
 			Log.e(TAG, "listenUsingRfcommWithServiceRecord() failed", e);
+			throw new NullPointerException("Bluetooth is not enabeled");
 		}
 
 		serverSocket = tmp;
