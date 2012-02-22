@@ -31,13 +31,14 @@ public class ClientThread extends Thread{
 		{
 			if(this.isInterrupted()){
 				if(Constants.DEBUG) Log.d(TAG, "interrupted");
-				break;
+				return;
 			}
 			//get list of all paired devices
 			Set <BluetoothDevice> pairedDevices = adapter.getBondedDevices();
 
 			for (BluetoothDevice d : pairedDevices)
 			{
+
 				BluetoothSocket clientSocket = null;
 				try {
 					Log.d(TAG,  "Device: " + d.getName() );
@@ -51,6 +52,8 @@ public class ClientThread extends Thread{
 
 				catch (IOException e) {
 					Log.e(TAG, "Socket create() failed", e);
+					//TODO: throw exception
+					return;
 				}
 
 				//once a socet is opened, try to connect and then pass to router
@@ -60,11 +63,14 @@ public class ClientThread extends Thread{
 				}
 
 				catch (IOException e) {
+					if(this.isInterrupted()){
+						if(Constants.DEBUG) Log.d(TAG, "interrupted");
+						return;
+					}
 					Log.e(TAG, "Socket connect() failed", e);
 				}
 			}
 		}
-		return;
 	}
 	
 	protected int closeSocket(){
@@ -77,7 +83,9 @@ public class ClientThread extends Thread{
 	
 	protected int kill(){
 		this.closeSocket();
+		//TODO: this thread does not get interrupted correctly
 		this.interrupt();
+		Log.d(TAG, "kill success");
 		return Constants.SUCCESS;
 	}
 };
