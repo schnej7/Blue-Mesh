@@ -145,6 +145,23 @@ public class RouterObject {
 
 		return Constants.SUCCESS;
 	}
+	
+	protected int notifyDisconnected( String deviceName ){
+		
+		//If the device name is in the list of connected devices
+		//then search for the ReadWriteThread associated with it
+		//and set it's pointer to null while it finishes execution
+		if( connectedDevices.remove(deviceName) ){
+			for( ReadWriteThread rwThread : rwThreads ){
+				if( rwThread.getSocket().getRemoteDevice().getName()
+						== deviceName){
+					rwThread = null;
+				}
+			}
+		}
+		
+		return Constants.SUCCESS;
+	}
 
 	protected int write(byte[] buffer) {
 
