@@ -34,6 +34,7 @@ public class ReadWriteThread extends Thread{
 			tmpOut = socket.getOutputStream();
 		} catch (IOException e) {
 			Log.e(TAG, "temp sockets not created", e);
+			//TODO: throw exception
 		}
 
 		in = tmpIn;
@@ -89,6 +90,8 @@ public class ReadWriteThread extends Thread{
 		} catch (IOException e) {
 			Log.e(TAG, "could not close out", e);
 		}
+
+        router.notifyDisconnected(this.socket.getRemoteDevice().getName());
         return;
 	}
 
