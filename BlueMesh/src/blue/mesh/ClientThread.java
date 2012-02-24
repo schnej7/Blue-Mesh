@@ -13,6 +13,7 @@ public class ClientThread extends Thread{
 	private static final String TAG = "ClientThread";
 	private BluetoothAdapter adapter;
 	private RouterObject router;
+	private boolean stop = false;
 
 	protected ClientThread(   
 			BluetoothAdapter mAdapter, 
@@ -27,7 +28,7 @@ public class ClientThread extends Thread{
 	//passed to the router object
 	public void run() {
 		
-		while (true)
+		while (!stop)
 		{
 			if(this.isInterrupted()){
 				if(Constants.DEBUG) Log.d(TAG, "interrupted");
@@ -39,6 +40,12 @@ public class ClientThread extends Thread{
 			for (BluetoothDevice d : pairedDevices)
 			{
 
+				//Check to stop
+				if(stop){
+					Log.d(TAG, "Thread stopped");
+					return;
+				}
+				
 				BluetoothSocket clientSocket = null;
 				try {
 					Log.d(TAG,  "Device: " + d.getName() );
@@ -82,9 +89,11 @@ public class ClientThread extends Thread{
 	}
 	
 	protected int kill(){
+		this.stop = true;
 		this.closeSocket();
 		//TODO: this thread does not get interrupted correctly
 		this.interrupt();
+
 		Log.d(TAG, "kill success");
 		return Constants.SUCCESS;
 	}
