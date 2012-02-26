@@ -70,6 +70,7 @@ public class BlueMeshService {
 	}
 	
 	public int disconnect(){
+		Log.d(TAG, "kill start");
 		this.clientThread.kill();
 		
 		this.serverThread.kill();
