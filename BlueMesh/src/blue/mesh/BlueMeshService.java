@@ -70,9 +70,13 @@ public class BlueMeshService {
 	}
 	
 	public int disconnect(){
+		Log.d(TAG, "kill start");
 		this.clientThread.kill();
+		
 		this.serverThread.kill();
+
 		this.router.stop();
+		
 		Log.d(TAG, "kill success");
 		return Constants.SUCCESS;
 	}
