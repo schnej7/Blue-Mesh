@@ -1,5 +1,6 @@
 package blue.mesh;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Set;
 
 import android.bluetooth.BluetoothAdapter;
@@ -13,12 +14,13 @@ public class ClientThread extends Thread{
 	private static final String TAG = "ClientThread";
 	private BluetoothAdapter adapter;
 	private RouterObject router;
+	private ArrayList <BluetoothSocket> openSockets;
 	private boolean stop = false;
 
 	protected ClientThread(   
 			BluetoothAdapter mAdapter, 
 			RouterObject mRouter )  {
-
+        openSockets = new ArrayList<BluetoothSocket>();
 		adapter = mAdapter;
 		router = mRouter;
 	}
@@ -67,6 +69,7 @@ public class ClientThread extends Thread{
 				try {
 					clientSocket.connect();
 					router.beginConnection(clientSocket);
+					openSockets.add(clientSocket);
 				}
 
 				catch (IOException e) {
@@ -84,7 +87,17 @@ public class ClientThread extends Thread{
 		
 		//TODO use this function to close any socket that is in a blocking
 		//call in order to kill this thread
-		
+		for (BluetoothSocket socket : openSockets){
+		  if (socket != null){
+			  try{
+				  socket.close();
+				  openSockets.remove(socket);
+			  }
+			  catch (IOException e){
+				  Log.e(TAG, "Socket close failed", e);
+			  }
+		  }
+		}
 		return Constants.SUCCESS;
 	}
 	
