@@ -68,6 +68,7 @@ public class ClientThread extends Thread{
 				//once a socet is opened, try to connect and then pass to router
 				try {
 					clientSocket.connect();
+					Log.d(TAG, "Socket connected, calling router.beginConnection()");
 					router.beginConnection(clientSocket);
 					openSockets.add(clientSocket);
 				}
