@@ -24,4 +24,11 @@ public final class Constants {
     public static final String NAME = "bluemesh";
 
     public static final Boolean DEBUG = true;
+    
+    public static final byte BYTE_LEVEL_USER = 1;
+    public static final byte BYTE_LEVEL_SYSTEM = 2;
+    
+    public static final byte SYSTEM_MSG_TOTAL_DEVICE_QUERY = 1;
+    public static final byte SYSTEM_MSG_TOTAL_DEVICE_CHECK_IN = 2;
+    
 }
