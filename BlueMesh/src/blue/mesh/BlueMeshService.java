@@ -57,7 +57,7 @@ public class BlueMeshService {
 	//Trevor wrote this:
 	//function that writes message to devices
 	public int write( byte [] buffer){
-		router.write(buffer);
+		router.write(buffer, Constants.BYTE_LEVEL_USER);
 		return Constants.SUCCESS;
 	}
 	
@@ -67,6 +67,15 @@ public class BlueMeshService {
 	public byte [] pull(){
 		
 		return router.getNextMessage();
+	}
+	
+	public int getNumberOfDevicesOnNetwork(){
+		
+		return router.getNumberOfDevicesOnNetwork();
+	}
+	
+	public String getMyDeviceName(){
+		return adapter.getName();
 	}
 	
 	public int disconnect(){
