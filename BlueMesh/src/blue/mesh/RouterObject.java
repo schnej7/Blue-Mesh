@@ -185,10 +185,12 @@ public class RouterObject {
 		message[0] = Constants.SYSTEM_MSG_TOTAL_DEVICE_QUERY;
 		write(message, Constants.BYTE_LEVEL_SYSTEM);
 		
-		try {
-			wait(100);
-		} catch (InterruptedException e) {
-			Log.e(TAG, "Wait inturrupted");
+		synchronized(this){
+			try {
+				wait(100);
+			} catch (InterruptedException e) {
+				Log.e(TAG, "Wait inturrupted");
+			}
 		}
 		
 		return numberOfDevicesOnNetwork;
