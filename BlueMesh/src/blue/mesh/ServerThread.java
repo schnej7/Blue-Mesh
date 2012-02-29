@@ -24,7 +24,7 @@ public class ServerThread extends Thread{
 		//Attempt to listen on ServerSocket for incoming requests
 		BluetoothServerSocket tmp = null;
 
-		if(Constants.DEBUG) Log.d(TAG, "Creating SearchThread");
+		if(Constants.DEBUG) Log.d(TAG, "Attempting to listen");
 
 		// Create a new listening server socket
 		try {
@@ -60,6 +60,7 @@ public class ServerThread extends Thread{
 
             // If a connection was accepted, pass socket to router
             if (socket != null) {
+            	Log.d(TAG, "Socket connected, calling router.beginConnection()");
 				router.beginConnection(socket);
             }
             
