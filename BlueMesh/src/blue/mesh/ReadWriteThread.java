@@ -92,6 +92,7 @@ public class ReadWriteThread extends Thread{
 		}
 
         router.notifyDisconnected(this.socket.getRemoteDevice().getName());
+        Log.d(TAG, "ReadWriteThread returned");
         return;
 	}
 
