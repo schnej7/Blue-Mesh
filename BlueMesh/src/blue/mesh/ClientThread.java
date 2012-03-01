@@ -63,7 +63,7 @@ public class ClientThread extends Thread{
 					return;
 				}
 
-				//once a socet is opened, try to connect and then pass to router
+				//once a socket is opened, try to connect and then pass to router
 				try {
 					clientSocket.connect();
 					router.beginConnection(clientSocket);

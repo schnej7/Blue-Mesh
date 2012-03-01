@@ -75,7 +75,7 @@ public class ReadWriteThread extends Thread{
                 Log.e(TAG, "disconnected", e);
                 break;
             }
-        }
+        } //End of WHILE loop
         
         //On exit close the in and out sockets
         try {
