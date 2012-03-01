@@ -14,13 +14,15 @@ public class ClientThread extends Thread{
 	private static final String TAG = "ClientThread";
 	private BluetoothAdapter adapter;
 	private RouterObject router;
-	private ArrayList <BluetoothSocket> openSockets;
+	//TODO: Remove this line
+	//private ArrayList <BluetoothSocket> openSockets;
 	private boolean stop = false;
 
 	protected ClientThread(   
 			BluetoothAdapter mAdapter, 
 			RouterObject mRouter )  {
-        openSockets = new ArrayList<BluetoothSocket>();
+		//TODO: Remove this line
+        //openSockets = new ArrayList<BluetoothSocket>();
 		adapter = mAdapter;
 		router = mRouter;
 	}
@@ -70,7 +72,8 @@ public class ClientThread extends Thread{
 					clientSocket.connect();
 					Log.d(TAG, "Socket connected, calling router.beginConnection()");
 					router.beginConnection(clientSocket);
-					openSockets.add(clientSocket);
+					//TODO: Remove this line
+					//openSockets.add(clientSocket);
 				}
 
 				catch (IOException e) {
@@ -88,6 +91,8 @@ public class ClientThread extends Thread{
 		
 		//TODO use this function to close any socket that is in a blocking
 		//call in order to kill this thread
+		//TODO Redo this function
+		/*
 		for (BluetoothSocket socket : openSockets){
 		  if (socket != null){
 			  try{
@@ -98,7 +103,7 @@ public class ClientThread extends Thread{
 				  Log.e(TAG, "Socket close failed", e);
 			  }
 		  }
-		}
+		}*/
 		return Constants.SUCCESS;
 	}
 	
