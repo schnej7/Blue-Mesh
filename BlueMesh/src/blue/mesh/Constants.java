@@ -12,7 +12,7 @@ public final class Constants {
 	
 	public static final int MAX_MESSAGE_LEN = 1024;
 	
-	public static final int MESSAGE_ID_LEN = 1;
+	public static final int MESSAGE_ID_LEN = 4;
 	
 	public static final int MSG_HISTORY_LEN = 100;
 	
