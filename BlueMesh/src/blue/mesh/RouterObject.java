@@ -219,7 +219,22 @@ public class RouterObject {
 		
 		Random rand = new Random();
 		byte messageID[] = new byte[Constants.MESSAGE_ID_LEN];
-		rand.nextBytes(messageID);
+		
+		// Check that the message was not received before
+		synchronized (this.messageIDs) {
+			boolean uniqueID = false;
+			while( !uniqueID ){
+				rand.nextBytes(messageID);
+				uniqueID = true;
+				for( int i = 0; i < messageIDs.size(); i++ ){
+					if (Arrays.equals( messageIDs.get(i), messageID ) ) {
+						Log.d(TAG, "Message already recieved, ID: " + messageID[0]);
+						uniqueID = false;
+						break;
+					} 
+				}
+			}
+		}
 
 		byte new_buffer[] = new byte[Constants.MESSAGE_ID_LEN + buffer.length + 1];
 
