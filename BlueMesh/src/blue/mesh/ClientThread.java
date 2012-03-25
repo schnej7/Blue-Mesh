@@ -1,14 +1,11 @@
 package blue.mesh;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Set;
 
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
 import android.util.Log;
-
-
 
 public class ClientThread extends Thread{
 	private static final String TAG = "ClientThread";
@@ -18,9 +15,10 @@ public class ClientThread extends Thread{
 	//private ArrayList <BluetoothSocket> openSockets;
 	private boolean stop = false;
 
-	protected ClientThread(   
+	protected ClientThread(  
 			BluetoothAdapter mAdapter, 
 			RouterObject mRouter )  {
+
 		//TODO: Remove this line
         //openSockets = new ArrayList<BluetoothSocket>();
 		adapter = mAdapter;
