@@ -55,8 +55,9 @@ public class RouterObject {
 			rwThreads.add(aReadWriteThread);
 		}
 		
-		String tmp = new String("Connected to " + socket.getRemoteDevice().getName());
-		this.messages.add(tmp.getBytes());
+		//TODO: it would be nice if this worked
+		//String toastMsg = "Connected to " + socket.getRemoteDevice().getName();
+		//Toast.makeText(context, toastMsg.toString(), Toast.LENGTH_SHORT).show();
 
 		return Constants.SUCCESS;
 	}
