@@ -6,7 +6,7 @@ import android.util.Log;
 
 
 
-public class BlueMeshService {
+public class BlueMeshService{
 	
 	private BluetoothAdapter adapter;
 	private RouterObject router;
@@ -14,7 +14,6 @@ public class BlueMeshService {
 	private ClientThread clientThread;
 	private static final String TAG = "BlueMesh Service";
 	
-	///Trevor wrote this:
 	//BMS constructor
 	public BlueMeshService() throws NullPointerException{
 		Looper.myLooper();
@@ -54,14 +53,12 @@ public class BlueMeshService {
 		return Constants.SUCCESS;
 	}
 	
-	//Trevor wrote this:
 	//function that writes message to devices
 	public int write( byte [] buffer){
 		router.write(buffer, Constants.BYTE_LEVEL_USER);
 		return Constants.SUCCESS;
 	}
 	
-	//Trevor wrote this:
 	//function to grab most recent message off of message queue
 	//(message stack actually a linked list but is used like a queue)
 	public byte [] pull(){
