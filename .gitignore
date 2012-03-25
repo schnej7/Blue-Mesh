@@ -6,4 +6,11 @@ BlueMesh/bin
 BlueMesh/gen
 BlueMesh/proguard.cfg
 BlueMesh/project.properties
+TestApps/Fastest\ Bounce/.classpath
+TestApps/Fastest\ Bounce/.project
+TestApps/Fastest\ Bounce/.settings
+TestApps/Fastest\ Bounce/bin
+TestApps/Fastest\ Bounce/gen
+TestApps/Fastest\ Bounce/proguard.cfg
+TestApps/Fastest\ Bounce/project.properties
 VolumeTest
