@@ -13,4 +13,11 @@ TestApps/Fastest\ Bounce/bin
 TestApps/Fastest\ Bounce/gen
 TestApps/Fastest\ Bounce/proguard.cfg
 TestApps/Fastest\ Bounce/project.properties
+TestApps/Fastest\ Bounce\ (Standalone)/.classpath
+TestApps/Fastest\ Bounce\ (Standalone)/.project
+TestApps/Fastest\ Bounce\ (Standalone)/.settings
+TestApps/Fastest\ Bounce\ (Standalone)/bin
+TestApps/Fastest\ Bounce\ (Standalone)/gen
+TestApps/Fastest\ Bounce\ (Standalone)/proguard.cfg
+TestApps/Fastest\ Bounce\ (Standalone)/project.properties
 VolumeTest
