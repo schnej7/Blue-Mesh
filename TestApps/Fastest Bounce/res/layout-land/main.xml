@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:weightSum="1">
+    <ListView android:id="@+id/ListMessages" android:layout_width="fill_parent" android:layout_height="208dp" android:layout_weight="0.95"></ListView>
+    <LinearLayout android:layout_width="fill_parent" android:id="@+id/linearLayout2" android:layout_height="wrap_content" android:weightSum="1">
+    </LinearLayout>
+    <LinearLayout android:layout_width="fill_parent" android:id="@+id/linearLayout1" android:layout_height="49dp">
+        <Button android:layout_height="wrap_content" android:id="@+id/btnStart" android:text="Start" android:layout_width="wrap_content"></Button>
+        <Button android:layout_height="wrap_content" android:id="@+id/btnCls" android:text="CLS" android:layout_width="wrap_content"></Button>
+        <EditText android:layout_width="wrap_content" android:layout_height="wrap_content" android:id="@+id/txtInput" android:layout_weight="0.32">
+            <requestFocus></requestFocus>
+        </EditText>
+        <Button android:text="GO" android:layout_height="wrap_content" android:id="@+id/btnGo" android:layout_width="wrap_content"></Button>
+        <Button android:text="CLR" android:layout_height="wrap_content" android:id="@+id/btnClr" android:layout_width="wrap_content"></Button>
+    </LinearLayout>
+</LinearLayout>
