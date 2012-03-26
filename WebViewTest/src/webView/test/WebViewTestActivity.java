@@ -16,13 +16,13 @@ import android.widget.Toast;
 
 public class WebViewTestActivity extends Activity {
 
-	private static final Boolean EMULATOR = true;
+	private static final Boolean EMULATOR = false;
 	private static final String TAG = "WebViewTestActivity";
 	private ViewPager awesomePager;
 	private static int NUM_AWESOME_VIEWS = 0;
 	private Context cxt;
 	private AwesomePagerAdapter awesomeAdapter;
-	private BlueMeshServiceStub bms;
+	private BlueMeshService bms;
 	private Boolean stop = false;
 	private ArrayList <String> slides;
 
@@ -45,7 +45,7 @@ public class WebViewTestActivity extends Activity {
 
 		if( !EMULATOR ){
 			try{
-				//bms = new BlueMeshService(getApplicationContext());
+				bms = new BlueMeshService();
 			}
 			catch(NullPointerException e){
 				Toast.makeText(cxt, "Bluetooth Not Enabeled", Toast.LENGTH_LONG).show();
@@ -54,7 +54,7 @@ public class WebViewTestActivity extends Activity {
 			}
 		}
 		else{
-			bms = new BlueMeshServiceStub(cxt);
+			bms = new BlueMeshService();
 		}
 		
 		slides.add("<html><body>WELCOME</body></html>");
