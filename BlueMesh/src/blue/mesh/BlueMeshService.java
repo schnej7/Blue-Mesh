@@ -1,7 +1,6 @@
 package blue.mesh;
 
 import android.bluetooth.BluetoothAdapter;
-import android.os.Looper;
 import android.util.Log;
 
 
@@ -16,8 +15,8 @@ public class BlueMeshService{
 	
 	//BMS constructor
 	public BlueMeshService() throws NullPointerException{
-		Looper.myLooper();
-		Looper.prepare();
+		//Looper.myLooper();
+		//Looper.prepare();
 		//Gets bluetooth hardware from phone and makes sure that it is non-null;
 		adapter = BluetoothAdapter.getDefaultAdapter();
 
