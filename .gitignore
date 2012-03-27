@@ -20,4 +20,17 @@ TestApps/Fastest\ Bounce\ (Standalone)/bin
 TestApps/Fastest\ Bounce\ (Standalone)/gen
 TestApps/Fastest\ Bounce\ (Standalone)/proguard.cfg
 TestApps/Fastest\ Bounce\ (Standalone)/project.properties
-VolumeTest
+WebViewTest/.classpath
+WebViewTest/.project
+WebViewTest/.settings
+WebViewTest/bin
+WebViewTest/gen
+WebViewTest/proguard.cfg
+WebViewTest/project.properties
+WebViewHost/.classpath
+WebViewHost/.project
+WebViewHost/.settings
+WebViewHost/bin
+WebViewHost/gen
+WebViewHost/proguard.cfg
+WebViewHost/project.properties
