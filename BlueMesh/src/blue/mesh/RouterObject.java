@@ -82,7 +82,7 @@ public class RouterObject {
 				} 
 			}
 			
-			Log.d(TAG, "New Message, ID: " + messageID[0]);
+			Log.d(TAG, "New Message, ID: " + messageID.toString());
 			messageIDs.add(messageID);
 			// Remove oldest message ID if too many are stored
 			if (messageIDs.size() > Constants.MSG_HISTORY_LEN) {
