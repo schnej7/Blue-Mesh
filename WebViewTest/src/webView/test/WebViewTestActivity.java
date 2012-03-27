@@ -6,6 +6,9 @@ import blue.mesh.BlueMeshService;
 import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
+import android.os.Message;
 import android.os.Parcelable;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
@@ -19,8 +22,8 @@ import android.widget.Toast;
 
 public class WebViewTestActivity extends Activity {
 
-	private BlueMeshServiceStub bms;
-	private Boolean TEST = true;
+	private BlueMeshService bms;
+	private Boolean TEST = false;
 	private static final String TAG = "WebViewTestActivity";
 	private ViewPager awesomePager;
 	private static int NUM_AWESOME_VIEWS = 0;
@@ -70,7 +73,7 @@ public class WebViewTestActivity extends Activity {
 		slides = new ArrayList<String>();
 		
 		try{
-			bms = new BlueMeshServiceStub();
+			bms = new BlueMeshService();
 		}
 		catch(NullPointerException e){
 			Toast.makeText(cxt, "Bluetooth Not Enabeled", Toast.LENGTH_LONG).show();
@@ -84,6 +87,13 @@ public class WebViewTestActivity extends Activity {
 		
 		bms.launch();
 	}
+	
+    private final Handler mHandler = new Handler(){
+    	@Override
+    	public void handleMessage( Message msg ){
+    		addSlide((byte[]) msg.obj);
+    	}
+    };
 
 	public void onStart(){
 		super.onStart();		
@@ -99,7 +109,10 @@ public class WebViewTestActivity extends Activity {
 	}
 	
 	private class ReadThread extends Thread {
+		
 		public void run(){
+			Looper.myLooper();
+    		Looper.prepare();
 			while (true){
 				if( this.isInterrupted()){
 					stop = true;
@@ -111,11 +124,17 @@ public class WebViewTestActivity extends Activity {
 				byte bytes[] = null;
 				bytes = bms.pull();
 				if( bytes == null){
-					//We got nothing
+					//Sleep if nothing is received to avoid
+					//pounding bms
+					try {
+						sleep(100);
+					} catch (InterruptedException e) {
+						Log.e(TAG, "sleep() failed", e);
+					}
 				}
 				else{
 					if( TEST && NUM_AWESOME_VIEWS > 10 ){ stop = true; }
-					addSlide(bytes);
+					mHandler.obtainMessage(0, bytes.length, -1, bytes).sendToTarget();
 				}
 			}
 		}
