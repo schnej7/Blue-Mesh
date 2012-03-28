@@ -16,6 +16,8 @@ public class RouterObject {
 	private List<byte[]> messageIDs;
 	private final String TAG = "RouterObject";
 	private List<byte[]> messages;
+	private boolean queryingNumberOfDevices = false;
+	private int numberOfDevicesOnNetwork = 1;
 
 	protected RouterObject() {
 		connectedDevices = new ArrayList<String>();
@@ -53,18 +55,22 @@ public class RouterObject {
 			rwThreads.add(aReadWriteThread);
 		}
 		
-		String tmp = new String("Connected to " + socket.getRemoteDevice().getName());
-		this.messages.add(tmp.getBytes());
+		//TODO: it would be nice if this worked
+		//String toastMsg = "Connected to " + socket.getRemoteDevice().getName();
+		//Toast.makeText(context, toastMsg.toString(), Toast.LENGTH_SHORT).show();
 
 		return Constants.SUCCESS;
 	}
 
 	protected int route(byte buffer[], int source) {
 
+		// get the message level
+		byte messageLevel = buffer[0];
+		
 		// get the messageID
 		byte messageID[] = new byte[Constants.MESSAGE_ID_LEN];
 		for (int i = 0; i < Constants.MESSAGE_ID_LEN; i++) {
-			messageID[i] = buffer[i];
+			messageID[i] = buffer[i + 1];
 		}
 
 		// Check that the message was not received before
@@ -76,7 +82,7 @@ public class RouterObject {
 				} 
 			}
 			
-			Log.d(TAG, "New Message, ID: " + messageID[0]);
+			Log.d(TAG, "New Message, ID: " + messageID.toString());
 			messageIDs.add(messageID);
 			// Remove oldest message ID if too many are stored
 			if (messageIDs.size() > Constants.MSG_HISTORY_LEN) {
@@ -94,21 +100,48 @@ public class RouterObject {
 			}
 		}
 
-		// If I am not the sender of the message
-		// add it to the message queue
-		if (source != Constants.SRC_ME) {
-			// Add message to message queue
-			synchronized (this.messages) {
-				byte message[] = new byte[buffer.length
-						- Constants.MESSAGE_ID_LEN];
-				for (int i = Constants.MESSAGE_ID_LEN; i < buffer.length; i++) {
-					message[i - Constants.MESSAGE_ID_LEN] = buffer[i];
+		//if the message is a system level message
+		if( messageLevel == Constants.BYTE_LEVEL_SYSTEM ){
+			byte message[] = new byte[buffer.length - Constants.MESSAGE_ID_LEN - 1];
+			for (int i = Constants.MESSAGE_ID_LEN + 1; i < buffer.length; i++) {
+				message[i - Constants.MESSAGE_ID_LEN - 1] = buffer[i];
+			}
+			handleSystemMessage( message );
+		}
+		
+		//if the message is a user level message
+		else if ( messageLevel == Constants.BYTE_LEVEL_USER ){
+			// If I am not the sender of the message
+			// add it to the message queue
+			if (source != Constants.SRC_ME) {
+				// Add message to message queue
+				synchronized (this.messages) {
+					byte message[] = new byte[buffer.length - Constants.MESSAGE_ID_LEN - 1];
+					for (int i = Constants.MESSAGE_ID_LEN + 1; i < buffer.length; i++) {
+						message[i - Constants.MESSAGE_ID_LEN - 1] = buffer[i];
+					}
+					messages.add(message);
 				}
-				messages.add(message);
 			}
 		}
 
 		return Constants.SUCCESS;
+	}
+
+	private void handleSystemMessage(byte[] message) {
+		
+		if( message[0] == Constants.SYSTEM_MSG_TOTAL_DEVICE_QUERY ){
+			byte[] newMessage = new byte[1];
+			newMessage[0] = Constants.SYSTEM_MSG_TOTAL_DEVICE_CHECK_IN;
+			this.write(newMessage, Constants.BYTE_LEVEL_SYSTEM);
+		}
+		
+		else if ( message[0] == Constants.SYSTEM_MSG_TOTAL_DEVICE_CHECK_IN ){
+			if( queryingNumberOfDevices ){
+				numberOfDevicesOnNetwork++;
+			}
+		}
+		
 	}
 
 	protected byte[] getNextMessage() {
@@ -146,6 +179,24 @@ public class RouterObject {
 		return Constants.SUCCESS;
 	}
 	
+	protected int getNumberOfDevicesOnNetwork(){
+		
+		numberOfDevicesOnNetwork = 1;
+		byte[] message = new byte[1];
+		message[0] = Constants.SYSTEM_MSG_TOTAL_DEVICE_QUERY;
+		write(message, Constants.BYTE_LEVEL_SYSTEM);
+		
+		synchronized(this){
+			try {
+				wait(100);
+			} catch (InterruptedException e) {
+				Log.e(TAG, "Wait inturrupted");
+			}
+		}
+		
+		return numberOfDevicesOnNetwork;
+	}
+	
 	protected int notifyDisconnected( String deviceName ){
 		
 		//If the device name is in the list of connected devices
@@ -163,20 +214,39 @@ public class RouterObject {
 		return Constants.SUCCESS;
 	}
 
-	protected int write(byte[] buffer) {
+	protected int write(byte[] buffer, byte messageLevel) {
 
+		
+		
 		Random rand = new Random();
 		byte messageID[] = new byte[Constants.MESSAGE_ID_LEN];
-		rand.nextBytes(messageID);
+		
+		// Check that the message was not received before
+		synchronized (this.messageIDs) {
+			boolean uniqueID = false;
+			while( !uniqueID ){
+				rand.nextBytes(messageID);
+				uniqueID = true;
+				for( int i = 0; i < messageIDs.size(); i++ ){
+					if (Arrays.equals( messageIDs.get(i), messageID ) ) {
+						Log.d(TAG, "Message already recieved, ID: " + messageID[0]);
+						uniqueID = false;
+						break;
+					} 
+				}
+			}
+		}
 
-		byte new_buffer[] = new byte[Constants.MESSAGE_ID_LEN + buffer.length];
+		byte new_buffer[] = new byte[Constants.MESSAGE_ID_LEN + buffer.length + 1];
 
+		new_buffer[0] = messageLevel;
+		
 		for (int i = 0; i < Constants.MESSAGE_ID_LEN; i++) {
-			new_buffer[i] = messageID[i];
+			new_buffer[i + 1] = messageID[i];
 		}
 
 		for (int i = 0; i < buffer.length; i++) {
-			new_buffer[Constants.MESSAGE_ID_LEN + i] = buffer[i];
+			new_buffer[Constants.MESSAGE_ID_LEN + i + 1] = buffer[i];
 		}
 
 		this.route(new_buffer, Constants.SRC_ME);

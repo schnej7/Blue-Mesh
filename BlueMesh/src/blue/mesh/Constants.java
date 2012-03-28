@@ -12,7 +12,7 @@ public final class Constants {
 	
 	public static final int MAX_MESSAGE_LEN = 1024;
 	
-	public static final int MESSAGE_ID_LEN = 1;
+	public static final int MESSAGE_ID_LEN = 4;
 	
 	public static final int MSG_HISTORY_LEN = 100;
 	
@@ -24,4 +24,11 @@ public final class Constants {
     public static final String NAME = "bluemesh";
 
     public static final Boolean DEBUG = true;
+    
+    public static final byte BYTE_LEVEL_USER = 1;
+    public static final byte BYTE_LEVEL_SYSTEM = 2;
+    
+    public static final byte SYSTEM_MSG_TOTAL_DEVICE_QUERY = 1;
+    public static final byte SYSTEM_MSG_TOTAL_DEVICE_CHECK_IN = 2;
+    
 }

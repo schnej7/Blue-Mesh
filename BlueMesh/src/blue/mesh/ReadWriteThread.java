@@ -75,7 +75,7 @@ public class ReadWriteThread extends Thread{
                 Log.e(TAG, "disconnected", e);
                 break;
             }
-        }
+        } //End of WHILE loop
         
         //On exit close the in and out sockets
         try {
@@ -92,6 +92,7 @@ public class ReadWriteThread extends Thread{
 		}
 
         router.notifyDisconnected(this.socket.getRemoteDevice().getName());
+        Log.d(TAG, "ReadWriteThread returned");
         return;
 	}
 

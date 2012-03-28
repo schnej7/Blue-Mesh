@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="vertical" >
+
+    <LinearLayout
+        android:id="@+id/linearLayout1"
+        android:layout_width="fill_parent"
+        android:layout_height="410dp" >
+
+        <WebView
+            xmlns:android="http://schemas.android.com/apk/res/android"
+            android:id="@+id/wvDisplay"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/linearLayout1"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent" >
+
+        <Button
+            android:id="@+id/btnBack"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_weight="0.42"
+            android:text="Back" />
+        <Button
+            android:id="@+id/btnSend"
+            android:layout_width="fill_parent"
+            android:layout_height="74dp"
+            android:layout_weight="0.42"
+            android:text="Send" />
+        <Button
+            android:id="@+id/btnNext"
+            android:layout_width="fill_parent"
+            android:layout_height="74dp"
+            android:layout_weight="0.42"
+            android:text="Next" />
+
+    </LinearLayout>
+
+</LinearLayout>
