@@ -11,6 +11,7 @@ public class ClientThread extends Thread{
 	private static final String TAG = "ClientThread";
 	private BluetoothAdapter adapter;
 	private RouterObject router;
+
 	//TODO: Remove this line
 	//private ArrayList <BluetoothSocket> openSockets;
 	private boolean stop = false;
@@ -30,23 +31,13 @@ public class ClientThread extends Thread{
 	//passed to the router object
 	public void run() {
 		
-		while (!stop)
+		while (!this.isInterrupted())
 		{
-			if(this.isInterrupted()){
-				if(Constants.DEBUG) Log.d(TAG, "interrupted");
-				return;
-			}
 			//get list of all paired devices
 			Set <BluetoothDevice> pairedDevices = adapter.getBondedDevices();
 
 			for (BluetoothDevice d : pairedDevices)
 			{
-
-				//Check to stop
-				if(stop){
-					Log.d(TAG, "Thread stopped");
-					return;
-				}
 				
 				BluetoothSocket clientSocket = null;
 				try {
@@ -73,16 +64,16 @@ public class ClientThread extends Thread{
 					//TODO: Remove this line
 					//openSockets.add(clientSocket);
 				}
-
+				
 				catch (IOException e) {
-					if(this.isInterrupted()){
-						if(Constants.DEBUG) Log.d(TAG, "interrupted");
-						return;
-					}
 					Log.e(TAG, "Socket connect() failed", e);
+					//TODO: throw exception
+					return;
 				}
 			}
 		}
+		Log.d(TAG, "Thread interrupted");
+        return;
 	}
 	
 	protected int closeSocket(){
@@ -106,10 +97,10 @@ public class ClientThread extends Thread{
 	}
 	
 	protected int kill(){
-		this.stop = true;
+		this.interrupt();
 		this.closeSocket();
 		//TODO: this thread does not get interrupted correctly
-		this.interrupt();
+		
 
 		Log.d(TAG, "kill success");
 		return Constants.SUCCESS;
