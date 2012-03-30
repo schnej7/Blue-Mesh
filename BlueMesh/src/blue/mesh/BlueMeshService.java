@@ -28,13 +28,17 @@ public class BlueMeshService{
 		}
 		
 		router = new RouterObject();
+		if (Constants.DEBUG) Log.d(TAG, "Router Object Created");
 		try{
 			serverThread = new ServerThread(adapter, router);
+			//TODO: This command above causes an error in non-CLD programs.
 		}
 		catch(NullPointerException e){
 			throw e;
 		}
+		if (Constants.DEBUG) Log.d(TAG, "Sever Thread Created");
 		clientThread = new ClientThread(adapter, router);
+		if (Constants.DEBUG) Log.d(TAG, "Client Thread Created");
 	}
 	
 	//TODO: Implement later if needed

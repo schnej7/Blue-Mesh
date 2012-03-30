@@ -25,7 +25,9 @@ public class ServerThread extends Thread{
 		BluetoothServerSocket tmp = null;
 
 		if(Constants.DEBUG) Log.d(TAG, "Attempting to listen");
-
+		
+		//TODO: An Error Occurs after this comment in non-CLD Programs.
+		
 		// Create a new listening server socket
 		try {
 			tmp = adapter.listenUsingRfcommWithServiceRecord(
