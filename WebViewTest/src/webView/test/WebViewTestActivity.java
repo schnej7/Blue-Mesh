@@ -38,7 +38,7 @@ public class WebViewTestActivity extends Activity {
 		super.onDestroy();
 		readThread.interrupt();
 		bms.disconnect();
-	}
+}
 	
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -88,12 +88,12 @@ public class WebViewTestActivity extends Activity {
 		bms.launch();
 	}
 	
-    private final Handler mHandler = new Handler(){
-    	@Override
-    	public void handleMessage( Message msg ){
-    		addSlide((byte[]) msg.obj);
-    	}
-    };
+	private final Handler mHandler = new Handler(){
+		@Override
+		public void handleMessage( Message msg ){
+			addSlide((byte[]) msg.obj);
+		}
+	};
 
 	public void onStart(){
 		super.onStart();		
@@ -112,7 +112,7 @@ public class WebViewTestActivity extends Activity {
 		
 		public void run(){
 			Looper.myLooper();
-    		Looper.prepare();
+			Looper.prepare();
 			while (true){
 				if( this.isInterrupted()){
 					stop = true;

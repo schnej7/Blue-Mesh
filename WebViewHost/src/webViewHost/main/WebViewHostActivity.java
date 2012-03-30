@@ -133,26 +133,26 @@ public class WebViewHostActivity extends Activity {
             }
         });
         
-        //button listener send
-        final Button buttonSend = (Button) findViewById(R.id.btnSend);
-        buttonSend.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-            	if( bluetoothWorking ){
-            		bms.write(slides.get(currentSlide).getBytes());
-            	}
-            }
-        });
-        
-    	try{
-    		bms = new BlueMeshService();
-    	}
-    	catch(NullPointerException e){
-    		Toast.makeText(cxt, "Bluetooth Not Enabeled", Toast.LENGTH_LONG).show();
-    		Log.e(TAG, "Bluetooth not enabeled");
-    		return;
-    	}
-    	bluetoothWorking = true;
-    	bms.launch();
+		//button listener send
+		final Button buttonSend = (Button) findViewById(R.id.btnSend);
+		buttonSend.setOnClickListener(new View.OnClickListener() {
+		    public void onClick(View v) {
+		    	if( bluetoothWorking ){
+		    		bms.write(slides.get(currentSlide).getBytes());
+		    	}
+		    }
+		});
+		
+		try{
+			bms = new BlueMeshService();
+		}
+		catch(NullPointerException e){
+			Toast.makeText(cxt, "Bluetooth Not Enabeled", Toast.LENGTH_LONG).show();
+			Log.e(TAG, "Bluetooth not enabeled");
+			return;
+		}
+		bluetoothWorking = true;
+		bms.launch();
     }
     
     @Override
