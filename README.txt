@@ -1,1 +1,1 @@
-Sean is learning git
+Sean is practicing git

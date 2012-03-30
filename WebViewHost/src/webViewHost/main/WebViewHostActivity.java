@@ -60,7 +60,7 @@ public class WebViewHostActivity extends Activity {
         slides = new ArrayList<String>();
         
         byte[] numSlidesBuffer = new byte[3];
-        
+        int bytesRead = 0;
         //Use this line to read from files
         InputStream inputStream = null;
 		try {
@@ -69,7 +69,7 @@ public class WebViewHostActivity extends Activity {
 			Log.e(TAG, "open() failed", e);
 		}
         try {
-			inputStream.read(numSlidesBuffer);
+        	bytesRead = inputStream.read(numSlidesBuffer);
 		} catch (IOException e) {
 			Log.e(TAG, "read() failed", e);
 		}
@@ -79,8 +79,12 @@ public class WebViewHostActivity extends Activity {
 			Log.e(TAG, "close() failed", e);
 		}
         
-        //NumSlides = Integer.valueOf(numSlidesBuffer.toString());
-        NumSlides = 3;
+        byte[] numSlidesSmallerBuffer = new byte[bytesRead];
+        for( int i = 0; i < bytesRead; i++){
+        	numSlidesSmallerBuffer[i] = numSlidesBuffer[i];
+        }
+        String strNumSlides = new String(numSlidesSmallerBuffer);
+        NumSlides = Integer.valueOf(strNumSlides);
         
         for( int i = 0; i < NumSlides; i++ ){
         	String fileName = "slide_" + (i+1) + ".html";
@@ -90,7 +94,7 @@ public class WebViewHostActivity extends Activity {
 				Log.e(TAG, "open() failed", e);
 			}
         	byte[] slideBuffer = new byte[1024];
-        	int bytesRead = 0;
+        	bytesRead = 0;
         	try {
 				bytesRead = inputStream.read(slideBuffer);
 			} catch (IOException e) {
