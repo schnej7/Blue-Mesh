@@ -32,6 +32,7 @@ public class WebViewTestActivity extends Activity {
 	private Boolean stop = false;
 	private ArrayList <String> slides;
 	private ReadThread readThread;
+	private boolean bluetoothWorking = false;
 	
 	@Override
 	public void onDestroy(){
@@ -72,6 +73,10 @@ public class WebViewTestActivity extends Activity {
 		awesomePager.setAdapter(awesomeAdapter);
 		slides = new ArrayList<String>();
 		
+		slides.add("<html><body><marquee>WELCOME</marquee></body></html>");
+		NUM_AWESOME_VIEWS++;
+		awesomeAdapter.notifyDataSetChanged();
+		
 		try{
 			bms = new BlueMeshService();
 		}
@@ -80,10 +85,7 @@ public class WebViewTestActivity extends Activity {
 			Log.e(TAG, "BlueMeshService Constructor failed");
 			return;
 		}
-		
-		slides.add("<html><body><marquee>WELCOME</marquee></body></html>");
-		NUM_AWESOME_VIEWS++;
-		awesomeAdapter.notifyDataSetChanged();
+		bluetoothWorking = true;
 		
 		bms.launch();
 	}
@@ -96,7 +98,8 @@ public class WebViewTestActivity extends Activity {
 	};
 
 	public void onStart(){
-		super.onStart();		
+		super.onStart();
+		if (!bluetoothWorking) return;
 		readThread = new ReadThread();
 		readThread.start();
 	}
