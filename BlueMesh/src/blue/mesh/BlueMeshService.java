@@ -89,11 +89,20 @@ public class BlueMeshService {
     // Kills threads and stops all communications
     public int disconnect() {
         Log.d(TAG, "kill start");
-        this.clientThread.kill();
+        
+        //TODO: check if conditionals fixes bug
+        //disconnecting when bluetooth not enabeled
+        if( this.clientThread != null ){
+            this.clientThread.kill();
+        }
 
-        this.serverThread.kill();
-
-        this.router.stop();
+        if( this.serverThread != null ){
+            this.serverThread.kill();
+        }
+        
+        if( this.router != null ){
+            this.router.stop();
+        }
 
         Log.d(TAG, "kill success");
         return Constants.SUCCESS;
