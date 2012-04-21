@@ -36,7 +36,6 @@ public class ClientThread extends Thread {
 
                 BluetoothSocket clientSocket = null;
                 try {
-                    Log.d(TAG, "Device: " + d.getName());
 
                     if (router.getDeviceState(d) == Constants.STATE_CONNECTED)
                         continue;
