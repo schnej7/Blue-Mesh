@@ -19,7 +19,7 @@ public class BlueMeshService {
         // Gets bluetooth hardware from phone and makes sure that it is
         // non-null;
         adapter = BluetoothAdapter.getDefaultAdapter();
-
+        
         // If bluetooth hardware does not exist...
         if (adapter == null) {
             if (Constants.DEBUG)
@@ -29,7 +29,28 @@ public class BlueMeshService {
             if (Constants.DEBUG)
                 Log.d(TAG, "BluetoothAdapter is is non-null");
         }
-
+        
+        //Try to restart bluetooth
+        if(adapter.isEnabled()){
+            Log.d(TAG, "disable");
+            if(adapter.disable()){
+                Log.d(TAG, "waiting...");
+                while( adapter.isEnabled()){}
+            }
+            else{
+                Log.d(TAG, "failed");
+            }
+        }
+        
+        Log.d(TAG, "enable");
+        if(adapter.enable()){
+            Log.d(TAG, "waiting...");
+            while( !adapter.isEnabled()){}
+        }
+        else{
+            Log.d(TAG, "failed");
+        }
+        
         // Create a new router object
         router = new RouterObject();
         if (Constants.DEBUG)
@@ -96,14 +117,17 @@ public class BlueMeshService {
         // disconnecting when bluetooth not enabeled
         if (this.clientThread != null) {
             this.clientThread.kill();
+            this.clientThread = null;
         }
 
         if (this.serverThread != null) {
             this.serverThread.kill();
+            this.serverThread = null;
         }
 
         if (this.router != null) {
             this.router.stop();
+            this.router = null;
         }
 
         Log.d(TAG, "kill success");
