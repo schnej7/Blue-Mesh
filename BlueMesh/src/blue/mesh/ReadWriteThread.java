@@ -71,6 +71,12 @@ public class ReadWriteThread extends Thread {
             }
         }
 
+        disconnect();
+
+        return;
+    }
+    
+    private int disconnect(){
         // On exit close the in and out sockets
         try {
             in.close();
@@ -87,7 +93,7 @@ public class ReadWriteThread extends Thread {
 
         router.notifyDisconnected(this.socket.getRemoteDevice().getName());
         Log.d(TAG, "ReadWriteThread returned");
-        return;
+        return Constants.SUCCESS;
     }
 
     protected int write(byte[] buffer) {
@@ -96,6 +102,7 @@ public class ReadWriteThread extends Thread {
             out.write(buffer);
         } catch (IOException e) {
             Log.e(TAG, "Exception during write", e);
+            disconnect();
         }
         return Constants.SUCCESS;
     }
