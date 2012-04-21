@@ -1,6 +1,8 @@
 package blue.mesh;
 
 import java.io.IOException;
+import java.util.UUID;
+
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothServerSocket;
 import android.bluetooth.BluetoothSocket;
@@ -12,10 +14,13 @@ public class ServerThread extends Thread {
     private BluetoothAdapter      adapter;
     private RouterObject          router;
     private BluetoothServerSocket serverSocket;
+    private UUID                  uuid;
 
-    protected ServerThread(BluetoothAdapter mAdapter, RouterObject mRouterObject)
+    protected ServerThread(BluetoothAdapter mAdapter,
+            RouterObject mRouterObject, UUID a_uuid)
             throws NullPointerException {
 
+        uuid = a_uuid;
         adapter = mAdapter;
         router = mRouterObject;
 
@@ -30,7 +35,7 @@ public class ServerThread extends Thread {
         // Create a new listening server socket
         try {
             tmp = adapter.listenUsingRfcommWithServiceRecord(Constants.NAME,
-                    Constants.MY_UUID);
+                    uuid);
         } catch (IOException e) {
             Log.e(TAG, "listenUsingRfcommWithServiceRecord() failed", e);
             throw new NullPointerException("Bluetooth is not enabeled");

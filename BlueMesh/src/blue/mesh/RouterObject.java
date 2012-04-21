@@ -132,7 +132,7 @@ public class RouterObject {
         return Constants.SUCCESS;
     }
 
-    //TODO: This doesnt work
+    // TODO: This doesnt work
     private void handleSystemMessage(byte[] message) {
 
         if (message[0] == Constants.SYSTEM_MSG_TOTAL_DEVICE_QUERY) {
@@ -184,7 +184,7 @@ public class RouterObject {
         return Constants.SUCCESS;
     }
 
-    //TODO: This doesnt work
+    // TODO: This doesnt work
     protected int getNumberOfDevicesOnNetwork() {
 
         numberOfDevicesOnNetwork = 1;
@@ -203,7 +203,7 @@ public class RouterObject {
         return numberOfDevicesOnNetwork;
     }
 
-    //TODO: This never seems to get called
+    // TODO: This never seems to get called
     protected int notifyDisconnected(String deviceName) {
         // If the device name is in the list of connected devices
         // then search for the ReadWriteThread associated with it
@@ -216,8 +216,7 @@ public class RouterObject {
                     rwThread = null;
                 }
             }
-        }
-        else{
+        } else {
             Log.d(TAG, "Device not removed");
         }
         return Constants.SUCCESS;

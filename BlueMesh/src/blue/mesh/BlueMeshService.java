@@ -1,5 +1,7 @@
 package blue.mesh;
 
+import java.util.UUID;
+
 import android.bluetooth.BluetoothAdapter;
 import android.util.Log;
 
@@ -12,7 +14,7 @@ public class BlueMeshService {
     private static final String TAG = "BlueMesh Service";
 
     // BMS constructor
-    public BlueMeshService() throws NullPointerException {
+    public BlueMeshService(UUID a_uuid) throws NullPointerException {
 
         // Gets bluetooth hardware from phone and makes sure that it is
         // non-null;
@@ -34,14 +36,14 @@ public class BlueMeshService {
             Log.d(TAG, "Router Object Created");
         // Try to create a new ServerThread
         try {
-            serverThread = new ServerThread(adapter, router);
+            serverThread = new ServerThread(adapter, router, a_uuid);
         } catch (NullPointerException e) {
             throw e;
         }
         if (Constants.DEBUG)
             Log.d(TAG, "Sever Thread Created");
         // Create a new clientThread
-        clientThread = new ClientThread(adapter, router);
+        clientThread = new ClientThread(adapter, router, a_uuid);
         if (Constants.DEBUG)
             Log.d(TAG, "Client Thread Created");
     }
@@ -89,18 +91,18 @@ public class BlueMeshService {
     // Kills threads and stops all communications
     public int disconnect() {
         Log.d(TAG, "kill start");
-        
-        //TODO: check if conditionals fixes bug
-        //disconnecting when bluetooth not enabeled
-        if( this.clientThread != null ){
+
+        // TODO: check if conditionals fixes bug
+        // disconnecting when bluetooth not enabeled
+        if (this.clientThread != null) {
             this.clientThread.kill();
         }
 
-        if( this.serverThread != null ){
+        if (this.serverThread != null) {
             this.serverThread.kill();
         }
-        
-        if( this.router != null ){
+
+        if (this.router != null) {
             this.router.stop();
         }
 

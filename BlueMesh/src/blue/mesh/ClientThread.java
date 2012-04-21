@@ -2,6 +2,7 @@ package blue.mesh;
 
 import java.io.IOException;
 import java.util.Set;
+import java.util.UUID;
 
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
@@ -12,9 +13,11 @@ public class ClientThread extends Thread {
     private static final String TAG = "ClientThread";
     private BluetoothAdapter    adapter;
     private RouterObject        router;
+    private UUID                uuid;
 
-    protected ClientThread(BluetoothAdapter mAdapter, RouterObject mRouter) {
-
+    protected ClientThread(BluetoothAdapter mAdapter, RouterObject mRouter,
+            UUID a_uuid) {
+        uuid = a_uuid;
         adapter = mAdapter;
         router = mRouter;
     }
@@ -28,9 +31,9 @@ public class ClientThread extends Thread {
             // get list of all paired devices
             Set<BluetoothDevice> pairedDevices = adapter.getBondedDevices();
 
-            //Loop through paired devices and attempt to connect
+            // Loop through paired devices and attempt to connect
             for (BluetoothDevice d : pairedDevices) {
-                
+
                 BluetoothSocket clientSocket = null;
                 try {
                     Log.d(TAG, "Device: " + d.getName());
@@ -38,8 +41,7 @@ public class ClientThread extends Thread {
                     if (router.getDeviceState(d) == Constants.STATE_CONNECTED)
                         continue;
 
-                    clientSocket = d
-                            .createRfcommSocketToServiceRecord(Constants.MY_UUID);
+                    clientSocket = d.createRfcommSocketToServiceRecord(uuid);
                 }
 
                 catch (IOException e) {
