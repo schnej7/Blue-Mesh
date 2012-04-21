@@ -202,6 +202,16 @@ public class RouterObject {
 
         return numberOfDevicesOnNetwork;
     }
+    
+    private boolean removeDeviceName(String deviceName){
+        for( int i = 0; i < connectedDevices.size(); i++ ){
+            if(connectedDevices.get(i).equals(deviceName)){
+                connectedDevices.remove(i);
+                return true;
+            }
+        }
+        return false;
+    }
 
     // TODO: This never seems to get called
     protected int notifyDisconnected(String deviceName) {
@@ -209,10 +219,10 @@ public class RouterObject {
         // then search for the ReadWriteThread associated with it
         // and set it's pointer to null while it finishes execution
         Log.d(TAG, "removing device: " + deviceName + " from devices");
-        if (connectedDevices.remove(deviceName)) {
+        if (removeDeviceName(deviceName)) {
             Log.d(TAG, "Device removed");
             for (ReadWriteThread rwThread : rwThreads) {
-                if (rwThread.getSocket().getRemoteDevice().getName() == deviceName) {
+                if (rwThread.getSocket().getRemoteDevice().getName().equals(deviceName)) {
                     rwThread = null;
                 }
             }
