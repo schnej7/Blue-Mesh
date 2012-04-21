@@ -163,6 +163,10 @@ public class WebViewHostActivity extends Activity {
     @Override
 	protected void onDestroy(){
     	super.onDestroy();
-    	bms.disconnect();
+    	//Check if bms was created
+    	if(bms != null){
+    		Log.d(TAG, "disconnecting()");
+    		bms.disconnect();
+    	}
     }
 }

@@ -39,7 +39,10 @@ public class WebViewTestActivity extends Activity {
 	public void onDestroy(){
 		super.onDestroy();
 		readThread.interrupt();
-		bms.disconnect();
+		if(bms != null){
+			Log.d(TAG, "disconnecting");
+			bms.disconnect();
+		}
 }
 	
     @Override
