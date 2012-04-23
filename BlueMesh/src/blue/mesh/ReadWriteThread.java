@@ -85,7 +85,7 @@ public class ReadWriteThread extends Thread {
             Log.e(TAG, "could not close out", e);
         }
 
-        router.notifyDisconnected(this.socket.getRemoteDevice().getName());
+        router.notifyDisconnected(this.socket.getRemoteDevice());
         Log.d(TAG, "ReadWriteThread returned");
         return;
     }

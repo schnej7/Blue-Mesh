@@ -11,7 +11,7 @@ import android.util.Log;
 
 public class RouterObject {
 
-    private List<String>          connectedDevices;
+    private List<BluetoothDevice> connectedDevices;
     private List<ReadWriteThread> rwThreads;
     private List<byte[]>          messageIDs;
     private final String          TAG                      = "RouterObject";
@@ -20,7 +20,7 @@ public class RouterObject {
     private int                   numberOfDevicesOnNetwork = 1;
 
     protected RouterObject() {
-        connectedDevices = new ArrayList<String>();
+        connectedDevices = new ArrayList<BluetoothDevice>();
         rwThreads = new ArrayList<ReadWriteThread>();
         messageIDs = new ArrayList<byte[]>();
         messages = new ArrayList<byte[]>();
@@ -34,7 +34,7 @@ public class RouterObject {
         synchronized (this.connectedDevices) {
             Log.d(TAG, "test if devices contains the device name");
             // Check if the device is already connected to
-            if (connectedDevices.contains(socket.getRemoteDevice().getName())) {
+            if (connectedDevices.contains(socket.getRemoteDevice())) {
                 try {
                     Log.d(TAG, "trying to close socket, already"
                             + "connected to device");
@@ -45,7 +45,7 @@ public class RouterObject {
                 return Constants.SUCCESS;
             }
             // Add device name to list of connected devices
-            connectedDevices.add(socket.getRemoteDevice().getName());
+            connectedDevices.add(socket.getRemoteDevice());
         }
 
         // Don't let another thread touch rwThreads while I add to it
@@ -163,7 +163,7 @@ public class RouterObject {
 
     protected int getDeviceState(BluetoothDevice device) {
         synchronized (this.connectedDevices) {
-            if (connectedDevices.contains(device.getName())) {
+            if (connectedDevices.contains(device)) {
                 return Constants.STATE_CONNECTED;
             }
         }
@@ -203,16 +203,18 @@ public class RouterObject {
         return numberOfDevicesOnNetwork;
     }
 
-    //TODO: This never seems to get called
-    protected int notifyDisconnected(String deviceName) {
+    //NOTE: This is called once through the ReadWriteThread object.
+    protected int notifyDisconnected(BluetoothDevice device) {
         // If the device name is in the list of connected devices
         // then search for the ReadWriteThread associated with it
         // and set it's pointer to null while it finishes execution
-        Log.d(TAG, "removing device: " + deviceName + " from devices");
-        if (connectedDevices.remove(deviceName)) {
+        Log.d(TAG, "removing device: " + device.getName() + " from devices");
+        if (connectedDevices.remove(device)) {
             Log.d(TAG, "Device removed");
             for (ReadWriteThread rwThread : rwThreads) {
-                if (rwThread.getSocket().getRemoteDevice().getName() == deviceName) {
+                if (rwThread.getSocket().getRemoteDevice() == device) {
+                    //== is appropriate in the above statement, assuming .getRemoteDevice() returns
+                    //a pointer to the actual device, not a copy.
                     rwThread = null;
                 }
             }
