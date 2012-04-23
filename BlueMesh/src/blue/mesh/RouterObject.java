@@ -132,7 +132,7 @@ public class RouterObject {
         return Constants.SUCCESS;
     }
 
-    //TODO: This doesnt work
+    // TODO: This doesnt work
     private void handleSystemMessage(byte[] message) {
 
         if (message[0] == Constants.SYSTEM_MSG_TOTAL_DEVICE_QUERY) {
@@ -184,7 +184,7 @@ public class RouterObject {
         return Constants.SUCCESS;
     }
 
-    //TODO: This doesnt work
+    // TODO: This doesnt work
     protected int getNumberOfDevicesOnNetwork() {
 
         numberOfDevicesOnNetwork = 1;
@@ -202,7 +202,18 @@ public class RouterObject {
 
         return numberOfDevicesOnNetwork;
     }
+    
+    private boolean removeDeviceName(String deviceName){
+        for( int i = 0; i < connectedDevices.size(); i++ ){
+            if(connectedDevices.get(i).equals(deviceName)){
+                connectedDevices.remove(i);
+                return true;
+            }
+        }
+        return false;
+    }
 
+<<<<<<< HEAD
     //NOTE: This is called once through the ReadWriteThread object.
     protected int notifyDisconnected(BluetoothDevice device) {
         // If the device name is in the list of connected devices
@@ -215,11 +226,22 @@ public class RouterObject {
                 if (rwThread.getSocket().getRemoteDevice() == device) {
                     //== is appropriate in the above statement, assuming .getRemoteDevice() returns
                     //a pointer to the actual device, not a copy.
+=======
+    // TODO: This never seems to get called
+    protected int notifyDisconnected(String deviceName) {
+        // If the device name is in the list of connected devices
+        // then search for the ReadWriteThread associated with it
+        // and set it's pointer to null while it finishes execution
+        Log.d(TAG, "removing device: " + deviceName + " from devices");
+        if (removeDeviceName(deviceName)) {
+            Log.d(TAG, "Device removed");
+            for (ReadWriteThread rwThread : rwThreads) {
+                if (rwThread.getSocket().getRemoteDevice().getName().equals(deviceName)) {
+>>>>>>> 0c4b9444d1ca35d7082d43723e1d235aad9258be
                     rwThread = null;
                 }
             }
-        }
-        else{
+        } else {
             Log.d(TAG, "Device not removed");
         }
         return Constants.SUCCESS;

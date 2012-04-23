@@ -3,6 +3,7 @@ package webViewHost.main;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.UUID;
 
 import blue.mesh.BlueMeshService;
 
@@ -148,7 +149,7 @@ public class WebViewHostActivity extends Activity {
 		});
 		
 		try{
-			bms = new BlueMeshService();
+			bms = new BlueMeshService(UUID.fromString("fa87c0d0-afac-11de-8a39-0800200c9a66"));
 		}
 		catch(NullPointerException e){
 			Toast.makeText(cxt, "Bluetooth Not Enabeled", Toast.LENGTH_LONG).show();
@@ -162,6 +163,10 @@ public class WebViewHostActivity extends Activity {
     @Override
 	protected void onDestroy(){
     	super.onDestroy();
-    	bms.disconnect();
+    	//Check if bms was created
+    	if(bms != null){
+    		Log.d(TAG, "disconnecting()");
+    		bms.disconnect();
+    	}
     }
 }
