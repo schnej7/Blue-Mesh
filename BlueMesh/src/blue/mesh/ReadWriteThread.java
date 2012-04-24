@@ -77,7 +77,8 @@ public class ReadWriteThread extends Thread {
     }
     
     private int disconnect(){
-        // On exit close the in and out sockets
+        // On exit close the in and out sockets (but NOT the Bluetooth socket?)
+    	// Is there ever a reason to do that? Say, suspend, etc.?
         try {
             in.close();
             Log.d(TAG, "in closed");

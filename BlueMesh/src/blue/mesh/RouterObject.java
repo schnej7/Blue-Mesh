@@ -78,7 +78,7 @@ public class RouterObject {
         byte messageLevel = buffer[0];
 
         // get the messageID
-        byte messageID[] = new byte[Constants.MESSAGE_ID_LEN];
+        byte messageID[] = new byte[Constants.MESSAGE_ID_LEN]; //TODO: Memory Leak? Should it be nullified?
         for (int i = 0; i < Constants.MESSAGE_ID_LEN; i++) {
             messageID[i] = buffer[i + 1];
         }
@@ -118,6 +118,7 @@ public class RouterObject {
                 message[i - Constants.MESSAGE_ID_LEN - 1] = buffer[i];
             }
             handleSystemMessage(message);
+            //TODO: Drill into handleSystemMessage. Should message be nullified?
         }
 
         // if the message is a user level message
@@ -136,11 +137,12 @@ public class RouterObject {
                 }
             }
         }
+        
 
         return Constants.SUCCESS;
     }
 
-    // TODO: This doesnt work
+    // TODO: What is this trying to do?
     private void handleSystemMessage(byte[] message) {
 
         if (message[0] == Constants.SYSTEM_MSG_TOTAL_DEVICE_QUERY) {
@@ -187,12 +189,13 @@ public class RouterObject {
             } catch (IOException e) {
                 Log.e(TAG, "could not close socket", e);
             }
+        	
         }
 
         return Constants.SUCCESS;
     }
 
-    // TODO: This doesnt work
+    // TODO: Can we just get the number of active read/write threads at this time?
     protected int getNumberOfDevicesOnNetwork() {
 
         numberOfDevicesOnNetwork = 1;
