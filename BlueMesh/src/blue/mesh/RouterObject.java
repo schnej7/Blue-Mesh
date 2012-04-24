@@ -3,8 +3,10 @@ package blue.mesh;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
+
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
 import android.util.Log;
@@ -12,16 +14,17 @@ import android.util.Log;
 public class RouterObject {
 
     private List<BluetoothDevice> connectedDevices;
-    private List<ReadWriteThread> rwThreads;
+    private HashSet<ReadWriteThread> rwThreads;
     private List<byte[]>          messageIDs;
     private final String          TAG                      = "RouterObject";
     private List<byte[]>          messages;
     private boolean               queryingNumberOfDevices  = false;
     private int                   numberOfDevicesOnNetwork = 1;
+    private ReadWriteThread 	  aReadWriteThread; //Temporary pointer used for addition of r/w threads to rwThreads
 
     protected RouterObject() {
         connectedDevices = new ArrayList<BluetoothDevice>();
-        rwThreads = new ArrayList<ReadWriteThread>();
+        rwThreads = new HashSet<ReadWriteThread>();
         messageIDs = new ArrayList<byte[]>();
         messages = new ArrayList<byte[]>();
     }
@@ -49,11 +52,16 @@ public class RouterObject {
         }
 
         // Don't let another thread touch rwThreads while I add to it
-        ReadWriteThread aReadWriteThread = new ReadWriteThread(this, socket);
+        try {
+        	aReadWriteThread = new ReadWriteThread(this, socket);
+        } catch (IOException e){
+        	Log.e(TAG, "Router has no R/W thread (failed initialize)", e);
+        }
         aReadWriteThread.start();
         synchronized (this.rwThreads) {
-            rwThreads.add(aReadWriteThread);
+            rwThreads.add(aReadWriteThread); //Does not allow multiples (set)
         }
+        aReadWriteThread = null;
 
         // TODO: it would be nice if this worked
         // String toastMsg = "Connected to " +
@@ -204,6 +212,7 @@ public class RouterObject {
     }
 
     //NOTE: This is called once through the ReadWriteThread object.
+    //This is used when a R/W thread discovers its device can no longer be written to.
     protected int notifyDisconnected(BluetoothDevice device) {
         // If the device name is in the list of connected devices
         // then search for the ReadWriteThread associated with it

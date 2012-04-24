@@ -14,7 +14,7 @@ public class ReadWriteThread extends Thread {
     private final BluetoothSocket socket;
     private static final String   TAG = "ReadWriteThread";
 
-    protected ReadWriteThread(RouterObject mRouter, BluetoothSocket mSocket) {
+    protected ReadWriteThread(RouterObject mRouter, BluetoothSocket mSocket) throws IOException {
 
         Log.d(TAG, "RWTHREAD CONNECTED!");
 
@@ -30,7 +30,7 @@ public class ReadWriteThread extends Thread {
             tmpOut = socket.getOutputStream();
         } catch (IOException e) {
             Log.e(TAG, "temp sockets not created", e);
-            // TODO: throw exception
+            throw e;
         }
 
         in = tmpIn;
