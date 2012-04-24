@@ -18,8 +18,6 @@ public class RouterObject {
     private List<byte[]>          messageIDs;
     private final String          TAG                      = "RouterObject";
     private List<byte[]>          messages;
-    private boolean               queryingNumberOfDevices  = false;
-    private int                   numberOfDevicesOnNetwork = 1;
     private ReadWriteThread 	  aReadWriteThread; //Temporary pointer used for addition of r/w threads to rwThreads
 
     protected RouterObject() {
@@ -74,8 +72,10 @@ public class RouterObject {
 
     protected int route(byte buffer[], int source) {
 
-        // get the message level
-        byte messageLevel = buffer[0];
+        // Get the message level
+    	// TODO: Change parsing of message below so this byte isn't allocated.
+    	// TODO: Change message creation function so this byte isn't allocated.
+        // byte messageLevel = buffer[0];
 
         // get the messageID
         byte messageID[] = new byte[Constants.MESSAGE_ID_LEN]; //TODO: Memory Leak? Should it be nullified?
@@ -110,54 +110,25 @@ public class RouterObject {
             }
         }
 
-        // if the message is a system level message
-        if (messageLevel == Constants.BYTE_LEVEL_SYSTEM) {
-            byte message[] = new byte[buffer.length - Constants.MESSAGE_ID_LEN
-                    - 1];
-            for (int i = Constants.MESSAGE_ID_LEN + 1; i < buffer.length; i++) {
-                message[i - Constants.MESSAGE_ID_LEN - 1] = buffer[i];
-            }
-            handleSystemMessage(message);
-            //TODO: Drill into handleSystemMessage. Should message be nullified?
-        }
+        // In this implementation, all messages are user-level.
 
-        // if the message is a user level message
-        else if (messageLevel == Constants.BYTE_LEVEL_USER) {
-            // If I am not the sender of the message
-            // add it to the message queue
-            if (source != Constants.SRC_ME) {
-                // Add message to message queue
-                synchronized (this.messages) {
-                    byte message[] = new byte[buffer.length
-                            - Constants.MESSAGE_ID_LEN - 1];
-                    for (int i = Constants.MESSAGE_ID_LEN + 1; i < buffer.length; i++) {
-                        message[i - Constants.MESSAGE_ID_LEN - 1] = buffer[i];
-                    }
-                    messages.add(message);
+        // If I am not the sender of the message
+        // add it to the message queue
+        if (source != Constants.SRC_ME) {
+            // Add message to message queue
+            synchronized (this.messages) {
+                byte message[] = new byte[buffer.length
+                        - Constants.MESSAGE_ID_LEN - 1];
+                for (int i = Constants.MESSAGE_ID_LEN + 1; i < buffer.length; i++) {
+                    message[i - Constants.MESSAGE_ID_LEN - 1] = buffer[i];
                 }
+                messages.add(message);
             }
         }
-        
-
         return Constants.SUCCESS;
     }
 
-    // TODO: What is this trying to do?
-    private void handleSystemMessage(byte[] message) {
-
-        if (message[0] == Constants.SYSTEM_MSG_TOTAL_DEVICE_QUERY) {
-            byte[] newMessage = new byte[1];
-            newMessage[0] = Constants.SYSTEM_MSG_TOTAL_DEVICE_CHECK_IN;
-            this.write(newMessage, Constants.BYTE_LEVEL_SYSTEM);
-        }
-
-        else if (message[0] == Constants.SYSTEM_MSG_TOTAL_DEVICE_CHECK_IN) {
-            if (queryingNumberOfDevices) {
-                numberOfDevicesOnNetwork++;
-            }
-        }
-
-    }
+    // Completed: Clean out this code and references to System Messages, as well as their related constants, elsewhere.
 
     protected byte[] getNextMessage() {
 
@@ -195,23 +166,10 @@ public class RouterObject {
         return Constants.SUCCESS;
     }
 
-    // TODO: Can we just get the number of active read/write threads at this time?
+    // Can we just get the number of active read/write threads at this time?
+    // TODO: Ensure that the size of the rwThreads hashset is the number of connected devices.
     protected int getNumberOfDevicesOnNetwork() {
-
-        numberOfDevicesOnNetwork = 1;
-        byte[] message = new byte[1];
-        message[0] = Constants.SYSTEM_MSG_TOTAL_DEVICE_QUERY;
-        write(message, Constants.BYTE_LEVEL_SYSTEM);
-
-        synchronized (this) {
-            try {
-                wait(100);
-            } catch (InterruptedException e) {
-                Log.e(TAG, "Wait inturrupted");
-            }
-        }
-
-        return numberOfDevicesOnNetwork;
+    	return rwThreads.size();
     }
 
     //NOTE: This is called once through the ReadWriteThread object.

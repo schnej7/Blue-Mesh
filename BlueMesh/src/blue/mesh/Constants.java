@@ -30,6 +30,7 @@ public final class Constants {
     public static final Boolean DEBUG                            = true;
 
     // Used to determine at what lever a message originated
+    // No longer used in this implementation, but kept for compatibility.
     public static final byte    BYTE_LEVEL_USER                  = 1;
     public static final byte    BYTE_LEVEL_SYSTEM                = 2;
 

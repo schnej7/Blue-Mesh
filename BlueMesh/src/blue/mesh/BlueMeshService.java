@@ -99,7 +99,6 @@ public class BlueMeshService {
         return router.getNextMessage();
     }
 
-    // TODO: This does not work
     public int getNumberOfDevicesOnNetwork() {
         return router.getNumberOfDevicesOnNetwork();
     }
