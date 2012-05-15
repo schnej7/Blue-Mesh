@@ -77,8 +77,8 @@ public class ReadWriteThread extends Thread {
     }
     
     private int disconnect(){
-        // On exit close the in and out sockets (but NOT the Bluetooth socket?)
-    	// Is there ever a reason to do that? Say, suspend, etc.?
+        // On exit close the in and out sockets and the Bluetooth socket
+        router.notifyDisconnected(this.socket.getRemoteDevice());
         try {
             in.close();
             Log.d(TAG, "in closed");
@@ -91,8 +91,11 @@ public class ReadWriteThread extends Thread {
         } catch (IOException e) {
             Log.e(TAG, "could not close out", e);
         }
-
-        router.notifyDisconnected(this.socket.getRemoteDevice());
+        try {
+        	socket.close();
+        } catch (IOException e){
+        	Log.e(TAG, "could not close socket", e);
+        }
         Log.d(TAG, "ReadWriteThread returned");
         return Constants.SUCCESS;
     }

@@ -100,7 +100,8 @@ public class BlueMeshService {
     }
 
     public int getNumberOfDevicesOnNetwork() {
-        return router.getNumberOfDevicesOnNetwork();
+    	//Not Implemented
+        return 0;//router.getNumberOfDevicesOnNetwork();
     }
 
     // Returns the Bluetooth name of the device

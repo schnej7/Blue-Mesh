@@ -166,11 +166,11 @@ public class RouterObject {
         return Constants.SUCCESS;
     }
 
-    // Can we just get the number of active read/write threads at this time?
-    // TODO: Ensure that the size of the rwThreads hashset is the number of connected devices.
+    //Deprecated: Uses System Message Level, not yet implemented
+    /*
     protected int getNumberOfDevicesOnNetwork() {
-    	return rwThreads.size();
-    }
+    	return 0;//rwThreads.size(); Devices on NETWORK, not directly connected to this device
+    }*/
 
     //NOTE: This is called once through the ReadWriteThread object.
     //This is used when a R/W thread discovers its device can no longer be written to.
