@@ -1,6 +1,7 @@
 package webView.test;
 
 import java.util.ArrayList;
+import java.util.UUID;
 
 import blue.mesh.BlueMeshService;
 import android.app.Activity;
@@ -32,13 +33,17 @@ public class WebViewTestActivity extends Activity {
 	private Boolean stop = false;
 	private ArrayList <String> slides;
 	private ReadThread readThread;
+	private boolean bluetoothWorking = false;
 	
 	@Override
 	public void onDestroy(){
 		super.onDestroy();
 		readThread.interrupt();
-		bms.disconnect();
-	}
+		if(bms != null){
+			Log.d(TAG, "disconnecting");
+			bms.disconnect();
+		}
+}
 	
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -72,31 +77,33 @@ public class WebViewTestActivity extends Activity {
 		awesomePager.setAdapter(awesomeAdapter);
 		slides = new ArrayList<String>();
 		
+		slides.add("<html><body><marquee>WELCOME</marquee></body></html>");
+		NUM_AWESOME_VIEWS++;
+		awesomeAdapter.notifyDataSetChanged();
+		
 		try{
-			bms = new BlueMeshService();
+			bms = new BlueMeshService(UUID.fromString("fa87c0d0-afac-11de-8a39-0800200c9a66"));
 		}
 		catch(NullPointerException e){
 			Toast.makeText(cxt, "Bluetooth Not Enabeled", Toast.LENGTH_LONG).show();
 			Log.e(TAG, "BlueMeshService Constructor failed");
 			return;
 		}
-		
-		slides.add("<html><body><marquee>WELCOME</marquee></body></html>");
-		NUM_AWESOME_VIEWS++;
-		awesomeAdapter.notifyDataSetChanged();
+		bluetoothWorking = true;
 		
 		bms.launch();
 	}
 	
-    private final Handler mHandler = new Handler(){
-    	@Override
-    	public void handleMessage( Message msg ){
-    		addSlide((byte[]) msg.obj);
-    	}
-    };
+	private final Handler mHandler = new Handler(){
+		@Override
+		public void handleMessage( Message msg ){
+			addSlide((byte[]) msg.obj);
+		}
+	};
 
 	public void onStart(){
-		super.onStart();		
+		super.onStart();
+		if (!bluetoothWorking) return;
 		readThread = new ReadThread();
 		readThread.start();
 	}
@@ -112,7 +119,7 @@ public class WebViewTestActivity extends Activity {
 		
 		public void run(){
 			Looper.myLooper();
-    		Looper.prepare();
+			Looper.prepare();
 			while (true){
 				if( this.isInterrupted()){
 					stop = true;
