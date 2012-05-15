@@ -3,6 +3,7 @@ package webViewHost.main;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.UUID;
 
 import blue.mesh.BlueMeshService;
 
@@ -60,7 +61,7 @@ public class WebViewHostActivity extends Activity {
         slides = new ArrayList<String>();
         
         byte[] numSlidesBuffer = new byte[3];
-        
+        int bytesRead = 0;
         //Use this line to read from files
         InputStream inputStream = null;
 		try {
@@ -69,7 +70,7 @@ public class WebViewHostActivity extends Activity {
 			Log.e(TAG, "open() failed", e);
 		}
         try {
-			inputStream.read(numSlidesBuffer);
+        	bytesRead = inputStream.read(numSlidesBuffer);
 		} catch (IOException e) {
 			Log.e(TAG, "read() failed", e);
 		}
@@ -79,8 +80,12 @@ public class WebViewHostActivity extends Activity {
 			Log.e(TAG, "close() failed", e);
 		}
         
-        //NumSlides = Integer.valueOf(numSlidesBuffer.toString());
-        NumSlides = 3;
+        byte[] numSlidesSmallerBuffer = new byte[bytesRead];
+        for( int i = 0; i < bytesRead; i++){
+        	numSlidesSmallerBuffer[i] = numSlidesBuffer[i];
+        }
+        String strNumSlides = new String(numSlidesSmallerBuffer);
+        NumSlides = Integer.valueOf(strNumSlides);
         
         for( int i = 0; i < NumSlides; i++ ){
         	String fileName = "slide_" + (i+1) + ".html";
@@ -90,7 +95,7 @@ public class WebViewHostActivity extends Activity {
 				Log.e(TAG, "open() failed", e);
 			}
         	byte[] slideBuffer = new byte[1024];
-        	int bytesRead = 0;
+        	bytesRead = 0;
         	try {
 				bytesRead = inputStream.read(slideBuffer);
 			} catch (IOException e) {
@@ -133,31 +138,35 @@ public class WebViewHostActivity extends Activity {
             }
         });
         
-        //button listener send
-        final Button buttonSend = (Button) findViewById(R.id.btnSend);
-        buttonSend.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-            	if( bluetoothWorking ){
-            		bms.write(slides.get(currentSlide).getBytes());
-            	}
-            }
-        });
-        
-    	try{
-    		bms = new BlueMeshService();
-    	}
-    	catch(NullPointerException e){
-    		Toast.makeText(cxt, "Bluetooth Not Enabeled", Toast.LENGTH_LONG).show();
-    		Log.e(TAG, "Bluetooth not enabeled");
-    		return;
-    	}
-    	bluetoothWorking = true;
-    	bms.launch();
+		//button listener send
+		final Button buttonSend = (Button) findViewById(R.id.btnSend);
+		buttonSend.setOnClickListener(new View.OnClickListener() {
+		    public void onClick(View v) {
+		    	if( bluetoothWorking ){
+		    		bms.write(slides.get(currentSlide).getBytes());
+		    	}
+		    }
+		});
+		
+		try{
+			bms = new BlueMeshService(UUID.fromString("fa87c0d0-afac-11de-8a39-0800200c9a66"));
+		}
+		catch(NullPointerException e){
+			Toast.makeText(cxt, "Bluetooth Not Enabeled", Toast.LENGTH_LONG).show();
+			Log.e(TAG, "Bluetooth not enabeled");
+			return;
+		}
+		bluetoothWorking = true;
+		bms.launch();
     }
     
     @Override
 	protected void onDestroy(){
     	super.onDestroy();
-    	bms.disconnect();
+    	//Check if bms was created
+    	if(bms != null){
+    		Log.d(TAG, "disconnecting()");
+    		bms.disconnect();
+    	}
     }
 }
