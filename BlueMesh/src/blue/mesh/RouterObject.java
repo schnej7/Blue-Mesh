@@ -13,6 +13,8 @@ import android.util.Log;
 
 public class RouterObject {
 
+    //Singleton Object
+    private static final RouterObject INSTANCE = new RouterObject();
     private List<BluetoothDevice> connectedDevices;
     private HashSet<ReadWriteThread> rwThreads;
     private List<byte[]>          messageIDs;
@@ -20,7 +22,10 @@ public class RouterObject {
     private List<byte[]>          messages;
     private ReadWriteThread 	  aReadWriteThread; //Temporary pointer used for addition of r/w threads to rwThreads
 
-    protected RouterObject() {
+    //This constructor is used to surpress auto generation of constructors
+    private RouterObject() {}
+
+    protected static RouterObject getRouterObject() {
         connectedDevices = new ArrayList<BluetoothDevice>();
         rwThreads = new HashSet<ReadWriteThread>();
         messageIDs = new ArrayList<byte[]>();

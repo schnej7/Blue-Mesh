@@ -52,7 +52,7 @@ public class BlueMeshService {
         }
         
         // Create a new router object
-        router = new RouterObject();
+        router = RouterObject.getRouterObject();
         if (Constants.DEBUG)
             Log.d(TAG, "Router Object Created");
         // Try to create a new ServerThread
