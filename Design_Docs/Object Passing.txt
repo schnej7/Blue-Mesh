@@ -1,0 +1,3 @@
+ClientThread:
+Takes a set of paired devices from a "BluetoothAdapter"
+Passes a "BluetoothSocket" to the RouterObject
