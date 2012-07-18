@@ -74,7 +74,7 @@ public class ServerThread extends Thread {
         return;
     }
 
-    protected int closeSocket() {
+    private int closeSocket() { //Should not be called by any other object; use .kill() to end a thread.
         try {
             this.serverSocket.close();
         } catch (IOException e) {

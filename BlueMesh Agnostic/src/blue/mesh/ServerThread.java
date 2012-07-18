@@ -28,22 +28,8 @@ public class ServerThread extends Thread {
             if (this.isInterrupted()) {
                 break;
             }
-
-            //ServerInterface must be written first.
+            BluetoothObject[] list = server.ReturnObjects();
             
-            //OLD CODE
-            // Try to accept a client socket and connect to it
-            try {
-                socket = serverSocket.accept();
-            } catch (IOException e) {
-                Log.e(TAG, "accept() failed", e);
-            }
-
-            // If a connection was accepted, pass socket to router
-            if (socket != null) {
-                Log.d(TAG, "Socket connected, calling router.beginConnection()");
-                router.beginConnection(socket);
-            }
         }
         return;
     }

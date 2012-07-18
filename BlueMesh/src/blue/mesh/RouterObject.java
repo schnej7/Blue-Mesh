@@ -15,9 +15,9 @@ public class RouterObject {
 
     private List<BluetoothDevice> connectedDevices;
     private HashSet<ReadWriteThread> rwThreads;
-    private List<byte[]>          messageIDs;
+    private List<byte[]>          messageIDs;		//List of recently acquired messageIDs (Max size of Constants.MSG_HISTORY_LEN)
     private final String          TAG                      = "RouterObject";
-    private List<byte[]>          messages;
+    private List<byte[]>          messages;			//List of accepted messages to be read to the BlueMeshService.
     private ReadWriteThread 	  aReadWriteThread; //Temporary pointer used for addition of r/w threads to rwThreads
 
     protected RouterObject() {
@@ -155,11 +155,13 @@ public class RouterObject {
 
         for (ReadWriteThread aThread : rwThreads) {
             aThread.interrupt();
-            try {
+            
+            //Sockets are closed in ReadWriteThread's Interrupt
+            /*try {
                 aThread.getSocket().close();
             } catch (IOException e) {
                 Log.e(TAG, "could not close socket", e);
-            }
+            }*/
         	
         }
 
@@ -199,18 +201,18 @@ public class RouterObject {
         Random rand = new Random();
         byte messageID[] = new byte[Constants.MESSAGE_ID_LEN];
 
-        // Check that the message was not received before
+        // Generates a messageID that was not received before
         synchronized (this.messageIDs) {
             boolean uniqueID = false;
             while (!uniqueID) {
-                rand.nextBytes(messageID);
+                rand.nextBytes(messageID); //Fills messageID with random bytes
                 uniqueID = true;
-                for (int i = 0; i < messageIDs.size(); i++) {
-                    if (Arrays.equals(messageIDs.get(i), messageID)) {
-                        Log.d(TAG, "Message already recieved, ID: "
+                for (byte[] i : messageIDs){
+                    if (Arrays.equals(i, messageID)) {
+                        Log.d(TAG, "Message already recieved, ID starts with: " //Message exists in messageIDs
                                 + messageID[0]);
                         uniqueID = false;
-                        break;
+                        break; //Regenerates a random ID and tries again.
                     }
                 }
             }
