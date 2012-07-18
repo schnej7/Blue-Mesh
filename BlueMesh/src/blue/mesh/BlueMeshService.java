@@ -3,6 +3,7 @@ package blue.mesh;
 import java.util.UUID;
 
 import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothDevice;
 import android.util.Log;
 
 public class BlueMeshService {
@@ -52,7 +53,7 @@ public class BlueMeshService {
         }
         
         // Create a new router object
-        router = new RouterObject();
+        router = new RouterObject(adapter.getAddress());
         if (Constants.DEBUG)
             Log.d(TAG, "Router Object Created");
         // Try to create a new ServerThread
@@ -86,10 +87,15 @@ public class BlueMeshService {
         return Constants.SUCCESS;
     }
 
-    // function that writes message to devices
+    // function that writes message to all devices
     public int write(byte[] buffer) {
-        router.write(buffer, Constants.BYTE_LEVEL_USER);
+        router.write(buffer, Constants.MESSAGE_ALL, null);
         return Constants.SUCCESS;
+    }
+    
+    public int write(byte[] buffer, BluetoothDevice target) {
+    	router.write(buffer, Constants.MESSAGE_TARGET, target); //TODO: Insert Handling in router for alternate messages.
+    	return Constants.SUCCESS;
     }
 
     // function to grab most recent message off of message queue
