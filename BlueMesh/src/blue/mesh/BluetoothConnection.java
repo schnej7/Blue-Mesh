@@ -23,9 +23,9 @@ public class BluetoothConnection extends Connection{
     private BluetoothConnection(){
     }
     
-    public BluetoothConnection( InputStream a_input, OutputStream a_output, BluetoothSocket a_socket ){
-        input = a_input;
-        output = a_output;
+    public BluetoothConnection( BluetoothSocket a_socket ) throws IOException{
+        input = a_socket.getInputStream();
+        output = a_socket.getOutputStream();
         socket = a_socket;
     }
     
@@ -74,7 +74,7 @@ public class BluetoothConnection extends Connection{
     }
     
     public String getID(){
-        return type + '@' + socket.toString();
+        return type + '@' + socket.getRemoteDevice().toString();
     }
     
 }

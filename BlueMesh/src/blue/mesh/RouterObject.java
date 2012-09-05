@@ -1,6 +1,5 @@
 package blue.mesh;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -8,21 +7,19 @@ import java.util.List;
 import java.util.Random;
 
 import android.bluetooth.BluetoothDevice;
-import android.bluetooth.BluetoothSocket;
 import android.util.Log;
 
 public class RouterObject {
 
-    private List<BluetoothDevice> connectedDevices;
+    private List<String> connectedDevices;
     private HashSet<ReadWriteThread> rwThreads;
     private List<byte[]>          messageIDs;		//List of recently acquired messageIDs (Max size of Constants.MSG_HISTORY_LEN)
     private final String          TAG                      = "RouterObject";
     private List<byte[]>          messages;			//List of accepted messages to be read to the BlueMeshService.
-    private ReadWriteThread 	  aReadWriteThread; //Temporary pointer used for addition of r/w threads to rwThreads
     private byte[]				  address;			//This device's address, as it appears on incoming messages (Generated & Truncated)
 
     protected RouterObject(String m_address) {
-        connectedDevices = new ArrayList<BluetoothDevice>();
+        connectedDevices = new ArrayList<String>();
         rwThreads = new HashSet<ReadWriteThread>();
         messageIDs = new ArrayList<byte[]>();
         messages = new ArrayList<byte[]>();
@@ -33,7 +30,7 @@ public class RouterObject {
         }
     }
 
-    protected synchronized int beginConnection(BluetoothSocket socket) {
+    protected synchronized int beginConnection(Connection connection) {
 
         Log.d(TAG, "beginConnection");
         // Don't let another thread touch connectedDevices while
@@ -41,31 +38,21 @@ public class RouterObject {
         synchronized (this.connectedDevices) {
             Log.d(TAG, "test if devices contains the device name");
             // Check if the device is already connected to
-            if (connectedDevices.contains(socket.getRemoteDevice())) {
-                try {
-                    Log.d(TAG, "trying to close socket, already"
-                            + "connected to device");
-                    socket.close();
-                } catch (IOException e) {
-                    Log.e(TAG, "could not close() socket", e);
-                }
+            if (connectedDevices.contains(connection.getID())) {
+                Log.d(TAG, "trying to close socket, already connected to device");
+                connection.close();
                 return Constants.SUCCESS;
             }
             // Add device name to list of connected devices
-            connectedDevices.add(socket.getRemoteDevice());
+            connectedDevices.add(connection.getID());
         }
 
-        // Don't let another thread touch rwThreads while I add to it
-        try {
-        	aReadWriteThread = new ReadWriteThread(this, socket);
-        } catch (IOException e){
-        	Log.e(TAG, "Router has no R/W thread (failed initialize)", e);
-        }
+        ReadWriteThread aReadWriteThread = new ReadWriteThread(this, connection);
         aReadWriteThread.start();
+        
         synchronized (this.rwThreads) {
             rwThreads.add(aReadWriteThread); //Does not allow multiples (set)
         }
-        aReadWriteThread = null;
 
         // TODO: it would be nice if this worked
         // String toastMsg = "Connected to " +
@@ -132,11 +119,10 @@ public class RouterObject {
         	}
         }
         
-        // Send the message all the threads
+        // Send the message to all the threads
         synchronized (this.rwThreads) {
             for (ReadWriteThread aThread : rwThreads) {
-                Log.d(TAG, "Writing to device: "
-                        + aThread.getSocket().getRemoteDevice().getName());
+                Log.d(TAG, "Writing to device on thread: " + aThread.getName());
                 aThread.write(buffer);
             }
         }
@@ -182,23 +168,17 @@ public class RouterObject {
         return Constants.SUCCESS;
     }
 
-    //Deprecated: Uses System Message Level, not yet implemented
-    /*
-    protected int getNumberOfDevicesOnNetwork() {
-    	return 0;//rwThreads.size(); Devices on NETWORK, not directly connected to this device
-    }*/
-
     //NOTE: This is called once through the ReadWriteThread object.
     //This is used when a R/W thread discovers its device can no longer be written to.
-    protected int notifyDisconnected(BluetoothDevice device) {
-        // If the device name is in the list of connected devices
+    protected int notifyDisconnected(String deviceID, ReadWriteThread deadThread) {
+        // If the device ID is in the list of connected devices
         // then search for the ReadWriteThread associated with it
         // and set it's pointer to null while it finishes execution
-        Log.d(TAG, "removing device: " + device.getName() + " from devices");
-        if (connectedDevices.remove(device)) {
+        Log.d(TAG, "removing device: " + deviceID + " from devices");
+        if (connectedDevices.remove(deviceID)) {
             Log.d(TAG, "Device removed");
             for (ReadWriteThread rwThread : rwThreads) {
-                if (rwThread.getSocket().getRemoteDevice() == device) {
+                if (rwThread == deadThread) {
                     //== is appropriate in the above statement, assuming .getRemoteDevice() returns
                     //a pointer to the actual device, not a copy.
                     rwThread = null;
