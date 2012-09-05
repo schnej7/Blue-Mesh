@@ -8,33 +8,15 @@ import android.util.Log;
 
 public class ReadWriteThread extends Thread {
 
-    private final InputStream     in;
-    private final OutputStream    out;
     private final RouterObject    router;
-    private final BluetoothSocket socket;
+    private final Connection      connection;
     private static final String   TAG = "ReadWriteThread";
 
-    protected ReadWriteThread(RouterObject mRouter, BluetoothSocket mSocket) throws IOException {
-
+    protected ReadWriteThread(RouterObject a_router, Connection a_connection){
         Log.d(TAG, "RWTHREAD CONNECTED!");
 
-        router = mRouter;
-        socket = mSocket;
-
-        InputStream tmpIn = null;
-        OutputStream tmpOut = null;
-
-        // Get the BluetoothSocket input and output streams
-        try {
-            tmpIn = socket.getInputStream();
-            tmpOut = socket.getOutputStream();
-        } catch (IOException e) {
-            Log.e(TAG, "temp sockets not created", e);
-            throw e;
-        }
-
-        in = tmpIn;
-        out = tmpOut;
+        router = a_router;
+        connection = a_connection;
     }
 
     public void run() {

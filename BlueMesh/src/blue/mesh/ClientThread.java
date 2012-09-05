@@ -9,7 +9,7 @@ import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
 import android.util.Log;
 
-public class ClientThread extends Thread {
+public class ClientThread extends BluetoothConnectionThread {
     private static final String TAG = "ClientThread";
     private BluetoothAdapter    adapter;
     private RouterObject        router;
