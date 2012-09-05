@@ -8,7 +8,7 @@ import android.bluetooth.BluetoothSocket;
 import android.util.Log;
 
 
-public class BluetoothConnection extends Connection{
+public class AndroidBluetoothConnection extends Connection{
     
     private static final String TAG = "BluetoothConnection";
     private byte[] incommingBuffer = new byte[Constants.MAX_MESSAGE_LEN];
@@ -20,10 +20,10 @@ public class BluetoothConnection extends Connection{
     
     //Must not use default constructor
     @SuppressWarnings("unused")
-    private BluetoothConnection(){
+    private AndroidBluetoothConnection(){
     }
     
-    public BluetoothConnection( BluetoothSocket a_socket ) throws IOException{
+    public AndroidBluetoothConnection( BluetoothSocket a_socket ) throws IOException{
         input = a_socket.getInputStream();
         output = a_socket.getOutputStream();
         socket = a_socket;

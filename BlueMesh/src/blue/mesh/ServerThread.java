@@ -68,7 +68,7 @@ public class ServerThread extends Thread {
                 Log.d(TAG, "Socket connected, calling router.beginConnection()");
                 Connection connection;
                 try {
-                    connection = new BluetoothConnection( socket );
+                    connection = new AndroidBluetoothConnection( socket );
                     router.beginConnection(connection);
                 } catch (IOException e) {
                     Log.e(TAG, "Could not create connection", e);

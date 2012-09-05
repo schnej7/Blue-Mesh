@@ -53,7 +53,7 @@ public class ClientThread extends BluetoothConnectionThread {
                 // router
                 try {
                     clientSocket.connect();
-                    Connection bluetoothConnection = new BluetoothConnection( clientSocket );
+                    Connection bluetoothConnection = new AndroidBluetoothConnection( clientSocket );
                     Log.d(TAG,
                             "Connection Created, calling router.beginConnection()");
                     router.beginConnection(bluetoothConnection);
