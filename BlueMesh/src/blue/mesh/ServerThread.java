@@ -8,7 +8,7 @@ import android.bluetooth.BluetoothServerSocket;
 import android.bluetooth.BluetoothSocket;
 import android.util.Log;
 
-public class ServerThread extends Thread {
+public class ServerThread extends BluetoothConnectionThread {
 
     private static final String   TAG = "ServerThread";
     private BluetoothAdapter      adapter;
