@@ -6,6 +6,7 @@ public final class Utils {
     private Utils(){
     }
     
+    //Defines how to recognize os
     protected enum OS { 
         ANDROID ( "linux", "android" ),
         WINDOWS ( "win",   "oracle" ), 
@@ -21,6 +22,7 @@ public final class Utils {
         private final String vendor_url;
     };
 
+    //Are we running on ____ OS?
     protected static boolean isOS( OS os ) {
         String os_string = System.getProperty("os.name").toLowerCase();
         String vendor_url_string = System.getProperty("java.vendor.url").toLowerCase();
