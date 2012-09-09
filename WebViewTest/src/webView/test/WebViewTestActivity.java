@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.UUID;
 
 import blue.mesh.BlueMeshService;
+import blue.mesh.BlueMeshServiceBuilder;
 import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
@@ -82,7 +83,8 @@ public class WebViewTestActivity extends Activity {
 		awesomeAdapter.notifyDataSetChanged();
 		
 		try{
-			bms = new BlueMeshService(UUID.fromString("fa87c0d0-afac-11de-8a39-0800200c9a66"));
+			BlueMeshServiceBuilder bmsb = new BlueMeshServiceBuilder();
+			bms = bmsb.uuid(UUID.fromString("fa87c0d0-afac-11de-8a39-0800200c9a66")).bluetooth(true).build();
 		}
 		catch(NullPointerException e){
 			Toast.makeText(cxt, "Bluetooth Not Enabeled", Toast.LENGTH_LONG).show();
