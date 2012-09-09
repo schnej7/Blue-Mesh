@@ -28,6 +28,8 @@ public final class Constants {
 
     // Unique ID for BlueMesh applications
     public static final String  NAME                             = "bluemesh";
+    public static final String  DEFAULT_UUID_STRING              = "bbbbbbbb-afac-11de-8a39-0800200c9a66";
+    public static final String  DEFAULT_DEVICE_ID                = "bluemesh_device";
 
     // Debug flag
     public static final Boolean DEBUG                            = true;

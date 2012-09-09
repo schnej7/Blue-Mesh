@@ -56,8 +56,8 @@ public class BlueMeshService {
             Log.d(TAG, "Router Object Created");  
     }
     
-    // BMS constructor
-    protected BlueMeshService(){
+    //This is called from the builder once all the configurations are set
+    protected void setup(){
         setupRouter();
 
         if( bluetoothEnabled ){
@@ -65,6 +65,8 @@ public class BlueMeshService {
         }
     }
     
+    protected BlueMeshService(){
+    }
     
     protected void setUUID( UUID a_uuid ){
         uuid = a_uuid;
