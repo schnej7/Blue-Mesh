@@ -37,17 +37,33 @@ public class BlueMeshService {
         
         //TODO: restart bluetooth?
         
-        try {
-            bluetoothConnectionThreads.add( new ServerThread(adapter, router, uuid) );
-        } catch (NullPointerException e) {
-            throw e;
+        //Detect the OS and add the connection threads accordingly
+        if( Utils.isOS( Utils.OS.ANDROID ) ){
+            try {
+                bluetoothConnectionThreads.add( new ServerThread(adapter, router, uuid) );
+            } catch (NullPointerException e) {
+                throw e;
+            }
+            if (Constants.DEBUG)
+                Log.d(TAG, "Sever Thread Created");
+            // Create a new clientThread
+            bluetoothConnectionThreads.add( new ClientThread(adapter, router, uuid) );
+            if (Constants.DEBUG)
+                Log.d(TAG, "Client Thread Created");
         }
-        if (Constants.DEBUG)
-            Log.d(TAG, "Sever Thread Created");
-        // Create a new clientThread
-        bluetoothConnectionThreads.add( new ClientThread(adapter, router, uuid) );
-        if (Constants.DEBUG)
-            Log.d(TAG, "Client Thread Created");
+        else if( Utils.isOS( Utils.OS.WINDOWS ) ){
+            //TODO: implement this
+        }
+        else if( Utils.isOS( Utils.OS.LINUX ) ){
+            //TODO: implement this
+        }
+        else if( Utils.isOS( Utils.OS.OSX ) ){
+            //TODO: implement this
+        }
+        else{
+            //TODO: throw exception?
+        }
+
     }
     
     private void setupRouter(){
