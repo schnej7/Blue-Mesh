@@ -28,13 +28,12 @@ public final class Constants {
 
     // Unique ID for BlueMesh applications
     public static final String  NAME                             = "bluemesh";
+    public static final String  DEFAULT_UUID_STRING              = "bbbbbbbb-afac-11de-8a39-0800200c9a66";
+    public static final String  DEFAULT_DEVICE_ID                = "bluemesh_device";
 
     // Debug flag
     public static final Boolean DEBUG                            = true;
 
-    // Used to determine at what level a message originated (Deprecated)
-    //public static final byte    BYTE_LEVEL_USER                  = 1;
-    //public static final byte    BYTE_LEVEL_SYSTEM                = 2;
     // The slot previously used for that (first byte of message packet) is now used
     // to differentiate between a message to all and a message to one machine.
     public static final byte	MESSAGE_ALL						 = 1;
@@ -44,4 +43,6 @@ public final class Constants {
     public static final byte    SYSTEM_MSG_TOTAL_DEVICE_QUERY    = 1;
     public static final byte    SYSTEM_MSG_TOTAL_DEVICE_CHECK_IN = 2;
 
+    // Used to determine the type of connection
+    public static final String TYPE_BLUETOOTH                    = "1";
 }

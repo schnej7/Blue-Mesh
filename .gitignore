@@ -31,6 +31,7 @@ WebViewHost/.classpath
 WebViewHost/.project
 WebViewHost/.settings
 WebViewHost/bin
+WebViewHost/res/drawable*
 WebViewHost/gen
 WebViewHost/proguard.cfg
 WebViewHost/project.properties

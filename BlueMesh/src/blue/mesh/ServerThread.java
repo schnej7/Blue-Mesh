@@ -8,7 +8,7 @@ import android.bluetooth.BluetoothServerSocket;
 import android.bluetooth.BluetoothSocket;
 import android.util.Log;
 
-public class ServerThread extends Thread {
+public class ServerThread extends BluetoothConnectionThread {
 
     private static final String   TAG = "ServerThread";
     private BluetoothAdapter      adapter;
@@ -66,7 +66,13 @@ public class ServerThread extends Thread {
             // If a connection was accepted, pass socket to router
             if (socket != null) {
                 Log.d(TAG, "Socket connected, calling router.beginConnection()");
-                router.beginConnection(socket);
+                Connection connection;
+                try {
+                    connection = new AndroidBluetoothConnection( socket );
+                    router.beginConnection(connection);
+                } catch (IOException e) {
+                    Log.e(TAG, "Could not create connection", e);
+                }
             }
 
             socket = null;

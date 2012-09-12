@@ -9,7 +9,7 @@ import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
 import android.util.Log;
 
-public class ClientThread extends Thread {
+public class ClientThread extends BluetoothConnectionThread {
     private static final String TAG = "ClientThread";
     private BluetoothAdapter    adapter;
     private RouterObject        router;
@@ -53,15 +53,14 @@ public class ClientThread extends Thread {
                 // router
                 try {
                     clientSocket.connect();
+                    Connection bluetoothConnection = new AndroidBluetoothConnection( clientSocket );
                     Log.d(TAG,
-                            "Socket connected, calling router.beginConnection()");
-                    router.beginConnection(clientSocket);
-                    // TODO: Remove this line
-                    // openSockets.add(clientSocket);
+                            "Connection Created, calling router.beginConnection()");
+                    router.beginConnection(bluetoothConnection);
                 }
 
                 catch (IOException e) {
-                    Log.e(TAG, "Socket connect() failed", e);
+                    Log.e(TAG, "Connection constructor failsed", e);
                     // TODO: throw exception
                     return;
                 }
@@ -71,22 +70,8 @@ public class ClientThread extends Thread {
         return;
     }
 
-    protected int closeSocket() {
-
-        // TODO use this function to close any socket that is in a blocking
-        // call in order to kill this thread
-        // TODO Redo this function
-        /*
-         * for (BluetoothSocket socket : openSockets){ if (socket != null){ try{
-         * socket.close(); openSockets.remove(socket); } catch (IOException e){
-         * Log.e(TAG, "Socket close failed", e); } } }
-         */
-        return Constants.SUCCESS;
-    }
-
     protected int kill() {
         this.interrupt();
-        this.closeSocket();
         // TODO: this thread does not get interrupted correctly
 
         Log.d(TAG, "kill success");
