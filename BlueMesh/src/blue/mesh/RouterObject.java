@@ -62,57 +62,91 @@ public class RouterObject {
 
         return Constants.SUCCESS;
     }
+    
+    private byte getMessageLevel( byte buffer[] ){
+    	return buffer[0];
+    }
+    
+    private byte[] getMessageID( byte buffer[] ){
+    	byte messageID[] = new byte[Constants.MESSAGE_ID_LEN]; 
+    	for (int i = 0; i < Constants.MESSAGE_ID_LEN; i++) {
+            messageID[i] = buffer[i + 1];
+        }
+        return messageID;
+    }
+    
+    //Checks if the messageID is in messageIDs
+    private boolean messageIsNew( byte[] messageID ){
+    	synchronized( this.messageIDs ){
+    		for (int i = 0; i < messageIDs.size(); i++) {
+                if (Arrays.equals(messageIDs.get(i), messageID)) {
+                    Log.d(TAG, "Message already recieved, ID: " + messageID[0]);
+                    return false;
+                }
+            }
+    	}
+    	return true;
+    }
+    
+    //Adds messageID to messageIDs and removes the oldest ID if
+    //messageIDs.size() is larger than MSG_HISTORY_LEN
+    private void recordMessageID( byte[] messageID ){
+    	synchronized( this.messageIDs ){
+	        Log.d(TAG, "New Message, ID: " + messageID.toString());
+	        messageIDs.add(messageID);
+	        // Remove oldest message ID if too many are stored
+	        if (messageIDs.size() > Constants.MSG_HISTORY_LEN) {
+	            Log.d(TAG, "Removing Message from History");
+	            messageIDs.remove(0);
+	        }
+    	}
+    }
+    
+    //Adds the message to the queue to be processed by the app
+    private void addMessageToQueue( byte[] buffer ){
+    	synchronized (this.messages) {
+            byte message[] = new byte[buffer.length
+                    - Constants.MESSAGE_ID_LEN - 1];
+            for (int i = Constants.MESSAGE_ID_LEN + 1; i < buffer.length; i++) {
+                message[i - Constants.MESSAGE_ID_LEN - 1] = buffer[i];
+            }
+            messages.add(message);
+        }
+    }
+    
+    //Gets the target of the message if there is one
+    private byte[] getTarget( byte[] buffer ){
+    	byte target[] = new byte[Constants.TARGET_ID_LEN];
+    	for (int i=0; i<Constants.TARGET_ID_LEN; i++){
+    		target[i] = buffer[i + Constants.MESSAGE_ID_LEN + 1];
+    	}
+    	return target;
+    }
 
+    //Used to send a message to it's destination
     protected int route(byte buffer[], int source) {
 
         // Get the message level
-        byte messageLevel = buffer[0];
-
+        byte messageLevel = getMessageLevel( buffer );
         // get the messageID
-        byte messageID[] = new byte[Constants.MESSAGE_ID_LEN]; //TODO: Memory Leak? Should it be nullified?
-        for (int i = 0; i < Constants.MESSAGE_ID_LEN; i++) {
-            messageID[i] = buffer[i + 1];
-        }
+        byte messageID[] = getMessageID( buffer );
 
         // Check that the message was not received before
-        synchronized (this.messageIDs) {
-            for (int i = 0; i < messageIDs.size(); i++) {
-                if (Arrays.equals(messageIDs.get(i), messageID)) {
-                    Log.d(TAG, "Message already recieved, ID: " + messageID[0]);
-                    return Constants.SUCCESS;
-                }
-            }
-
-            Log.d(TAG, "New Message, ID: " + messageID.toString());
-            messageIDs.add(messageID);
-            // Remove oldest message ID if too many are stored
-            if (messageIDs.size() > Constants.MSG_HISTORY_LEN) {
-                Log.d(TAG, "Removing Message from History");
-                messageIDs.remove(0);
-            }
+        if( messageIsNew( messageID )){
+        	recordMessageID( messageID );
         }
-
-        if (messageLevel == Constants.MESSAGE_ALL){        
-	        // If I am not the sender of the message
-	        // add it to the message queue
-	        if (source != Constants.SRC_ME) {
-	            // Add message to message queue
-	            synchronized (this.messages) {
-	                byte message[] = new byte[buffer.length
-	                        - Constants.MESSAGE_ID_LEN - 1];
-	                for (int i = Constants.MESSAGE_ID_LEN + 1; i < buffer.length; i++) {
-	                    message[i - Constants.MESSAGE_ID_LEN - 1] = buffer[i];
-	                }
-	                messages.add(message);
-	            }
-	        }
+        else{
+        	return Constants.SUCCESS;
         }
         
+        // If I am not the sender of the message
+        // add it to the message queue
+        if (messageLevel == Constants.MESSAGE_ALL && source != Constants.SRC_ME){
+            // Add message to message queue
+        	addMessageToQueue( buffer );
+        }
         else if (messageLevel == Constants.MESSAGE_TARGET){
-        	byte target[] = new byte[Constants.TARGET_ID_LEN];
-        	for (int i=0; i<Constants.TARGET_ID_LEN; i++){
-        		target[i] = buffer[i + Constants.MESSAGE_ID_LEN + 1];
-        	}
+        	byte[] target = getTarget( buffer );
         	if (target == this.address) {
         		//Add to the message queue
         		return Constants.SUCCESS; //DO NOT send to all threads.
@@ -130,6 +164,7 @@ public class RouterObject {
         return Constants.SUCCESS;
     }
 
+    //Used by BlueMeshService to get the next message from the queue
     protected byte[] getNextMessage() {
 
         if (messages.size() > 0) {
@@ -142,6 +177,7 @@ public class RouterObject {
 
     }
 
+    //TODO: This is unused, do we need this?
     protected int getDeviceState(BluetoothDevice device) {
         synchronized (this.connectedDevices) {
             if (connectedDevices.contains(device)) {
@@ -190,6 +226,7 @@ public class RouterObject {
         return Constants.SUCCESS;
     }
 
+    //TODO: This function is a mamoth, break it up into smaller functions
     protected int write(byte[] buffer, byte messageLevel, BluetoothDevice target) {
         Random rand = new Random();
         byte messageID[] = new byte[Constants.MESSAGE_ID_LEN];
