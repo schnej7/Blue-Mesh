@@ -89,7 +89,7 @@ public class BlueMeshService {
     }
     
     protected void enableBluetooth( boolean enabled ){
-        bluetoothEnabled = true;
+        bluetoothEnabled = enabled;
     }
     
     protected void setDeviceId( String Id ){
