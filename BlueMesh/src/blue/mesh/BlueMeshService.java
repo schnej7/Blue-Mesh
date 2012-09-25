@@ -20,25 +20,26 @@ public class BlueMeshService {
     private ArrayList <BluetoothConnectionThread>        bluetoothConnectionThreads;
 
     private void setupBluetooth() throws NullPointerException{
-
-        // Gets bluetooth hardware from phone and makes sure that it is
-        // non-null;
-        BluetoothAdapter adapter = BluetoothAdapter.getDefaultAdapter();
-        
-        // If bluetooth hardware does not exist...
-        if (adapter == null) {
-            Log.d(TAG, "BluetoothAdapter is is null");
-            throw new NullPointerException("BluetoothAdapter is null");
-        } else {
-            Log.d(TAG, "BluetoothAdapter is is non-null");
-        }
-        
-        bluetoothName = adapter.getName();
-        
-        //TODO: restart bluetooth?
         
         //Detect the OS and add the connection threads accordingly
         if( Utils.isOS( Utils.OS.ANDROID ) ){
+        	
+            // Gets bluetooth hardware from phone and makes sure that it is
+            // non-null;
+            BluetoothAdapter adapter = BluetoothAdapter.getDefaultAdapter();
+            
+            // If bluetooth hardware does not exist...
+            if (adapter == null) {
+                Log.d(TAG, "BluetoothAdapter is is null");
+                throw new NullPointerException("BluetoothAdapter is null");
+            } else {
+                Log.d(TAG, "BluetoothAdapter is is non-null");
+            }
+            
+            bluetoothName = adapter.getName();
+            
+            //TODO: restart bluetooth?
+        	
             try {
                 bluetoothConnectionThreads.add( new ServerThread(adapter, router, uuid) );
             } catch (NullPointerException e) {
