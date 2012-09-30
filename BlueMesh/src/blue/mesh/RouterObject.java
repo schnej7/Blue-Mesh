@@ -225,13 +225,11 @@ public class RouterObject {
         }
         return Constants.SUCCESS;
     }
-
-    //TODO: This function is a mamoth, break it up into smaller functions
-    protected int write(byte[] buffer, byte messageLevel, BluetoothDevice target) {
-        Random rand = new Random();
-        byte messageID[] = new byte[Constants.MESSAGE_ID_LEN];
-
-        // Generates a messageID that was not received before
+    
+	// Generates and returns a messageID that was not received before
+    private byte[] uniqueMessageID(Random rand){
+    	byte[] messageID = new byte[Constants.MESSAGE_ID_LEN];
+    	
         synchronized (this.messageIDs) {
             boolean uniqueID = false;
             while (!uniqueID) {
@@ -248,15 +246,19 @@ public class RouterObject {
             }
         }
         
-    	int middle_field_length = 0;
-    	byte middle_field[] = null;
+        return messageID;
+    }
+    
+    //Constructs the middle field (containing message and target IDs, as applicable) of the message buffer
+    //Returns length of field
+    private byte[] middleField(byte messageLevel, byte[] messageID, BluetoothDevice target){
+    	byte[] middle_field = null;
     	
     	if (messageLevel == Constants.MESSAGE_ALL){
-    		middle_field_length = Constants.MESSAGE_ID_LEN;
     		middle_field = messageID;
     	}
+    	
     	else if (messageLevel == Constants.MESSAGE_TARGET){
-    		middle_field_length = (Constants.MESSAGE_ID_LEN + Constants.TARGET_ID_LEN);
     		byte[] targetID = target.toString().getBytes(); //May be longer than Constants.TARGET_ID_LEN
     		//TODO: Write what happens for targeted messages.
     		middle_field = new byte[Constants.MESSAGE_ID_LEN + Constants.TARGET_ID_LEN];
@@ -267,9 +269,22 @@ public class RouterObject {
     			middle_field[i+Constants.MESSAGE_ID_LEN] = targetID[i];
     		}
     	}
+    	
     	else {
     		Log.e(TAG, "Message Level is invalid");
     	}
+    	
+    	return middle_field;
+    }
+
+    protected int write(byte[] buffer, byte messageLevel, BluetoothDevice target) {
+        Random rand = new Random();
+        byte messageID[] = uniqueMessageID(rand);
+    	
+        byte[] middle_field = middleField(messageLevel, messageID, target);
+        int middle_field_length = 0;
+        if(middle_field != null)
+        	middle_field_length = middle_field.length;
 
     	//Construct the message in new_buffer and route it out.
         byte new_buffer[] = new byte[middle_field_length + buffer.length
