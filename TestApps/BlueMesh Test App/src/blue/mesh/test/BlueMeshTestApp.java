@@ -62,7 +62,7 @@ public class BlueMeshTestApp extends Activity{
 		bmsAlt.launch();
 	}
 	
-	//start the thread which connects the two simulated devices, then send the test packets
+	//start the thread which connects the two devices, then send the test packets
 	public void onStart(){
 		testThread = new TestThread();
 		
