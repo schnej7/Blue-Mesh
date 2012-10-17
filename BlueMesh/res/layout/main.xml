@@ -3,10 +3,17 @@
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:orientation="vertical" >
-
-    <TextView
+
+    <Button
+        android:id="@+id/btnTest1"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:text="@string/hello" />
+        android:text="Run Test 1" />
+    
+    <Button
+        android:id="@+id/btnQuit"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="Quit" />
 
 </LinearLayout>
