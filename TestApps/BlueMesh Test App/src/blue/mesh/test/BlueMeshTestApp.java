@@ -67,6 +67,7 @@ public class BlueMeshTestApp extends Activity{
 	
 	//start the thread which connects the two devices, then send the test packets
 	public void onStart(){
+		super.onStart();
 		readThread = new ReadThread();
 		//writeThread = new WriteThread();
 		
