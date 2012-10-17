@@ -265,8 +265,15 @@ public class RouterObject {
     		for(int i=0; i<Constants.MESSAGE_ID_LEN; i++){
     			middle_field[i] = messageID[i];
     		}
-    		for(int i=0; i<Constants.TARGET_ID_LEN; i++){
-    			middle_field[i+Constants.MESSAGE_ID_LEN] = targetID[i];
+    		if( targetID != null ){
+    		    for(int i=0; i<Constants.TARGET_ID_LEN; i++){
+                    middle_field[i+Constants.MESSAGE_ID_LEN] = targetID[i];
+                }    
+    		}
+    		else{
+    		    for(int i=0; i<Constants.TARGET_ID_LEN; i++){
+                    middle_field[i+Constants.MESSAGE_ID_LEN] = 0;
+                }
     		}
     	}
     	
