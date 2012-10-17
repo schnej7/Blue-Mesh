@@ -65,7 +65,6 @@ public class AndroidBluetoothConnection extends Connection{
         } catch (IOException e) {
             Log.e(TAG, "Error reading", e);
         }
-        b = new byte[bytes];
 
         for (int i = 0; i < bytes; i++) {
             b[i] = incommingBuffer[i];
