@@ -11,7 +11,7 @@ public class BlueMeshServiceBuilder {
     public BlueMeshServiceBuilder(){
         bluetoothEnabled = false;
         uuid = UUID.fromString(Constants.DEFAULT_UUID_STRING);
-        deviceId = "";
+        deviceId = Constants.DEFAULT_DEVICE_ID;
     }
     
     //This is the app specific ID, only apps with the same ID
