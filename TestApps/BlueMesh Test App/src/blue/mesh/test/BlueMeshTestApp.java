@@ -1,17 +1,18 @@
 package blue.mesh.test;
 
 import android.app.Activity;
+import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
 import android.util.Log;
+import android.view.View;
+import android.widget.Button;
 import android.widget.Toast;
 
 import blue.mesh.BlueMeshService;
 import blue.mesh.BlueMeshServiceBuilder;
-
-import java.util.UUID;
 
 //An Android test app to check basic functionality of the BlueMesh service
 public class BlueMeshTestApp extends Activity{
@@ -20,32 +21,42 @@ public class BlueMeshTestApp extends Activity{
 	//second BMS which will write back anything it reads
 	private BlueMeshService bmsAlt;
 	private ReadThread readThread;
+	
+	boolean done = false;
+	
+	protected Context context = this;
 	//private WriteThread writeThread;
 	
 	private final String TAG = "BlueMeshTestApp";
 	
 	//constant sets of bytes which can be recognized as successful tests
-	private final byte[] testBytes1 = {1, 2, 3, 4};
-	private final byte[] testBytes2 = {5, 6, 7, 8};
+	private final byte[] testBytes1 = "Test1".getBytes();
 	
-	private boolean test1 = false;
-	private boolean test2 = false;
+	protected synchronized void change_done( boolean value ){
+		done = value;
+	}
 	
 	//Handler to determine when tests have been completed
 	private final Handler mHandler = new Handler(){
 		@Override
 		public void handleMessage(Message msg){
 			byte[] bytes = (byte[]) msg.obj;
-			if(bytes == testBytes1)
-				test1 = true;
-			else if(bytes == testBytes2)
-				test2 = true;
+			if(bytes.toString().equals(testBytes1.toString())){
+				Toast.makeText(context, "Test 1 Passed " + bytes.toString(), Toast.LENGTH_LONG).show();
+			}
+			else{
+				Toast.makeText(context, "Test 1 Failed: " + bytes.toString(), Toast.LENGTH_LONG).show();
+			}
+			change_done(true);
 		}
+			
 	};
 	
 	@Override
 	public void onCreate(Bundle savedInstanceState){
 		super.onCreate(savedInstanceState);
+		
+        setContentView(R.layout.main);
 		
 		//create the test BMS objects and launch
 		try{
@@ -68,28 +79,29 @@ public class BlueMeshTestApp extends Activity{
 	//start the thread which connects the two devices, then send the test packets
 	public void onStart(){
 		super.onStart();
-		readThread = new ReadThread();
-		//writeThread = new WriteThread();
 		
+		readThread = new ReadThread();		
 		readThread.start();
-		//writeThread.start();
 		
-		//bmsAlt.write(testBytes1);
-		bmsMain.write(testBytes1);
-		bmsMain.write(testBytes2);
+		final Button buttonT1 = (Button) findViewById(R.id.btnTest1);
+        buttonT1.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+            	bmsMain.write(testBytes1);
+            	Toast.makeText(context, "Writing test bytes", Toast.LENGTH_LONG).show();
+            }
+        });
+        
+		final Button buttonQuit = (Button) findViewById(R.id.btnQuit);
+        buttonQuit.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+            	readThread.interrupt();
+            	bmsMain.disconnect();
+            	finish();
+            }
+        });
+        
+		Toast.makeText(context, "Trying to connect", Toast.LENGTH_LONG).show();
 		
-		
-		//construct test feedback string
-		String s = "Test 1: ";
-		if(test1) s += "passed\n";
-		else s += "failed\n";
-		
-		s += "Test 2: ";
-		if(test2) s += "paseed";
-		else s += "failed";
-		
-		//display results
-		Toast.makeText(this, s, Toast.LENGTH_LONG).show();
 	}
 	
 	public void onDestroy(){
