@@ -19,7 +19,8 @@ public class BlueMeshTestApp extends Activity{
 	private BlueMeshService bmsMain;
 	//second BMS which will write back anything it reads
 	private BlueMeshService bmsAlt;
-	private TestThread testThread;
+	private ReadThread readThread;
+	//private WriteThread writeThread;
 	
 	private final String TAG = "BlueMeshTestApp";
 	
@@ -50,8 +51,10 @@ public class BlueMeshTestApp extends Activity{
 		try{
 			BlueMeshServiceBuilder bmsb = new BlueMeshServiceBuilder();
 			bmsMain = bmsb.uuid(UUID.fromString("a56d-480f-3965-1bc4-23a5-44d2-768a-1234")).bluetooth(true).build();
+			/*
 			bmsb = new BlueMeshServiceBuilder();
 			bmsAlt = bmsb.uuid(UUID.fromString("a8b8-81c8-7971-8a8d-6a98-317c-da73-8d0f")).bluetooth(true).build();
+			*/
 		}
 		catch(NullPointerException e){
 			Log.e(TAG, "BlueMeshService Constructor failed.");
@@ -59,17 +62,21 @@ public class BlueMeshTestApp extends Activity{
 		}
 		
 		bmsMain.launch();
-		bmsAlt.launch();
+		//bmsAlt.launch();
 	}
 	
 	//start the thread which connects the two devices, then send the test packets
 	public void onStart(){
-		testThread = new TestThread();
+		readThread = new ReadThread();
+		//writeThread = new WriteThread();
 		
-		testThread.start();
+		readThread.start();
+		//writeThread.start();
 		
-		bmsAlt.write(testBytes1);
+		//bmsAlt.write(testBytes1);
+		bmsMain.write(testBytes1);
 		bmsMain.write(testBytes2);
+		
 		
 		//construct test feedback string
 		String s = "Test 1: ";
@@ -86,7 +93,8 @@ public class BlueMeshTestApp extends Activity{
 	
 	public void onDestroy(){
 		super.onDestroy();
-		testThread.interrupt();
+		readThread.interrupt();
+		//writeThread.interrupt();
 		
 		if(bmsMain != null){
 			Log.d(TAG, "disconnecting bmsMain");
@@ -101,17 +109,17 @@ public class BlueMeshTestApp extends Activity{
 	//Thread which handles reading and writing by the test BMS objects
 	//bmsMain checks for packets, then checks those found against the test arrays
 	//bmsAlt returns anything it reads, allowing for additional tests
-	private class TestThread extends Thread{
+	private class ReadThread extends Thread{
 		public void run(){
 			Looper.myLooper();
 			Looper.prepare();
 			
 			while(!this.isInterrupted()){
-				byte[] readMain = null, readAlt = null;
+				byte[] readMain = null;//, readAlt = null;
 				readMain = bmsMain.pull();
-				readAlt = bmsAlt.pull();
+				//readAlt = bmsAlt.pull();
 				
-				if(readMain == null && readAlt == null){
+				if(readMain == null){// && readAlt == null){
 					try{
 						sleep(100);
 					}
@@ -124,8 +132,8 @@ public class BlueMeshTestApp extends Activity{
 				else{
 					if(readMain != null)
 						mHandler.obtainMessage(0, readMain.length, -1, readMain).sendToTarget();
-					if(readAlt != null)
-						bmsAlt.write(readAlt);
+					//if(readAlt != null)
+					//	bmsAlt.write(readAlt);
 				}
 			}
 			
