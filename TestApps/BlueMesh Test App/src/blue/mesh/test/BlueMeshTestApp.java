@@ -50,7 +50,7 @@ public class BlueMeshTestApp extends Activity{
 		//create the test BMS objects and launch
 		try{
 			BlueMeshServiceBuilder bmsb = new BlueMeshServiceBuilder();
-			bmsMain = bmsb.uuid(UUID.fromString("a56d-480f-3965-1bc4-23a5-44d2-768a-1234")).bluetooth(true).build();
+			bmsMain = bmsb.bluetooth(true).build();
 			/*
 			bmsb = new BlueMeshServiceBuilder();
 			bmsAlt = bmsb.uuid(UUID.fromString("a8b8-81c8-7971-8a8d-6a98-317c-da73-8d0f")).bluetooth(true).build();
