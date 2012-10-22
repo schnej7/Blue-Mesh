@@ -121,8 +121,10 @@ public class BlueMeshService {
 
     // function to grab most recent message off of message queue
     // (message stack actually a linked list but is used like a queue)
-    public byte[] pull() {
-
+    public byte[] pull() throws NullPointerException{
+        if( router == null ){
+            throw new NullPointerException("router is null");
+        }
         return router.getNextMessage();
     }
 

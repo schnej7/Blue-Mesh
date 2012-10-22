@@ -165,8 +165,7 @@ public class RouterObject {
     }
 
     //Used by BlueMeshService to get the next message from the queue
-    protected byte[] getNextMessage() {
-
+    protected byte[] getNextMessage(){
         if (messages.size() > 0) {
             byte message[] = messages.get(0).clone();
             messages.remove(0);

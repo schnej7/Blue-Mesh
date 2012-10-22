@@ -1,7 +1,11 @@
 package blue.mesh.test;
 
+import java.util.Timer;
+import java.util.TimerTask;
+
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -9,6 +13,7 @@ import android.os.Message;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.Toast;
 
 import blue.mesh.BlueMeshService;
@@ -16,6 +21,8 @@ import blue.mesh.BlueMeshServiceBuilder;
 
 //An Android test app to check basic functionality of the BlueMesh service
 public class BlueMeshTestApp extends Activity{
+	
+	String T1F = "Test1 Failed";
 	
 	private BlueMeshService bmsMain;
 	//second BMS which will write back anything it reads
@@ -41,11 +48,24 @@ public class BlueMeshTestApp extends Activity{
 		@Override
 		public void handleMessage(Message msg){
 			byte[] bytes = (byte[]) msg.obj;
-			if(bytes.toString().equals(testBytes1.toString())){
-				Toast.makeText(context, "Test 1 Passed " + bytes.toString(), Toast.LENGTH_LONG).show();
+			String msgString = new String(bytes);
+			if(msgString.equals(T1F)){
+				Toast.makeText(context, "Test 1 Failed: timed out", Toast.LENGTH_LONG).show();
+				final Button buttonT1 = (Button) findViewById(R.id.btnTest1);
+				buttonT1.setTextColor(Color.RED);
+				enableAllButtons(true);
+			}
+			else if(msgString.equals(testBytes1.toString())){
+				Toast.makeText(context, "Test 1 Passed " + msgString, Toast.LENGTH_LONG).show();
+				final Button buttonT1 = (Button) findViewById(R.id.btnTest1);
+				buttonT1.setTextColor(Color.BLACK);
+				enableAllButtons(true);
 			}
 			else{
-				Toast.makeText(context, "Test 1 Failed: " + bytes.toString(), Toast.LENGTH_LONG).show();
+				Toast.makeText(context, "Test 1 Failed: " + msgString, Toast.LENGTH_LONG).show();
+				final Button buttonT1 = (Button) findViewById(R.id.btnTest1);
+				buttonT1.setTextColor(Color.RED);
+				enableAllButtons(true);
 			}
 			change_done(true);
 		}
@@ -71,14 +91,35 @@ public class BlueMeshTestApp extends Activity{
 			Log.e(TAG, "BlueMeshService Constructor failed.");
 			return;
 		}
-		
-		bmsMain.launch();
-		//bmsAlt.launch();
+	}
+	
+	public void enableAllButtons( Boolean enabled ){
+		final Button buttonT1 = (Button) findViewById(R.id.btnTest1);
+		buttonT1.setEnabled(enabled);
 	}
 	
 	//start the thread which connects the two devices, then send the test packets
 	public void onStart(){
 		super.onStart();
+		bmsMain.launch();
+		
+		final CheckBox chkBlueMeshStarted = (CheckBox) findViewById(R.id.chkBMSStarted);
+		//If the constructor failed...
+		if( bmsMain == null ){
+			
+			final Button buttonQuit = (Button) findViewById(R.id.btnQuit);
+	        buttonQuit.setOnClickListener(new View.OnClickListener() {
+	            public void onClick(View v) {
+	            	finish();
+	            }
+	        });
+	            
+			chkBlueMeshStarted.setChecked(false);
+			chkBlueMeshStarted.setTextColor(Color.RED);
+			return;
+		}
+		
+		chkBlueMeshStarted.setChecked(true);
 		
 		readThread = new ReadThread();		
 		readThread.start();
@@ -86,16 +127,27 @@ public class BlueMeshTestApp extends Activity{
 		final Button buttonT1 = (Button) findViewById(R.id.btnTest1);
         buttonT1.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-            	bmsMain.write(testBytes1);
             	Toast.makeText(context, "Writing test bytes", Toast.LENGTH_LONG).show();
+            	enableAllButtons( false );
+            	
+            	bmsMain.write(testBytes1);
+            	Timer t = new Timer();
+            	t.schedule(
+            	    new TimerTask()
+            	    {
+            	        public void run()
+            	        {
+            	        	mHandler.obtainMessage(0, T1F.getBytes().length, -1, T1F.getBytes()).sendToTarget();
+            	        }
+            	    },
+            	    2000); // run in two seconds
             }
         });
         
 		final Button buttonQuit = (Button) findViewById(R.id.btnQuit);
         buttonQuit.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-            	readThread.interrupt();
-            	bmsMain.disconnect();
+            	cleanUp();
             	finish();
             }
         });
@@ -104,8 +156,7 @@ public class BlueMeshTestApp extends Activity{
 		
 	}
 	
-	public void onDestroy(){
-		super.onDestroy();
+	public void cleanUp(){
 		readThread.interrupt();
 		//writeThread.interrupt();
 		
@@ -128,11 +179,20 @@ public class BlueMeshTestApp extends Activity{
 			Looper.prepare();
 			
 			while(!this.isInterrupted()){
-				byte[] readMain = null;//, readAlt = null;
-				readMain = bmsMain.pull();
-				//readAlt = bmsAlt.pull();
+				byte[] readMain = null;
 				
-				if(readMain == null){// && readAlt == null){
+				//Pull can throw a null pointer exception
+				//if bms has been stopped
+				try{
+					readMain = bmsMain.pull();
+				}
+				catch( NullPointerException e ){
+					Log.e(TAG, "Could not pull", e);
+					break;
+				}
+				
+				//Try again
+				if(readMain == null){
 					try{
 						sleep(100);
 					}
@@ -140,16 +200,11 @@ public class BlueMeshTestApp extends Activity{
 						Log.e(TAG, "sleep() failed", e);
 					}
 				}
-				
 				//handle bytes read as appropriate
 				else{
-					if(readMain != null)
-						mHandler.obtainMessage(0, readMain.length, -1, readMain).sendToTarget();
-					//if(readAlt != null)
-					//	bmsAlt.write(readAlt);
+					mHandler.obtainMessage(0, readMain.length, -1, readMain).sendToTarget();
 				}
 			}
-			
 			Log.d(TAG, "testThread interrupted");
 		}
 	}
