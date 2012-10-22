@@ -10,7 +10,7 @@ import android.util.Log;
 
 public class AndroidBluetoothConnection extends Connection{
     
-    private static final String TAG = "BluetoothConnection";
+    private static final String TAG = "AndroidBluetoothConnection";
     private byte[] incommingBuffer = new byte[Constants.MAX_MESSAGE_LEN];
     private String type = Constants.TYPE_BLUETOOTH;
     
@@ -58,12 +58,13 @@ public class AndroidBluetoothConnection extends Connection{
     }
 
     @Override
-    public int read(byte[] b) {
+    public int read(byte[] b) throws IOException {
         int bytes = 0;
         try {
             bytes = input.read(incommingBuffer);
         } catch (IOException e) {
             Log.e(TAG, "Error reading", e);
+            throw new IOException();
         }
 
         for (int i = 0; i < bytes; i++) {

@@ -1,5 +1,7 @@
 package blue.mesh;
 
+import java.io.IOException;
+
 import android.util.Log;
 
 public class ReadWriteThread extends Thread {
@@ -25,7 +27,15 @@ public class ReadWriteThread extends Thread {
                 break;
             }
 
-            int bytes = connection.read( buffer );
+            int bytes = 0;
+            try{
+                bytes = connection.read( buffer );
+            }
+            catch( IOException e ){
+                Log.e(TAG, "read failed", e);
+                router.notifyDisconnected(this.connection.getID(), this);
+            }
+            
             if( bytes > 0 ){
                 Log.d(TAG, "Got something");
             }
