@@ -1,5 +1,7 @@
 package blue.mesh;
 
+import java.io.IOException;
+
 import android.util.Log;
 
 public class ReadWriteThread extends Thread {
@@ -16,7 +18,7 @@ public class ReadWriteThread extends Thread {
     }
 
     public void run() {
-        byte[] buffer = null;
+        byte[] buffer = new byte[Constants.MAX_MESSAGE_LEN];
 
         // Keep listening to the InputStream while connected
         while (true) {
@@ -25,9 +27,25 @@ public class ReadWriteThread extends Thread {
                 break;
             }
 
-            int bytes = connection.read( buffer );
+            int bytes = 0;
+            try{
+                bytes = connection.read( buffer );
+            }
+            catch( IOException e ){
+                Log.e(TAG, "read failed", e);
+                router.notifyDisconnected(this.connection.getID(), this);
+            }
+            
             if( bytes > 0 ){
-                router.route(buffer, Constants.SRC_OTHER);
+                Log.d(TAG, "Got something");
+            }
+            if( bytes > 0 && buffer != null ){
+                Log.d(TAG, buffer.toString());
+                byte[] returnBuffer = new byte[bytes];
+                for( int i = 0; i < bytes; i++ ){
+                    returnBuffer[i] = buffer[i];
+                }
+                router.route(returnBuffer, Constants.SRC_OTHER);
             }
         }
 
@@ -46,7 +64,7 @@ public class ReadWriteThread extends Thread {
     }
 
     protected int write(byte[] buffer) {
-        Log.d(TAG, "Writing bytes");
+        Log.d(TAG, "Writing bytes: " + buffer.toString() );
         connection.write( buffer );
         return Constants.SUCCESS;
     }

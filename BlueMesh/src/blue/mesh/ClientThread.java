@@ -60,7 +60,7 @@ public class ClientThread extends BluetoothConnectionThread {
                 }
 
                 catch (IOException e) {
-                    Log.e(TAG, "Connection constructor failsed", e);
+                    Log.e(TAG, "Connection constructor failed", e);
                     // TODO: throw exception
                     return;
                 }

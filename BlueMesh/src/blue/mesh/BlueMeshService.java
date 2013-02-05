@@ -17,7 +17,7 @@ public class BlueMeshService {
     private static final String TAG = "BlueMesh Service";
     
     //Used to store all Bluetoot Connection Threads
-    private ArrayList <BluetoothConnectionThread>        bluetoothConnectionThreads;
+    private ArrayList <BluetoothConnectionThread> bluetoothConnectionThreads = new ArrayList<BluetoothConnectionThread>();
 
     private void setupBluetooth() throws NullPointerException{
         
@@ -43,6 +43,7 @@ public class BlueMeshService {
             try {
                 bluetoothConnectionThreads.add( new ServerThread(adapter, router, uuid) );
             } catch (NullPointerException e) {
+                Log.e(TAG, "Could not add server thread", e);
                 throw e;
             }
             if (Constants.DEBUG)
@@ -120,8 +121,10 @@ public class BlueMeshService {
 
     // function to grab most recent message off of message queue
     // (message stack actually a linked list but is used like a queue)
-    public byte[] pull() {
-
+    public byte[] pull() throws NullPointerException{
+        if( router == null ){
+            throw new NullPointerException("router is null");
+        }
         return router.getNextMessage();
     }
 

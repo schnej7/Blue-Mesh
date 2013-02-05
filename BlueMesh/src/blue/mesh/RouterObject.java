@@ -36,7 +36,7 @@ public class RouterObject {
         // Don't let another thread touch connectedDevices while
         // I read and write it
         synchronized (this.connectedDevices) {
-            Log.d(TAG, "test if devices contains the device name");
+            Log.d(TAG, "test if devices contains the device name: " + connection.getID());
             // Check if the device is already connected to
             if (connectedDevices.contains(connection.getID())) {
                 Log.d(TAG, "trying to close socket, already connected to device");
@@ -165,8 +165,7 @@ public class RouterObject {
     }
 
     //Used by BlueMeshService to get the next message from the queue
-    protected byte[] getNextMessage() {
-
+    protected byte[] getNextMessage(){
         if (messages.size() > 0) {
             byte message[] = messages.get(0).clone();
             messages.remove(0);
@@ -211,7 +210,7 @@ public class RouterObject {
         // then search for the ReadWriteThread associated with it
         // and set it's pointer to null while it finishes execution
         Log.d(TAG, "removing device: " + deviceID + " from devices");
-        if (connectedDevices.remove(deviceID)) {
+        if (connectedDevices.remove(connectedDevices.indexOf(deviceID)) != null) {
             Log.d(TAG, "Device removed");
             for (ReadWriteThread rwThread : rwThreads) {
                 if (rwThread == deadThread) {
@@ -265,8 +264,15 @@ public class RouterObject {
     		for(int i=0; i<Constants.MESSAGE_ID_LEN; i++){
     			middle_field[i] = messageID[i];
     		}
-    		for(int i=0; i<Constants.TARGET_ID_LEN; i++){
-    			middle_field[i+Constants.MESSAGE_ID_LEN] = targetID[i];
+    		if( targetID != null ){
+    		    for(int i=0; i<Constants.TARGET_ID_LEN; i++){
+                    middle_field[i+Constants.MESSAGE_ID_LEN] = targetID[i];
+                }    
+    		}
+    		else{
+    		    for(int i=0; i<Constants.TARGET_ID_LEN; i++){
+                    middle_field[i+Constants.MESSAGE_ID_LEN] = 0;
+                }
     		}
     	}
     	
