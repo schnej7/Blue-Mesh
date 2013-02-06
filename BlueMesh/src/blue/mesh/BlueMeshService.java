@@ -144,7 +144,9 @@ public class BlueMeshService {
 
         // TODO: check if conditionals fixes bug
         // disconnecting when bluetooth not enabeled
+    	Log.d(TAG, "Killing " + bluetoothConnectionThreads.size());
         for( BluetoothConnectionThread bct: bluetoothConnectionThreads ){
+        	Log.d(TAG, "Killing " + bct.getName());
             if (bct != null) {
                 bct.kill();
                 bct = null;

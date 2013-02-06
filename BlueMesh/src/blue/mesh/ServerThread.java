@@ -90,6 +90,7 @@ public class ServerThread extends BluetoothConnectionThread {
     }
 
     protected int kill() {
+    	Log.d(TAG, "trying to kill");
         this.closeSocket();
         this.interrupt();
         Log.d(TAG, "kill success");
