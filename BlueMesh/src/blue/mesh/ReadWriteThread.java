@@ -21,11 +21,7 @@ public class ReadWriteThread extends Thread {
         byte[] buffer = new byte[Constants.MAX_MESSAGE_LEN];
 
         // Keep listening to the InputStream while connected
-        while (true) {
-
-            if (this.isInterrupted()) {
-                break;
-            }
+        while (!this.isInterrupted()) {
 
             int bytes = 0;
             try{
@@ -33,7 +29,7 @@ public class ReadWriteThread extends Thread {
             }
             catch( IOException e ){
                 Log.e(TAG, "read failed", e);
-                router.notifyDisconnected(this.connection.getID(), this);
+                break;
             }
             
             if( bytes > 0 ){

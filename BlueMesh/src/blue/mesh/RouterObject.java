@@ -211,16 +211,14 @@ public class RouterObject {
         // and set it's pointer to null while it finishes execution
         Log.d(TAG, "removing device: " + deviceID + " from devices");
         if (connectedDevices.remove(connectedDevices.indexOf(deviceID)) != null) {
-            Log.d(TAG, "Device removed");
-            for (ReadWriteThread rwThread : rwThreads) {
-                if (rwThread == deadThread) {
-                    //== is appropriate in the above statement, assuming .getRemoteDevice() returns
-                    //a pointer to the actual device, not a copy.
-                    rwThread = null;
-                }
+            if( rwThreads.remove(deadThread) ){
+                Log.d(TAG, "Device removed");
+            }
+            else{
+                Log.d(TAG, "Device not removed from rwThreads");
             }
         } else {
-            Log.d(TAG, "Device not removed");
+            Log.d(TAG, "Device not removed from connectedDevices");
         }
         return Constants.SUCCESS;
     }
