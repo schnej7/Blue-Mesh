@@ -61,6 +61,7 @@ public class ServerThread extends BluetoothConnectionThread {
                 socket = serverSocket.accept();
             } catch (IOException e) {
                 Log.e(TAG, "accept() failed", e);
+                break;
             }
 
             // If a connection was accepted, pass socket to router
