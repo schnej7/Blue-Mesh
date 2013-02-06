@@ -33,6 +33,7 @@ public class ClientThread extends BluetoothConnectionThread {
 
             // Loop through paired devices and attempt to connect
             for (BluetoothDevice d : pairedDevices) {
+                Log.d(TAG, "Trying to connect to " + d.getName());
 
                 BluetoothSocket clientSocket = null;
                 try {
@@ -62,7 +63,6 @@ public class ClientThread extends BluetoothConnectionThread {
                 catch (IOException e) {
                     Log.e(TAG, "Connection constructor failed", e);
                     // TODO: throw exception
-                    return;
                 }
             }
         }
