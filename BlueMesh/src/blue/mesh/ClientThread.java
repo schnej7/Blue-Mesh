@@ -14,6 +14,8 @@ public class ClientThread extends BluetoothConnectionThread {
     private BluetoothAdapter    adapter;
     private RouterObject        router;
     private UUID                uuid;
+    private BluetoothSocket 	clientSocket = null;
+
 
     protected ClientThread(BluetoothAdapter mAdapter, RouterObject mRouter,
             UUID a_uuid) {
@@ -30,12 +32,14 @@ public class ClientThread extends BluetoothConnectionThread {
         while (!this.isInterrupted()) {
             // get list of all paired devices
             Set<BluetoothDevice> pairedDevices = adapter.getBondedDevices();
+            
+            Log.d(TAG, "isInterrupted() == " + this.isInterrupted());
 
             // Loop through paired devices and attempt to connect
             for (BluetoothDevice d : pairedDevices) {
                 Log.d(TAG, "Trying to connect to " + d.getName());
 
-                BluetoothSocket clientSocket = null;
+                clientSocket = null;
                 try {
 
                     if (router.getDeviceState(d) == Constants.STATE_CONNECTED)
@@ -72,6 +76,11 @@ public class ClientThread extends BluetoothConnectionThread {
 
     protected int kill() {
         this.interrupt();
+    	try {
+			this.clientSocket.close();
+		} catch (IOException e) {
+			Log.e(TAG, "Could not close socket", e);
+		}
         // TODO: this thread does not get interrupted correctly
 
         Log.d(TAG, "kill success");
