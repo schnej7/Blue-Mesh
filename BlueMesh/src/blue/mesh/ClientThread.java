@@ -33,8 +33,6 @@ public class ClientThread extends BluetoothConnectionThread {
             // get list of all paired devices
             Set<BluetoothDevice> pairedDevices = adapter.getBondedDevices();
             
-            Log.d(TAG, "isInterrupted() == " + this.isInterrupted());
-
             // Loop through paired devices and attempt to connect
             for (BluetoothDevice d : pairedDevices) {
                 Log.d(TAG, "Trying to connect to " + d.getName());
@@ -66,7 +64,9 @@ public class ClientThread extends BluetoothConnectionThread {
 
                 catch (IOException e) {
                     Log.e(TAG, "Connection constructor failed", e);
+                    Log.d(TAG, "isInterrupted() == " + this.isInterrupted());
                     if( this.isInterrupted() ){
+                        Log.d(TAG, "Thread interrupted");
                     	return;
                     }
                     // TODO: throw exception
