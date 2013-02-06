@@ -15,6 +15,7 @@ public class ClientThread extends BluetoothConnectionThread {
     private RouterObject        router;
     private UUID                uuid;
     private BluetoothSocket 	clientSocket = null;
+    private Boolean				killed = false;
 
 
     protected ClientThread(BluetoothAdapter mAdapter, RouterObject mRouter,
@@ -29,7 +30,7 @@ public class ClientThread extends BluetoothConnectionThread {
     // passed to the router object
     public void run() {
 
-        while (!this.isInterrupted()) {
+        while (!this.killed ) {
             // get list of all paired devices
             Set<BluetoothDevice> pairedDevices = adapter.getBondedDevices();
             
@@ -64,8 +65,8 @@ public class ClientThread extends BluetoothConnectionThread {
 
                 catch (IOException e) {
                     Log.e(TAG, "Connection constructor failed", e);
-                    Log.d(TAG, "isInterrupted() == " + this.isInterrupted());
-                    if( this.isInterrupted() ){
+                    Log.d(TAG, "isInterrupted() == " + this.killed );
+                    if( this.killed ){
                         Log.d(TAG, "Thread interrupted");
                     	return;
                     }
@@ -78,7 +79,7 @@ public class ClientThread extends BluetoothConnectionThread {
     }
 
     protected int kill() {
-        this.interrupt();
+        this.killed = true;
     	try {
 			this.clientSocket.close();
 		} catch (IOException e) {
