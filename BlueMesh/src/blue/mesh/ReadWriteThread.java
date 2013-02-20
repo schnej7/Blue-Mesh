@@ -29,6 +29,7 @@ public class ReadWriteThread extends Thread {
             }
             catch( IOException e ){
                 Log.e(TAG, "read failed", e);
+                disconnect();
                 break;
             }
 
