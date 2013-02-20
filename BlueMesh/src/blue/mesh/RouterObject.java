@@ -59,6 +59,7 @@ public class RouterObject {
         // socket.getRemoteDevice().getName();
         // Toast.makeText(context, toastMsg.toString(),
         // Toast.LENGTH_SHORT).show();
+        Log.d(TAG, "Finished setting up connection");
 
         return Constants.SUCCESS;
     }

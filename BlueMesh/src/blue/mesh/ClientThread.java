@@ -30,7 +30,7 @@ public class ClientThread extends BluetoothConnectionThread {
     // passed to the router object
     public void run() {
 
-        while (!this.killed ) {
+        while ( !this.killed ) {
             // get list of all paired devices
             Set<BluetoothDevice> pairedDevices = adapter.getBondedDevices();
             
@@ -79,12 +79,8 @@ public class ClientThread extends BluetoothConnectionThread {
     }
 
     protected int kill() {
+    	Log.d(TAG, "trying to kill");
         this.killed = true;
-    	try {
-			this.clientSocket.close();
-		} catch (IOException e) {
-			Log.e(TAG, "Could not close socket", e);
-		}
         // TODO: this thread does not get interrupted correctly
 
         Log.d(TAG, "kill success");
