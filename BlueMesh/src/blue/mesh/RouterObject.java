@@ -191,14 +191,7 @@ public class RouterObject {
 
         for (ReadWriteThread aThread : rwThreads) {
             aThread.interrupt();
-            
-            //Sockets are closed in ReadWriteThread's Interrupt
-            /*try {
-                aThread.getSocket().close();
-            } catch (IOException e) {
-                Log.e(TAG, "could not close socket", e);
-            }*/
-        	
+        	aThread.disconnect();
         }
 
         return Constants.SUCCESS;

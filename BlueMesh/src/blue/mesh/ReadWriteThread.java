@@ -31,6 +31,7 @@ public class ReadWriteThread extends Thread {
                 Log.e(TAG, "read failed", e);
                 break;
             }
+
             
             if( bytes > 0 ){
                 Log.d(TAG, "Got something");
@@ -45,12 +46,10 @@ public class ReadWriteThread extends Thread {
             }
         }
 
-        disconnect();
-
         return;
     }
     
-    private int disconnect(){
+    protected int disconnect(){
         // On exit close the in and out sockets and the Bluetooth socket
         router.notifyDisconnected(connection.getID(), this);
         connection.close();
