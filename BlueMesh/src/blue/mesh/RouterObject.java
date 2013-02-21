@@ -38,6 +38,7 @@ public class RouterObject {
         synchronized (this.connectedDevices) {
             Log.d(TAG, "test if devices contains the device name: " + connection.getID());
             // Check if the device is already connected to
+            // TODO: use the mac Addresses instead of the device names
             if (connectedDevices.contains(connection.getID())) {
                 Log.d(TAG, "trying to close socket, already connected to device");
                 connection.close();

@@ -7,6 +7,7 @@ public class BlueMeshServiceBuilder {
     private boolean bluetoothEnabled;
     private UUID uuid;
     private String deviceId;
+    //TODO: Debugging option
 
     public BlueMeshServiceBuilder(){
         bluetoothEnabled = false;

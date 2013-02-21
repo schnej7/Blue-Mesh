@@ -49,7 +49,7 @@ public class ClientThread extends BluetoothConnectionThread {
 
                 catch (IOException e) {
                     Log.e(TAG, "Socket create() failed", e);
-                    // TODO: throw exception
+                    // TODO: throw exception and kill BlueMesh
                     return;
                 }
 
@@ -70,7 +70,6 @@ public class ClientThread extends BluetoothConnectionThread {
                         Log.d(TAG, "Thread interrupted");
                     	return;
                     }
-                    // TODO: throw exception
                 }
             }
         }
@@ -81,8 +80,6 @@ public class ClientThread extends BluetoothConnectionThread {
     protected int kill() {
     	Log.d(TAG, "trying to kill");
         this.killed = true;
-        // TODO: this thread does not get interrupted correctly
-
         Log.d(TAG, "kill success");
         return Constants.SUCCESS;
     }

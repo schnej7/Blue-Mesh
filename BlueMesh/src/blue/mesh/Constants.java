@@ -28,10 +28,12 @@ public final class Constants {
 
     // Unique ID for BlueMesh applications
     public static final String  NAME                             = "bluemesh";
+    //TODO: Update DEAFAULT_UUID_STRING before beta launch
     public static final String  DEFAULT_UUID_STRING              = "bbbbbbbb-afac-11de-8a39-0800200c9a66";
     public static final String  DEFAULT_DEVICE_ID                = "bluemesh_device";
 
     // Debug flag
+    //TODO: Move this to BlueMeshServiceBuilder
     public static final Boolean DEBUG                            = true;
 
     // The slot previously used for that (first byte of message packet) is now used
