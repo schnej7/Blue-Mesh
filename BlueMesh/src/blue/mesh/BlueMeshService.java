@@ -37,8 +37,6 @@ public class BlueMeshService {
             }
             
             bluetoothName = adapter.getName();
-            
-            //TODO: restart bluetooth?
         	
             try {
                 bluetoothConnectionThreads.add( new ServerThread(adapter, router, uuid) );
@@ -49,23 +47,25 @@ public class BlueMeshService {
             if (Constants.DEBUG)
                 Log.d(TAG, "Sever Thread Created");
             // Create a new clientThread
-            bluetoothConnectionThreads.add( new ClientThread(adapter, router, uuid) );
+            bluetoothConnectionThreads.add( new ClientThread(adapter, this, router, uuid) );
             if (Constants.DEBUG)
                 Log.d(TAG, "Client Thread Created");
         }
         else if( Utils.isOS( Utils.OS.WINDOWS ) ){
             //TODO: implement this
+        	throw new NullPointerException("BlueMesh not supported on windows");
         }
         else if( Utils.isOS( Utils.OS.LINUX ) ){
             //TODO: implement this
+        	throw new NullPointerException("BlueMesh not supported on linux");
         }
         else if( Utils.isOS( Utils.OS.OSX ) ){
             //TODO: implement this
+        	throw new NullPointerException("BlueMesh not supported on OSX");
         }
         else{
-            //TODO: throw exception?
+        	throw new NullPointerException("BlueMesh not supported on this device");
         }
-
     }
     
     private void setupRouter(){
@@ -99,8 +99,6 @@ public class BlueMeshService {
     }
 
     public int launch() {
-
-        // TODO: Conditionals are untested
         for( BluetoothConnectionThread bct: bluetoothConnectionThreads)
         if (!bct.isAlive()) {
             bct.start();
@@ -115,7 +113,7 @@ public class BlueMeshService {
     }
     
     public int write(byte[] buffer, BluetoothDevice target) {
-    	router.write(buffer, Constants.MESSAGE_TARGET, target); //TODO: Insert Handling in router for alternate messages.
+    	router.write(buffer, Constants.MESSAGE_TARGET, target);
     	return Constants.SUCCESS;
     }
 
@@ -141,9 +139,6 @@ public class BlueMeshService {
     // Kills threads and stops all communications
     public int disconnect() {
         Log.d(TAG, "kill start");
-
-        // TODO: check if conditionals fixes bug
-        // disconnecting when bluetooth not enabeled
     	Log.d(TAG, "Killing " + bluetoothConnectionThreads.size());
         for( BluetoothConnectionThread bct: bluetoothConnectionThreads ){
         	Log.d(TAG, "Killing " + bct.getName());

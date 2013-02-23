@@ -7,7 +7,7 @@ public class BlueMeshServiceBuilder {
     private boolean bluetoothEnabled;
     private UUID uuid;
     private String deviceId;
-    //TODO: Debugging option
+    BlueMeshService bms = new BlueMeshService();
 
     public BlueMeshServiceBuilder(){
         bluetoothEnabled = false;
@@ -19,6 +19,12 @@ public class BlueMeshServiceBuilder {
     //will be able to communicate
     public BlueMeshServiceBuilder uuid( UUID a_uuid ){
         uuid = a_uuid;
+        return this;
+    }
+
+    //Enable debugging messages in the log
+    public BlueMeshServiceBuilder debug( boolean a_debug ){
+        Constants.DEBUG = a_debug;
         return this;
     }
     
@@ -37,7 +43,8 @@ public class BlueMeshServiceBuilder {
     //Call this to construct a BlueMeshService object once
     //all the configurations have been specified
     public BlueMeshService build(){
-        BlueMeshService bms = new BlueMeshService();
+        bms.disconnect();
+        bms = new BlueMeshService();
         
         bms.setUUID(uuid);
         bms.setDeviceId(deviceId);

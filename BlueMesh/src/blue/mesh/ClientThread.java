@@ -12,23 +12,25 @@ import android.util.Log;
 public class ClientThread extends BluetoothConnectionThread {
     private static final String TAG = "ClientThread";
     private BluetoothAdapter    adapter;
+    private BlueMeshService		bms;
     private RouterObject        router;
     private UUID                uuid;
     private BluetoothSocket 	clientSocket = null;
     private Boolean				killed = false;
 
 
-    protected ClientThread(BluetoothAdapter mAdapter, RouterObject mRouter,
+    protected ClientThread(BluetoothAdapter mAdapter, BlueMeshService mBms, RouterObject mRouter,
             UUID a_uuid) {
         uuid = a_uuid;
         adapter = mAdapter;
         router = mRouter;
+        bms = mBms;
     }
 
     // function run gets list of paired devices, and attempts to
     // open and connect a socket for that device, which is then
     // passed to the router object
-    public void run() {
+    public void run(){
 
         while ( !this.killed ) {
             // get list of all paired devices
@@ -49,8 +51,7 @@ public class ClientThread extends BluetoothConnectionThread {
 
                 catch (IOException e) {
                     Log.e(TAG, "Socket create() failed", e);
-                    // TODO: throw exception and kill BlueMesh
-                    return;
+                    bms.disconnect();
                 }
 
                 // once a socket is opened, try to connect and then pass to

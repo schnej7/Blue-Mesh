@@ -33,8 +33,7 @@ public final class Constants {
     public static final String  DEFAULT_DEVICE_ID                = "bluemesh_device";
 
     // Debug flag
-    //TODO: Move this to BlueMeshServiceBuilder
-    public static final Boolean DEBUG                            = true;
+    public static Boolean DEBUG           		                 = true;
 
     // The slot previously used for that (first byte of message packet) is now used
     // to differentiate between a message to all and a message to one machine.

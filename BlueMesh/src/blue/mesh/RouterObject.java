@@ -38,7 +38,6 @@ public class RouterObject {
         synchronized (this.connectedDevices) {
             Log.d(TAG, "test if devices contains the device name: " + connection.getID());
             // Check if the device is already connected to
-            // TODO: use the mac Addresses instead of the device names
             if (connectedDevices.contains(connection.getID())) {
                 Log.d(TAG, "trying to close socket, already connected to device");
                 connection.close();
@@ -178,7 +177,6 @@ public class RouterObject {
 
     }
 
-    //TODO: This is unused, do we need this?
     protected int getDeviceState(BluetoothDevice device) {
         synchronized (this.connectedDevices) {
             if (connectedDevices.contains(device)) {
@@ -252,7 +250,7 @@ public class RouterObject {
     	
     	else if (messageLevel == Constants.MESSAGE_TARGET){
     		byte[] targetID = target.toString().getBytes(); //May be longer than Constants.TARGET_ID_LEN
-    		//TODO: Write what happens for targeted messages.
+
     		middle_field = new byte[Constants.MESSAGE_ID_LEN + Constants.TARGET_ID_LEN];
     		for(int i=0; i<Constants.MESSAGE_ID_LEN; i++){
     			middle_field[i] = messageID[i];
