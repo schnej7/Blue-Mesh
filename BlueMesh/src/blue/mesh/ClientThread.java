@@ -86,11 +86,14 @@ public class ClientThread extends BluetoothConnectionThread {
                 catch (IOException e) {
                     Log.e(TAG, "Connection constructor failed", e);
                     try {
-						if( e.getMessage().contains( "refused" ) && removeBond( d ) ){
-							while( !createBond( d ) ){ Log.d(TAG, "Trying to rebond");}
+						if( e.getMessage().contains( "refused" ) ){
+							if(  removeBond( d ) ){
+								while( !createBond( d ) ){ Log.d(TAG, "Trying to rebond");}
+							}
 						}
 						else{
 							Log.d(TAG, "Could not remove bond");
+							Log.d(TAG, e.getMessage());
 						}
 					} catch (Exception e1) {
 						Log.d(TAG, "Could not removeBond() or createBond()");
