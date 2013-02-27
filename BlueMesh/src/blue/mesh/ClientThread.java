@@ -1,7 +1,6 @@
 package blue.mesh;
 
 import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Set;
 import java.util.UUID;
@@ -66,23 +65,7 @@ public class ClientThread extends BluetoothConnectionThread {
                     if (router.getDeviceState( Constants.TYPE_BLUETOOTH + '@' + d.toString()) == Constants.STATE_CONNECTED)
                         continue;
 
-                    Method m;
-                    try {
-						m = d.getClass().getMethod("createRfcommSocket", new Class[]{int.class});
-	                    clientSocket = (BluetoothSocket)m.invoke(d, Integer.valueOf(1));
-	                    clientSocket = d.createRfcommSocketToServiceRecord(uuid);
-					} catch (SecurityException e) {
-						Log.d(TAG, "Problem", e);
-					} catch (NoSuchMethodException e) {
-						Log.d(TAG, "Problem", e);
-					} catch (IllegalArgumentException e) {
-						Log.d(TAG, "Problem", e);
-					} catch (IllegalAccessException e) {
-						Log.d(TAG, "Problem", e);
-					} catch (InvocationTargetException e) {
-						Log.d(TAG, "Problem", e);
-					}
-
+                    clientSocket = d.createRfcommSocketToServiceRecord(uuid);
                 }
 
                 catch (IOException e) {
