@@ -1,6 +1,7 @@
 package blue.mesh;
 
 import java.io.IOException;
+import java.lang.reflect.Method;
 import java.util.Set;
 import java.util.UUID;
 
@@ -26,6 +27,24 @@ public class ClientThread extends BluetoothConnectionThread {
         router = mRouter;
         bms = mBms;
     }
+    
+    private boolean removeBond(BluetoothDevice btDevice)  
+    throws Exception  
+    {  
+        Class<?> btClass = Class.forName("android.bluetooth.BluetoothDevice");
+        Method removeBondMethod = btClass.getMethod("removeBond");  
+        Boolean returnValue = (Boolean) removeBondMethod.invoke(btDevice);  
+        return returnValue.booleanValue();  
+    }
+
+    private boolean createBond(BluetoothDevice btDevice)  
+    throws Exception  
+    { 
+        Class<?> class1 = Class.forName("android.bluetooth.BluetoothDevice");
+        Method createBondMethod = class1.getMethod("createBond");  
+        Boolean returnValue = (Boolean) createBondMethod.invoke(btDevice);  
+        return returnValue.booleanValue();  
+    }  
 
     // function run gets list of paired devices, and attempts to
     // open and connect a socket for that device, which is then
@@ -46,13 +65,22 @@ public class ClientThread extends BluetoothConnectionThread {
                     if (router.getDeviceState( Constants.TYPE_BLUETOOTH + '@' + d.toString()) == Constants.STATE_CONNECTED)
                         continue;
 
+                    if( removeBond( d ) ){
+                    	createBond( d );
+                    }
+                    else{
+                    	Log.d(TAG, "Could not remove bond");
+                    }
                     clientSocket = d.createRfcommSocketToServiceRecord(uuid);
                 }
 
                 catch (IOException e) {
                     Log.e(TAG, "Socket create() failed", e);
                     bms.disconnect();
-                }
+                } catch (Exception e) {
+                	Log.e(TAG, "createBond() or removeBond() failed", e);
+                    bms.disconnect();
+				}
 
                 // once a socket is opened, try to connect and then pass to
                 // router
