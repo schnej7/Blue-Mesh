@@ -16,7 +16,7 @@ public class ClientThread extends BluetoothConnectionThread {
     private RouterObject        router;
     private UUID                uuid;
     private BluetoothSocket 	clientSocket = null;
-    private Boolean				killed = false;
+    volatile private Boolean	killed = false;
 
 
     protected ClientThread(BluetoothAdapter mAdapter, BlueMeshService mBms, RouterObject mRouter,
