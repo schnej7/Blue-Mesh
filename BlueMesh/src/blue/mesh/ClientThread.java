@@ -65,12 +65,6 @@ public class ClientThread extends BluetoothConnectionThread {
                     if (router.getDeviceState( Constants.TYPE_BLUETOOTH + '@' + d.toString()) == Constants.STATE_CONNECTED)
                         continue;
 
-                    if( removeBond( d ) ){
-                    	while( !createBond( d ) ){ Log.d(TAG, "Trying to rebond");}
-                    }
-                    else{
-                    	Log.d(TAG, "Could not remove bond");
-                    }
                     clientSocket = d.createRfcommSocketToServiceRecord(uuid);
                 }
 
@@ -78,8 +72,17 @@ public class ClientThread extends BluetoothConnectionThread {
                     Log.e(TAG, "Socket create() failed", e);
                     bms.disconnect();
                 } catch (Exception e) {
-                	Log.e(TAG, "createBond() or removeBond() failed", e);
-                    bms.disconnect();
+                    try {
+						if( e.getMessage().contains( "refused" ) && removeBond( d ) ){
+							while( !createBond( d ) ){ Log.d(TAG, "Trying to rebond");}
+						}
+						else{
+							Log.d(TAG, "Could not remove bond");
+						}
+					} catch (Exception e1) {
+						Log.d(TAG, "Could not removeBond() or createBond()");
+					}
+
 				}
 
                 // once a socket is opened, try to connect and then pass to
