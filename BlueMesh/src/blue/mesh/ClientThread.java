@@ -90,10 +90,10 @@ public class ClientThread extends BluetoothConnectionThread {
 							if(  removeBond( d ) ){
 								while( !createBond( d ) ){ Log.d(TAG, "Trying to rebond");}
 							}
-						}
-						else{
-							Log.d(TAG, "Could not remove bond");
-							Log.d(TAG, e.getMessage());
+							else{
+								Log.d(TAG, "Could not remove bond");
+								Log.d(TAG, e.getMessage());
+							}
 						}
 					} catch (Exception e1) {
 						Log.d(TAG, "Could not removeBond() or createBond()");
