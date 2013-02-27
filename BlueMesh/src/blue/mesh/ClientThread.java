@@ -71,20 +71,8 @@ public class ClientThread extends BluetoothConnectionThread {
                 catch (IOException e) {
                     Log.e(TAG, "Socket create() failed", e);
                     bms.disconnect();
-                } catch (Exception e) {
-                    try {
-						if( e.getMessage().contains( "refused" ) && removeBond( d ) ){
-							while( !createBond( d ) ){ Log.d(TAG, "Trying to rebond");}
-						}
-						else{
-							Log.d(TAG, "Could not remove bond");
-						}
-					} catch (Exception e1) {
-						Log.d(TAG, "Could not removeBond() or createBond()");
-					}
-
-				}
-
+                }
+                
                 // once a socket is opened, try to connect and then pass to
                 // router
                 try {
@@ -97,6 +85,16 @@ public class ClientThread extends BluetoothConnectionThread {
 
                 catch (IOException e) {
                     Log.e(TAG, "Connection constructor failed", e);
+                    try {
+						if( e.getMessage().contains( "refused" ) && removeBond( d ) ){
+							while( !createBond( d ) ){ Log.d(TAG, "Trying to rebond");}
+						}
+						else{
+							Log.d(TAG, "Could not remove bond");
+						}
+					} catch (Exception e1) {
+						Log.d(TAG, "Could not removeBond() or createBond()");
+					}
                     Log.d(TAG, "isInterrupted() == " + this.killed );
                     if( this.killed ){
                         Log.d(TAG, "Thread interrupted");
