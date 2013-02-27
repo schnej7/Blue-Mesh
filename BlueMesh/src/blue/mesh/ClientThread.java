@@ -43,7 +43,7 @@ public class ClientThread extends BluetoothConnectionThread {
                 clientSocket = null;
                 try {
 
-                    if (router.getDeviceState(d) == Constants.STATE_CONNECTED)
+                    if (router.getDeviceState( Constants.TYPE_BLUETOOTH + '@' + d.toString()) == Constants.STATE_CONNECTED)
                         continue;
 
                     clientSocket = d.createRfcommSocketToServiceRecord(uuid);

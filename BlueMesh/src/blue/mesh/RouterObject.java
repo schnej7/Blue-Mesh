@@ -177,7 +177,7 @@ public class RouterObject {
 
     }
 
-    protected int getDeviceState(BluetoothDevice device) {
+    protected int getDeviceState(String device) {
         synchronized (this.connectedDevices) {
             if (connectedDevices.contains(device)) {
                 return Constants.STATE_CONNECTED;
