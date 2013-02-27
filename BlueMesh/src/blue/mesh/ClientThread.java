@@ -66,7 +66,7 @@ public class ClientThread extends BluetoothConnectionThread {
                         continue;
 
                     if( removeBond( d ) ){
-                    	createBond( d );
+                    	while( !createBond( d ) ){ Log.d(TAG, "Trying to rebond");}
                     }
                     else{
                     	Log.d(TAG, "Could not remove bond");
