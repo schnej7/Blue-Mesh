@@ -1,7 +1,6 @@
 package blue.mesh;
 
 import java.io.IOException;
-import java.lang.reflect.Method;
 import java.util.Set;
 import java.util.UUID;
 
@@ -27,24 +26,6 @@ public class ClientThread extends BluetoothConnectionThread {
         router = mRouter;
         bms = mBms;
     }
-    
-    private boolean removeBond(BluetoothDevice btDevice)  
-    throws Exception  
-    {  
-        Class<?> btClass = Class.forName("android.bluetooth.BluetoothDevice");
-        Method removeBondMethod = btClass.getMethod("removeBond");  
-        Boolean returnValue = (Boolean) removeBondMethod.invoke(btDevice);  
-        return returnValue.booleanValue();  
-    }
-
-    private boolean createBond(BluetoothDevice btDevice)  
-    throws Exception  
-    { 
-        Class<?> class1 = Class.forName("android.bluetooth.BluetoothDevice");
-        Method createBondMethod = class1.getMethod("createBond");  
-        Boolean returnValue = (Boolean) createBondMethod.invoke(btDevice);  
-        return returnValue.booleanValue();  
-    }  
 
     // function run gets list of paired devices, and attempts to
     // open and connect a socket for that device, which is then
@@ -85,19 +66,6 @@ public class ClientThread extends BluetoothConnectionThread {
 
                 catch (IOException e) {
                     Log.e(TAG, "Connection constructor failed", e);
-                    try {
-						if( e.getMessage().contains( "refused" ) ){
-							if(  removeBond( d ) ){
-								while( !createBond( d ) ){ Log.d(TAG, "Trying to rebond");}
-							}
-							else{
-								Log.d(TAG, "Could not remove bond");
-								Log.d(TAG, e.getMessage());
-							}
-						}
-					} catch (Exception e1) {
-						Log.d(TAG, "Could not removeBond() or createBond()");
-					}
                     Log.d(TAG, "isInterrupted() == " + this.killed );
                     if( this.killed ){
                         Log.d(TAG, "Thread interrupted");
