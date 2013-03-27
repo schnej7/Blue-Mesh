@@ -38,7 +38,7 @@ public class ClientThread extends BluetoothConnectionThread {
             
             // Loop through paired devices and attempt to connect
             for (BluetoothDevice d : pairedDevices) {
-                Log.d(TAG, "Trying to connect to " + d.getName());
+            	if(Constants.DEBUG) Log.d(TAG, "Trying to connect to " + d.getName());
 
                 clientSocket = null;
                 try {
@@ -50,7 +50,7 @@ public class ClientThread extends BluetoothConnectionThread {
                 }
 
                 catch (IOException e) {
-                    Log.e(TAG, "Socket create() failed", e);
+                	if(Constants.DEBUG) Log.e(TAG, "Socket create() failed", e);
                     bms.disconnect();
                 }
                 
@@ -59,29 +59,29 @@ public class ClientThread extends BluetoothConnectionThread {
                 try {
                     clientSocket.connect();
                     Connection bluetoothConnection = new AndroidBluetoothConnection( clientSocket );
-                    Log.d(TAG,
+                    if(Constants.DEBUG) Log.d(TAG,
                             "Connection Created, calling router.beginConnection()");
                     router.beginConnection(bluetoothConnection);
                 }
 
                 catch (IOException e) {
-                    Log.e(TAG, "Connection constructor failed", e);
-                    Log.d(TAG, "isInterrupted() == " + this.killed );
+                	if(Constants.DEBUG) Log.e(TAG, "Connection constructor failed", e);
+                	if(Constants.DEBUG) Log.d(TAG, "isInterrupted() == " + this.killed );
                     if( this.killed ){
-                        Log.d(TAG, "Thread interrupted");
+                    	if(Constants.DEBUG) Log.d(TAG, "Thread interrupted");
                     	return;
                     }
                 }
             }
         }
-        Log.d(TAG, "Thread interrupted");
+        if(Constants.DEBUG) Log.d(TAG, "Thread interrupted");
         return;
     }
 
     protected int kill() {
-    	Log.d(TAG, "trying to kill");
+    	if(Constants.DEBUG) Log.d(TAG, "trying to kill");
         this.killed = true;
-        Log.d(TAG, "kill success");
+        if(Constants.DEBUG) Log.d(TAG, "kill success");
         return Constants.SUCCESS;
     }
 };

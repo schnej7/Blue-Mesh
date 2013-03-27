@@ -32,14 +32,14 @@ public class RouterObject {
 
     protected synchronized int beginConnection(Connection connection) {
 
-        Log.d(TAG, "beginConnection");
+    	if(Constants.DEBUG) Log.d(TAG, "beginConnection");
         // Don't let another thread touch connectedDevices while
         // I read and write it
         synchronized (this.connectedDevices) {
-            Log.d(TAG, "test if devices contains the device name: " + connection.getID());
+        	if(Constants.DEBUG) Log.d(TAG, "test if devices contains the device name: " + connection.getID());
             // Check if the device is already connected to
             if (connectedDevices.contains(connection.getID())) {
-                Log.d(TAG, "trying to close socket, already connected to device");
+            	if(Constants.DEBUG) Log.d(TAG, "trying to close socket, already connected to device");
                 connection.close();
                 return Constants.SUCCESS;
             }
@@ -59,7 +59,7 @@ public class RouterObject {
         // socket.getRemoteDevice().getName();
         // Toast.makeText(context, toastMsg.toString(),
         // Toast.LENGTH_SHORT).show();
-        Log.d(TAG, "Finished setting up connection");
+        if(Constants.DEBUG) Log.d(TAG, "Finished setting up connection");
 
         return Constants.SUCCESS;
     }
@@ -81,7 +81,7 @@ public class RouterObject {
     	synchronized( this.messageIDs ){
     		for (int i = 0; i < messageIDs.size(); i++) {
                 if (Arrays.equals(messageIDs.get(i), messageID)) {
-                    Log.d(TAG, "Message already recieved, ID: " + messageID[0]);
+                	if(Constants.DEBUG) Log.d(TAG, "Message already recieved, ID: " + messageID[0]);
                     return false;
                 }
             }
@@ -93,11 +93,11 @@ public class RouterObject {
     //messageIDs.size() is larger than MSG_HISTORY_LEN
     private void recordMessageID( byte[] messageID ){
     	synchronized( this.messageIDs ){
-	        Log.d(TAG, "New Message, ID: " + messageID.toString());
+    		if(Constants.DEBUG) Log.d(TAG, "New Message, ID: " + messageID.toString());
 	        messageIDs.add(messageID);
 	        // Remove oldest message ID if too many are stored
 	        if (messageIDs.size() > Constants.MSG_HISTORY_LEN) {
-	            Log.d(TAG, "Removing Message from History");
+	        	if(Constants.DEBUG) Log.d(TAG, "Removing Message from History");
 	            messageIDs.remove(0);
 	        }
     	}
@@ -157,7 +157,7 @@ public class RouterObject {
         // Send the message to all the threads
         synchronized (this.rwThreads) {
             for (ReadWriteThread aThread : rwThreads) {
-                Log.d(TAG, "Writing to device on thread: " + aThread.getName());
+            	if(Constants.DEBUG) Log.d(TAG, "Writing to device on thread: " + aThread.getName());
                 aThread.write(buffer);
             }
         }
@@ -202,16 +202,16 @@ public class RouterObject {
         // If the device ID is in the list of connected devices
         // then search for the ReadWriteThread associated with it
         // and set it's pointer to null while it finishes execution
-        Log.d(TAG, "removing device: " + deviceID + " from devices");
+    	if(Constants.DEBUG) Log.d(TAG, "removing device: " + deviceID + " from devices");
         if (connectedDevices.remove(connectedDevices.indexOf(deviceID)) != null) {
             if( rwThreads.remove(deadThread) ){
-                Log.d(TAG, "Device removed");
+            	if(Constants.DEBUG) Log.d(TAG, "Device removed");
             }
             else{
-                Log.d(TAG, "Device not removed from rwThreads");
+            	if(Constants.DEBUG) Log.d(TAG, "Device not removed from rwThreads");
             }
         } else {
-            Log.d(TAG, "Device not removed from connectedDevices");
+        	if(Constants.DEBUG) Log.d(TAG, "Device not removed from connectedDevices");
         }
         return Constants.SUCCESS;
     }
@@ -227,7 +227,7 @@ public class RouterObject {
                 uniqueID = true;
                 for (byte[] i : messageIDs){
                     if (Arrays.equals(i, messageID)) {
-                        Log.d(TAG, "Message already recieved, ID starts with: " //Message exists in messageIDs
+                    	if(Constants.DEBUG) Log.d(TAG, "Message already recieved, ID starts with: " //Message exists in messageIDs
                                 + messageID[0]);
                         uniqueID = false;
                         break; //Regenerates a random ID and tries again.
@@ -268,7 +268,7 @@ public class RouterObject {
     	}
     	
     	else {
-    		Log.e(TAG, "Message Level is invalid");
+    		if(Constants.DEBUG) Log.e(TAG, "Message Level is invalid");
     	}
     	
     	return middle_field;

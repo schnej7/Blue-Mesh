@@ -11,7 +11,7 @@ public class ReadWriteThread extends Thread {
     private static final String   TAG = "ReadWriteThread";
 
     protected ReadWriteThread(RouterObject a_router, Connection a_connection){
-        Log.d(TAG, "RWTHREAD CONNECTED!");
+    	if(Constants.DEBUG) Log.d(TAG, "RWTHREAD CONNECTED!");
 
         router = a_router;
         connection = a_connection;
@@ -28,17 +28,17 @@ public class ReadWriteThread extends Thread {
                 bytes = connection.read( buffer );
             }
             catch( IOException e ){
-                Log.e(TAG, "read failed", e);
+            	if(Constants.DEBUG) Log.e(TAG, "read failed", e);
                 disconnect();
                 break;
             }
 
             
             if( bytes > 0 ){
-                Log.d(TAG, "Got something");
+            	if(Constants.DEBUG) Log.d(TAG, "Got something");
             }
             if( bytes > 0 && buffer != null ){
-                Log.d(TAG, buffer.toString());
+            	if(Constants.DEBUG) Log.d(TAG, buffer.toString());
                 byte[] returnBuffer = new byte[bytes];
                 for( int i = 0; i < bytes; i++ ){
                     returnBuffer[i] = buffer[i];
@@ -55,12 +55,12 @@ public class ReadWriteThread extends Thread {
         router.notifyDisconnected(connection.getID(), this);
         connection.close();
         
-        Log.d(TAG, "ReadWriteThread returned");
+        if(Constants.DEBUG) Log.d(TAG, "ReadWriteThread returned");
         return Constants.SUCCESS;
     }
 
     protected int write(byte[] buffer) {
-        Log.d(TAG, "Writing bytes: " + buffer.toString() );
+    	if(Constants.DEBUG) Log.d(TAG, "Writing bytes: " + buffer.toString() );
         connection.write( buffer );
         return Constants.SUCCESS;
     }

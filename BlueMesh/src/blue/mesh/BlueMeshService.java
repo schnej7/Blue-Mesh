@@ -30,10 +30,10 @@ public class BlueMeshService {
             
             // If bluetooth hardware does not exist...
             if (adapter == null) {
-                Log.d(TAG, "BluetoothAdapter is is null");
+            	if(Constants.DEBUG) Log.d(TAG, "BluetoothAdapter is is null");
                 throw new NullPointerException("BluetoothAdapter is null");
             } else {
-                Log.d(TAG, "BluetoothAdapter is is non-null");
+            	if(Constants.DEBUG) Log.d(TAG, "BluetoothAdapter is is non-null");
             }
             
             bluetoothName = adapter.getName();
@@ -41,15 +41,13 @@ public class BlueMeshService {
             try {
                 bluetoothConnectionThreads.add( new ServerThread(adapter, router, uuid) );
             } catch (NullPointerException e) {
-                Log.e(TAG, "Could not add server thread", e);
+            	if(Constants.DEBUG) Log.e(TAG, "Could not add server thread", e);
                 throw e;
             }
-            if (Constants.DEBUG)
-                Log.d(TAG, "Sever Thread Created");
+            if (Constants.DEBUG) Log.d(TAG, "Sever Thread Created");
             // Create a new clientThread
             bluetoothConnectionThreads.add( new ClientThread(adapter, this, router, uuid) );
-            if (Constants.DEBUG)
-                Log.d(TAG, "Client Thread Created");
+            if (Constants.DEBUG) Log.d(TAG, "Client Thread Created");
         }
         else if( Utils.isOS( Utils.OS.WINDOWS ) ){
             //TODO: implement this
@@ -70,8 +68,7 @@ public class BlueMeshService {
     
     private void setupRouter(){
         router = new RouterObject(uniqueDeviceId);
-        if (Constants.DEBUG)
-            Log.d(TAG, "Router Object Created");  
+        if (Constants.DEBUG) Log.d(TAG, "Router Object Created");  
     }
     
     //This is called from the builder once all the configurations are set
@@ -138,10 +135,10 @@ public class BlueMeshService {
 
     // Kills threads and stops all communications
     public int disconnect() {
-        Log.d(TAG, "kill start");
-    	Log.d(TAG, "Killing " + bluetoothConnectionThreads.size());
+    	if(Constants.DEBUG) Log.d(TAG, "kill start");
+    	if(Constants.DEBUG) Log.d(TAG, "Killing " + bluetoothConnectionThreads.size());
         for( BluetoothConnectionThread bct: bluetoothConnectionThreads ){
-        	Log.d(TAG, "Killing " + bct.getName());
+        	if(Constants.DEBUG) Log.d(TAG, "Killing " + bct.getName());
             if (bct != null) {
                 bct.kill();
                 bct = null;
@@ -153,7 +150,7 @@ public class BlueMeshService {
             this.router = null;
         }
 
-        Log.d(TAG, "kill success");
+        if(Constants.DEBUG) Log.d(TAG, "kill success");
         return Constants.SUCCESS;
     }
 

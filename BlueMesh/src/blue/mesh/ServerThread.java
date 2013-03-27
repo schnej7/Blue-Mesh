@@ -27,15 +27,14 @@ public class ServerThread extends BluetoothConnectionThread {
         // Attempt to listen on ServerSocket for incoming requests
         BluetoothServerSocket tmp = null;
 
-        if (Constants.DEBUG)
-            Log.d(TAG, "Attempting to listen");
+        if (Constants.DEBUG) Log.d(TAG, "Attempting to listen");
 
         // Create a new listening server socket
         try {
             tmp = adapter.listenUsingRfcommWithServiceRecord(Constants.NAME,
                     uuid);
         } catch (IOException e) {
-            Log.e(TAG, "listenUsingRfcommWithServiceRecord() failed", e);
+        	if(Constants.DEBUG) Log.e(TAG, "listenUsingRfcommWithServiceRecord() failed", e);
             throw new NullPointerException("Bluetooth is not enabeled");
         }
 
@@ -52,7 +51,7 @@ public class ServerThread extends BluetoothConnectionThread {
             // Exit while loop if interrupted
             if (this.isInterrupted()) {
                 if (Constants.DEBUG)
-                    Log.d(TAG, "interrupted");
+                	if(Constants.DEBUG) Log.d(TAG, "interrupted");
                 break;
             }
 
@@ -60,19 +59,19 @@ public class ServerThread extends BluetoothConnectionThread {
             try {
                 socket = serverSocket.accept();
             } catch (IOException e) {
-                Log.e(TAG, "accept() failed", e);
+            	if(Constants.DEBUG) Log.e(TAG, "accept() failed", e);
                 break;
             }
 
             // If a connection was accepted, pass socket to router
             if (socket != null) {
-                Log.d(TAG, "Socket connected, calling router.beginConnection()");
+            	if(Constants.DEBUG) Log.d(TAG, "Socket connected, calling router.beginConnection()");
                 Connection connection;
                 try {
                     connection = new AndroidBluetoothConnection( socket );
                     router.beginConnection(connection);
                 } catch (IOException e) {
-                    Log.e(TAG, "Could not create connection", e);
+                	if(Constants.DEBUG) Log.e(TAG, "Could not create connection", e);
                 }
             }
 
@@ -85,16 +84,16 @@ public class ServerThread extends BluetoothConnectionThread {
         try {
             this.serverSocket.close();
         } catch (IOException e) {
-            Log.e(TAG, "Could not close serverSocket", e);
+        	if(Constants.DEBUG) Log.e(TAG, "Could not close serverSocket", e);
         }
         return Constants.SUCCESS;
     }
 
     protected int kill() {
-    	Log.d(TAG, "trying to kill");
+    	if(Constants.DEBUG) Log.d(TAG, "trying to kill");
         this.closeSocket();
         this.interrupt();
-        Log.d(TAG, "kill success");
+        if(Constants.DEBUG) Log.d(TAG, "kill success");
         return Constants.SUCCESS;
     }
 }

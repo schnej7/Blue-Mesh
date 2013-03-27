@@ -34,17 +34,17 @@ public class AndroidBluetoothConnection extends Connection{
         try {
             input.close();
         } catch (IOException e) {
-            Log.e(TAG, "Problem closing input", e);
+            if(Constants.DEBUG) Log.e(TAG, "Problem closing input", e);
         }
         try {
             output.close();
         } catch (IOException e) {
-            Log.e(TAG, "Problem closing output", e);
+        	if(Constants.DEBUG) Log.e(TAG, "Problem closing output", e);
         }
         try {
             socket.close();
         } catch (IOException e) {
-            Log.e(TAG, "Problem closing BluetoothSocket", e);
+        	if(Constants.DEBUG) Log.e(TAG, "Problem closing BluetoothSocket", e);
         }
     }
 
@@ -53,7 +53,7 @@ public class AndroidBluetoothConnection extends Connection{
         try {
             output.write( b );
         } catch (IOException e) {
-            Log.e( TAG, "failed to write", e );
+        	if(Constants.DEBUG) Log.e( TAG, "failed to write", e );
         }
     }
 
@@ -63,7 +63,7 @@ public class AndroidBluetoothConnection extends Connection{
         try {
             bytes = input.read(incommingBuffer);
         } catch (IOException e) {
-            Log.e(TAG, "Error reading", e);
+        	if(Constants.DEBUG) Log.e(TAG, "Error reading", e);
             throw new IOException();
         }
 
