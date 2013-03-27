@@ -72,6 +72,29 @@ public class AndroidBluetoothConnection extends Connection{
         }
         return bytes;
     }
+    @Override
+    public int read(byte[] b, int offset, int len) throws IOException {
+    	int bytes;
+    	try {
+    		bytes = input.read(incommingBuffer, offset, len);
+    	} catch (IOException e) {
+    		Log.e(TAG, "Error reading", e);
+    		throw new IOException();
+    	}
+    	if (bytes != len) {
+    		IOException e = new IOException();
+    		Log.e(TAG, "Did not read enough bytes", e);
+    		throw e;
+    	}
+    	
+    	for (int i = 0; i < bytes; i++) {
+    		b[i] = incommingBuffer[i];
+    	}
+    	return bytes;
+    	
+    }
+    
+
     
     public String getID(){
         return type + '@' + socket.getRemoteDevice().toString();
