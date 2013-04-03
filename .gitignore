@@ -5,32 +5,34 @@ BlueMesh/.settings
 BlueMesh/bin
 BlueMesh/gen
 BlueMesh/proguard.cfg
-BlueMesh/project.properties
 TestApps/Fastest\ Bounce/.classpath
 TestApps/Fastest\ Bounce/.project
 TestApps/Fastest\ Bounce/.settings
 TestApps/Fastest\ Bounce/bin
 TestApps/Fastest\ Bounce/gen
 TestApps/Fastest\ Bounce/proguard.cfg
-TestApps/Fastest\ Bounce/project.properties
 TestApps/Fastest\ Bounce\ (Standalone)/.classpath
 TestApps/Fastest\ Bounce\ (Standalone)/.project
 TestApps/Fastest\ Bounce\ (Standalone)/.settings
 TestApps/Fastest\ Bounce\ (Standalone)/bin
 TestApps/Fastest\ Bounce\ (Standalone)/gen
 TestApps/Fastest\ Bounce\ (Standalone)/proguard.cfg
-TestApps/Fastest\ Bounce\ (Standalone)/project.properties
+TestApps/BlueMesh\ Test\ App/.classpath
+TestApps/BlueMesh\ Test\ App/.project
+TestApps/BlueMesh\ Test\ App/.settings
+TestApps/BlueMesh\ Test\ App/bin
+TestApps/BlueMesh\ Test\ App/gen
 WebViewTest/.classpath
 WebViewTest/.project
 WebViewTest/.settings
 WebViewTest/bin
 WebViewTest/gen
 WebViewTest/proguard.cfg
-WebViewTest/project.properties
 WebViewHost/.classpath
 WebViewHost/.project
 WebViewHost/.settings
 WebViewHost/bin
+WebViewHost/res/drawable*
 WebViewHost/gen
 WebViewHost/proguard.cfg
-WebViewHost/project.properties
+*lint.xml

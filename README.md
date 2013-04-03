@@ -12,3 +12,5 @@ Contact Us
 ==========
 
 If you have any questions, feel free to contact us at schnej7@rpi.edu, Happy Developing!
+
+Check out the wiki for more information about the API.

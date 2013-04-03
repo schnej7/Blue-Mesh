@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="vertical" >
+
+    <!--  This is fine, disregard the warning on enabled -->
+    <CheckBox
+        android:id="@+id/chkBMSStarted"
+        android:enabled="false"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/chkBMSStarted" />
+
+    <Button
+        android:id="@+id/btnTest1"
+        android:textColor="#666666"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/bntTest1" />
+    
+    <Button
+        android:id="@+id/btnQuit"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/btnQuit" />
+
+</LinearLayout>

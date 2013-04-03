@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">BlueMesh Test App Test</string>
+    <string name="chkBMSStarted">BlueMesh Started</string>
+    <string name="bntTest1">Run Test 1</string>
+    <string name="btnQuit">Quit</string>
+
+</resources>

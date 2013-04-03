@@ -1,101 +1,122 @@
 package blue.mesh;
 
+import java.util.ArrayList;
 import java.util.UUID;
 
 import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothDevice;
 import android.util.Log;
 
 public class BlueMeshService {
 
-    private BluetoothAdapter    adapter;
     private RouterObject        router;
-    private ServerThread        serverThread;
-    private ClientThread        clientThread;
+    private UUID                uuid;
+    private String              uniqueDeviceId;
+    private boolean             bluetoothEnabled = false;
+    private String              bluetoothName = null;
     private static final String TAG = "BlueMesh Service";
+    
+    //Used to store all Bluetoot Connection Threads
+    private ArrayList <BluetoothConnectionThread> bluetoothConnectionThreads = new ArrayList<BluetoothConnectionThread>();
 
-    // BMS constructor
-    public BlueMeshService(UUID a_uuid) throws NullPointerException {
-
-        // Gets bluetooth hardware from phone and makes sure that it is
-        // non-null;
-        adapter = BluetoothAdapter.getDefaultAdapter();
+    private void setupBluetooth() throws NullPointerException{
         
-        // If bluetooth hardware does not exist...
-        if (adapter == null) {
-            if (Constants.DEBUG)
-                Log.d(TAG, "BluetoothAdapter is null");
-            throw new NullPointerException("BluetoothAdapter is null");
-        } else {
-            if (Constants.DEBUG)
-                Log.d(TAG, "BluetoothAdapter is is non-null");
-        }
-        
-        //Try to restart bluetooth
-        if(adapter.isEnabled()){
-            Log.d(TAG, "disable");
-            if(adapter.disable()){
-                Log.d(TAG, "waiting...");
-                while( adapter.isEnabled()){}
+        //Detect the OS and add the connection threads accordingly
+        if( Utils.isOS( Utils.OS.ANDROID ) ){
+        	
+            // Gets bluetooth hardware from phone and makes sure that it is
+            // non-null;
+            BluetoothAdapter adapter = BluetoothAdapter.getDefaultAdapter();
+            
+            // If bluetooth hardware does not exist...
+            if (adapter == null) {
+            	if(Constants.DEBUG) Log.d(TAG, "BluetoothAdapter is is null");
+                throw new NullPointerException("BluetoothAdapter is null");
+            } else {
+            	if(Constants.DEBUG) Log.d(TAG, "BluetoothAdapter is is non-null");
             }
-            else{
-                Log.d(TAG, "failed");
+            
+            bluetoothName = adapter.getName();
+        	
+            try {
+                bluetoothConnectionThreads.add( new ServerThread(adapter, router, uuid) );
+            } catch (NullPointerException e) {
+            	if(Constants.DEBUG) Log.e(TAG, "Could not add server thread", e);
+                throw e;
             }
+            if (Constants.DEBUG) Log.d(TAG, "Sever Thread Created");
+            // Create a new clientThread
+            bluetoothConnectionThreads.add( new ClientThread(adapter, this, router, uuid) );
+            if (Constants.DEBUG) Log.d(TAG, "Client Thread Created");
         }
-        
-        Log.d(TAG, "enable");
-        if(adapter.enable()){
-            Log.d(TAG, "waiting...");
-            while( !adapter.isEnabled()){}
+        else if( Utils.isOS( Utils.OS.WINDOWS ) ){
+            //TODO: implement this
+        	throw new NullPointerException("BlueMesh not supported on windows");
+        }
+        else if( Utils.isOS( Utils.OS.LINUX ) ){
+            //TODO: implement this
+        	throw new NullPointerException("BlueMesh not supported on linux");
+        }
+        else if( Utils.isOS( Utils.OS.OSX ) ){
+            //TODO: implement this
+        	throw new NullPointerException("BlueMesh not supported on OSX");
         }
         else{
-            Log.d(TAG, "failed");
+        	throw new NullPointerException("BlueMesh not supported on this device");
         }
-        
-        // Create a new router object
-        router = RouterObject.getRouterObject();
-        if (Constants.DEBUG)
-            Log.d(TAG, "Router Object Created");
-        // Try to create a new ServerThread
-        try {
-            serverThread = new ServerThread(adapter, router, a_uuid);
-        } catch (NullPointerException e) {
-            throw e;
+    }
+    
+    private void setupRouter(){
+        router = new RouterObject(uniqueDeviceId);
+        if (Constants.DEBUG) Log.d(TAG, "Router Object Created");  
+    }
+    
+    //This is called from the builder once all the configurations are set
+    protected void setup(){
+        setupRouter();
+
+        if( bluetoothEnabled ){
+            setupBluetooth();
         }
-        if (Constants.DEBUG)
-            Log.d(TAG, "Sever Thread Created");
-        // Create a new clientThread
-        clientThread = new ClientThread(adapter, router, a_uuid);
-        if (Constants.DEBUG)
-            Log.d(TAG, "Client Thread Created");
+    }
+    
+    protected BlueMeshService(){
+    }
+    
+    protected void setUUID( UUID a_uuid ){
+        uuid = a_uuid;
+    }
+    
+    protected void enableBluetooth( boolean enabled ){
+        bluetoothEnabled = enabled;
+    }
+    
+    protected void setDeviceId( String Id ){
+        uniqueDeviceId = Id;
     }
 
-    // TODO: Implement later if needed
-    public int config() {
-        return Constants.SUCCESS;
+    public void launch() {
+        for( BluetoothConnectionThread bct: bluetoothConnectionThreads)
+        if (!bct.isAlive()) {
+            bct.start();
+        }
     }
 
-    public int launch() {
-
-        // TODO: Conditionals are untested
-        if (!serverThread.isAlive()) {
-            serverThread.start();
-        }
-        if (!clientThread.isAlive()) {
-            clientThread.start();
-        }
-        return Constants.SUCCESS;
+    // function that writes message to all devices
+    public void write(byte[] buffer) {
+        router.write(buffer, Constants.MESSAGE_ALL, null);
     }
-
-    // function that writes message to devices
-    public int write(byte[] buffer) {
-        router.write(buffer, Constants.BYTE_LEVEL_USER);
-        return Constants.SUCCESS;
+    
+    public void write(byte[] buffer, BluetoothDevice target) {
+    	router.write(buffer, Constants.MESSAGE_TARGET, target);
     }
 
     // function to grab most recent message off of message queue
     // (message stack actually a linked list but is used like a queue)
-    public byte[] pull() {
-
+    public byte[] pull() throws NullPointerException{
+        if( router == null ){
+            throw new NullPointerException("router is null");
+        }
         return router.getNextMessage();
     }
 
@@ -106,23 +127,19 @@ public class BlueMeshService {
 
     // Returns the Bluetooth name of the device
     public String getMyDeviceName() {
-        return adapter.getName();
+        return bluetoothName;
     }
 
     // Kills threads and stops all communications
     public int disconnect() {
-        Log.d(TAG, "kill start");
-
-        // TODO: check if conditionals fixes bug
-        // disconnecting when bluetooth not enabeled
-        if (this.clientThread != null) {
-            this.clientThread.kill();
-            this.clientThread = null;
-        }
-
-        if (this.serverThread != null) {
-            this.serverThread.kill();
-            this.serverThread = null;
+    	if(Constants.DEBUG) Log.d(TAG, "kill start");
+    	if(Constants.DEBUG) Log.d(TAG, "Killing " + bluetoothConnectionThreads.size());
+        for( BluetoothConnectionThread bct: bluetoothConnectionThreads ){
+        	if(Constants.DEBUG) Log.d(TAG, "Killing " + bct.getName());
+            if (bct != null) {
+                bct.kill();
+                bct = null;
+            }
         }
 
         if (this.router != null) {
@@ -130,7 +147,7 @@ public class BlueMeshService {
             this.router = null;
         }
 
-        Log.d(TAG, "kill success");
+        if(Constants.DEBUG) Log.d(TAG, "kill success");
         return Constants.SUCCESS;
     }
 
