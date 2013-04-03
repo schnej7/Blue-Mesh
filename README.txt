@@ -1,1 +1,0 @@
-Sean is practicing git
