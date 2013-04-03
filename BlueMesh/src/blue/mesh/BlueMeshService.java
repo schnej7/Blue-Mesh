@@ -95,23 +95,20 @@ public class BlueMeshService {
         uniqueDeviceId = Id;
     }
 
-    public int launch() {
+    public void launch() {
         for( BluetoothConnectionThread bct: bluetoothConnectionThreads)
         if (!bct.isAlive()) {
             bct.start();
         }
-        return Constants.SUCCESS;
     }
 
     // function that writes message to all devices
-    public int write(byte[] buffer) {
+    public void write(byte[] buffer) {
         router.write(buffer, Constants.MESSAGE_ALL, null);
-        return Constants.SUCCESS;
     }
     
-    public int write(byte[] buffer, BluetoothDevice target) {
+    public void write(byte[] buffer, BluetoothDevice target) {
     	router.write(buffer, Constants.MESSAGE_TARGET, target);
-    	return Constants.SUCCESS;
     }
 
     // function to grab most recent message off of message queue
