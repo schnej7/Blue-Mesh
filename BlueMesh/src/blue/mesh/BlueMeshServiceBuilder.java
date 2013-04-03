@@ -10,7 +10,7 @@ public class BlueMeshServiceBuilder {
     BlueMeshService bms = new BlueMeshService();
 
     public BlueMeshServiceBuilder(){
-        bluetoothEnabled = false;
+        bluetoothEnabled = true;
         uuid = UUID.fromString(Constants.DEFAULT_UUID_STRING);
         deviceId = Constants.DEFAULT_DEVICE_ID;
     }
