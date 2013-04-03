@@ -46,4 +46,6 @@ public final class Constants {
 
     // Used to determine the type of connection
     public static final String TYPE_BLUETOOTH                    = "1";
+    // Size of the message header in bytes which describes message size
+	public static final int HEADER_SIZE 						 =  4;
 }
