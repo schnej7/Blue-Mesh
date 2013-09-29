@@ -21,10 +21,10 @@ public class RouterObject {
     protected RouterObject(String m_address) {
         connectedDevices = new ArrayList<String>();
         rwThreads = new HashSet<ReadWriteThread>();
-        messageIDs = new ArrayList<byte[]>();
-        messages = new ArrayList<byte[]>();
-        address = new byte[Constants.TARGET_ID_LEN];
-        byte[] temp = m_address.getBytes();
+        messageIDs = new ArrayList<byte[]>();		//This is not being used ANYMORE
+        messages = new ArrayList<byte[]>();			//This is not being used ANYMORE
+        address = new byte[Constants.TARGET_ID_LEN];//What was this for?
+        byte[] temp = m_address.getBytes();			//Also what is this for?
         for(int i=0; i<Constants.TARGET_ID_LEN; i++){
         	address[i] = temp[i];
         }
@@ -64,10 +64,12 @@ public class RouterObject {
         return Constants.SUCCESS;
     }
     
+    @Deprecated
     private byte getMessageLevel( byte buffer[] ){
     	return buffer[0];
     }
     
+    @Deprecated
     private byte[] getMessageID( byte buffer[] ){
     	byte messageID[] = new byte[Constants.MESSAGE_ID_LEN]; 
     	for (int i = 0; i < Constants.MESSAGE_ID_LEN; i++) {
@@ -77,6 +79,7 @@ public class RouterObject {
     }
     
     //Checks if the messageID is in messageIDs
+    @Deprecated
     private boolean messageIsNew( byte[] messageID ){
     	synchronized( this.messageIDs ){
     		for (int i = 0; i < messageIDs.size(); i++) {
@@ -91,6 +94,7 @@ public class RouterObject {
     
     //Adds messageID to messageIDs and removes the oldest ID if
     //messageIDs.size() is larger than MSG_HISTORY_LEN
+    @Deprecated
     private void recordMessageID( byte[] messageID ){
     	synchronized( this.messageIDs ){
     		if(Constants.DEBUG) Log.d(TAG, "New Message, ID: " + messageID.toString());
@@ -104,6 +108,7 @@ public class RouterObject {
     }
     
     //Adds the message to the queue to be processed by the app
+    @Deprecated
     private void addMessageToQueue( byte[] buffer ){
     	synchronized (this.messages) {
             byte message[] = new byte[buffer.length
@@ -116,6 +121,7 @@ public class RouterObject {
     }
     
     //Gets the target of the message if there is one
+    @Deprecated
     private byte[] getTarget( byte[] buffer ){
     	byte target[] = new byte[Constants.TARGET_ID_LEN];
     	for (int i=0; i<Constants.TARGET_ID_LEN; i++){
@@ -125,6 +131,7 @@ public class RouterObject {
     }
 
     //Used to send a message to it's destination
+    @Deprecated
     protected int route(byte buffer[], int source) {
 
         // Get the message level
@@ -166,6 +173,7 @@ public class RouterObject {
     }
 
     //Used by BlueMeshService to get the next message from the queue
+    @Deprecated
     protected byte[] getNextMessage(){
         if (messages.size() > 0) {
             byte message[] = messages.get(0).clone();
@@ -217,6 +225,7 @@ public class RouterObject {
     }
     
 	// Generates and returns a messageID that was not received before
+    @Deprecated
     private byte[] uniqueMessageID(Random rand){
     	byte[] messageID = new byte[Constants.MESSAGE_ID_LEN];
     	
@@ -241,6 +250,7 @@ public class RouterObject {
     
     //Constructs the middle field (containing message and target IDs, as applicable) of the message buffer
     //Returns length of field
+    @Deprecated
     private byte[] middleField(byte messageLevel, byte[] messageID, BluetoothDevice target){
     	byte[] middle_field = null;
     	
@@ -273,7 +283,15 @@ public class RouterObject {
     	
     	return middle_field;
     }
+    
+    protected int write(Message message){
+    	Random rand = new Random();
+    	message.setId(rand.nextInt());
+    	this.route(message, Constants.SRC_ME);
+    	return Constants.SUCCESS;
+    }
 
+    @Deprecated
     protected int write(byte[] buffer, byte messageLevel, BluetoothDevice target) {
         Random rand = new Random();
         byte messageID[] = uniqueMessageID(rand);

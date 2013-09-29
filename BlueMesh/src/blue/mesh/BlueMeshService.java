@@ -103,16 +103,27 @@ public class BlueMeshService {
     }
 
     // function that writes message to all devices
+    @Deprecated
     public void write(byte[] buffer) {
         router.write(buffer, Constants.MESSAGE_ALL, null);
     }
     
+    public void send(Message message){
+    	
+    }
+    
+    public Message pullMessage(){
+    	
+    }
+    
+    @Deprecated
     public void write(byte[] buffer, BluetoothDevice target) {
     	router.write(buffer, Constants.MESSAGE_TARGET, target);
     }
 
     // function to grab most recent message off of message queue
     // (message stack actually a linked list but is used like a queue)
+    @Deprecated
     public byte[] pull() throws NullPointerException{
         if( router == null ){
             throw new NullPointerException("router is null");
